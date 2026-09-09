@@ -30,7 +30,7 @@ Sistema de Gestión Inteligente de Flotas de Drones
 | RF-10 | El sistema debe generar una alerta cuando la batería de un dron caiga por debajo de un umbral definido por el operador durante una misión. |
 | RF-11 | El sistema debe generar una alerta cuando un dron se desvíe más de una distancia configurable (metros) respecto a su ruta planificada, o ingrese a una zona restringida. |
 | RF-12 | El sistema debe notificar al operador en tiempo real ante cualquier alerta generada|
-| RF-13 | El sistema debe clasificar cada alerta por nivel de severidad (baja, media, alta, crítica) según reglas predefinidas asociadas a su tipo de evento. |
+| RF-13 | El sistema debe clasificar cada alerta por nivel de severidad (baja, media, alta, crítica) |
 
 ### Mantenimiento
 
@@ -72,7 +72,7 @@ Sistema de Gestión Inteligente de Flotas de Drones
 | ID | Descripción | Métrica |
 |---|---|---|
 | RNF-04 | El sistema debe autenticar a todo usuario antes de permitir el acceso a cualquier funcionalidad. | 100% de los casos de uso requieren sesión autenticada; 0 accesos posibles sin credenciales válidas en pruebas de acceso directo. |
-| RNF-05 | Las credenciales de los usuarios deben almacenarse de forma segura, nunca en texto plano, usando un algoritmo de hash con sal (ej. bcrypt, Argon2). | 100% de las contraseñas almacenadas con hash y sal mediante un algoritmo estándar reconocido (bcrypt o Argon2); 0 contraseñas en texto plano o con hash sin sal (ej. MD5/SHA1 directo). |
+| RNF-05 | Las credenciales de los usuarios deben almacenarse de forma segura, nunca en texto plano, usando un algoritmo de hash | 100% de las contraseñas almacenadas con hash y sal mediante un algoritmo estándar reconocido; 0 contraseñas en texto plano o con hash |
 
 ### Usabilidad
 
