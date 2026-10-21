@@ -23,6 +23,10 @@ El proyecto se desarrolla en Java como trabajo final de la asignatura de Diseño
 - Panel de control para supervisión e intervención manual del operador.
 - Gestión de roles: operador y administrador.
 
+## Stack tecnológico
+
+- **Backend:** obligatoriamente con **Spring Boot** (Java).
+- **Base de datos:** **MongoDB**.
 
 ## Autor
 
