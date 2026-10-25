@@ -86,9 +86,9 @@ Drone state rules:
 | `-assignedDrone: Drone` (0..1) | `+startReturn()` |
 | `-state: MissionState` | `+finish()` |
 | `-routeAttempts: int` | `+abort()` |
-| `-createdAt: Instant` | `+flightDuration(): Duration` |
-| `-flightStart: Instant` | |
-| `-flightEnd: Instant` | |
+| `-createdAt: LocalDateTime` | `+flightDuration(): Duration` |
+| `-flightStart: LocalDateTime` | |
+| `-flightEnd: LocalDateTime` | |
 
 **MissionState** `«enumeration»`: `PENDING`, `TAKEOFF`, `IN_PROGRESS`, `PAUSED`, `RETURNING`, `COMPLETED`, `ABORTED`
 
@@ -124,7 +124,7 @@ Drone state rules:
 | Attributes | Operations |
 |---|---|
 | `-id: UUID` | `+message(): String` `{abstract}` |
-| `-generatedAt: Instant` | `+isIncident(): boolean` |
+| `-generatedAt: LocalDateTime` | `+isIncident(): boolean` |
 | `-severity: Severity` | |
 | `-drone: Drone` | |
 | `-mission: Mission` (0..1) | |
@@ -157,7 +157,7 @@ Drone state rules:
 | `-alertId: UUID` | |
 | `-mission: Mission` | |
 | `-severity: Severity` | |
-| `-moment: Instant` | |
+| `-moment: LocalDateTime` | |
 
 **MaintenanceRecommendation**
 
@@ -166,7 +166,7 @@ Drone state rules:
 | `-id: UUID` | |
 | `-drone: Drone` | |
 | `-reason: String` | |
-| `-generatedAt: Instant` | |
+| `-generatedAt: LocalDateTime` | |
 
 **MaintenanceRecord**
 
@@ -175,7 +175,7 @@ Drone state rules:
 | `-id: UUID` | |
 | `-drone: Drone` | |
 | `-result: MaintenanceResult` | |
-| `-date: Instant` | |
+| `-date: LocalDateTime` | |
 
 **MaintenanceResult** `«enumeration»`: `APPROVED`, `REQUIRES_REPAIR`, `DECOMMISSION`. Operation: `+applyTo(drone: Drone, history: FlightHistory)`
 
@@ -249,3 +249,72 @@ Drone state rules:
 | Telemetry | Unchanged: its origin is out of scope |
 
 **Pending validation:** severity LOW for `MaintenanceAlert` (analyst proposal, noted in HU-12).
+
+---
+
+## 4. Attribute types and how state is modeled
+
+- `equipment` is `List<String>` (free text, no closed catalog, HU-01).
+- `location` is a `Location` object (name, latitude, longitude, altitude), not a date type.
+- All date-time attributes use `LocalDateTime`: `createdAt`, `flightStart`, `flightEnd`, `generatedAt`, `moment`, `date`. Durations use `Duration`.
+- **State** is an attribute whose type is an enumeration: `Drone.state: DroneState` and `Mission.state: MissionState`. In the logical view it is just that enum; the allowed transitions are the table in section 1.2 (for missions, the state diagram of HU-07/08). An invalid transition throws `IllegalOperationException`.
+- In the development view the enum is paired with an interface, one class per state, so each state decides which transitions are valid (State pattern): `DroneStateHandler` with `AvailableState`, `OnMissionState`, `ChargingState`, `InMaintenanceState`, `OutOfServiceState`, `DecommissionedState`; and `MissionStateHandler` with `PendingState`, `TakeoffState`, `InProgressState`, `PausedState`, `ReturningState`, `CompletedState`, `AbortedState`. `Drone.state` stays the enum; the handler is looked up from it.
+
+---
+
+## 5. Index of classes, enumerations and interfaces
+
+### 5.1 Logical view
+
+| Kind | Name |
+|---|---|
+| Abstract class | `Drone`, `Alert` |
+| Class | `User`, `DeliveryDrone`, `InspectionDrone`, `MonitoringDrone`, `Mission`, `Location`, `Route`, `RestrictedZone`, `LowBatteryAlert`, `RouteDeviationAlert`, `RestrictedZoneAlert`, `MaintenanceAlert`, `FlightHistory`, `Incident`, `MaintenanceRecommendation`, `MaintenanceRecord`, `SystemConfiguration`, `AssignmentRule`, `AlertThresholds`, `MaintenanceThresholds` |
+| Enumeration | `Role`, `Permission`, `DroneState`, `MissionState`, `Priority`, `Severity`, `MaintenanceResult` |
+| Interface | none (the logical view only has domain concepts) |
+
+### 5.2 Development view
+
+| Package | Kind | Name | Main operations |
+|---|---|---|---|
+| fleet | Interface | `DroneStateHandler` | `assignToMission`, `completeMission`, `finishCharging`, `markOutOfService`, `sendToMaintenance`, `reactivate`, `decommission` |
+| fleet | Abstract class | `BaseDroneState` | rejects every transition by default |
+| fleet | Classes | `AvailableState`, `OnMissionState`, `ChargingState`, `InMaintenanceState`, `OutOfServiceState`, `DecommissionedState` | override only the valid transitions |
+| fleet | Interface | `DroneFactory` | `type()`, `create(DroneData)` |
+| fleet | Classes | `DeliveryDroneFactory`, `InspectionDroneFactory`, `MonitoringDroneFactory`, `DroneFactoryRegistry` | `supports(type)`, `create(DroneData)` |
+| fleet | Class | `DroneService` | `register`, `reportFault`, `decommission`, `reactivate` |
+| fleet | Interface | `DroneRepository` | `save`, `findById` |
+| missions | Interface | `MissionStateHandler` | `assignDrone`, `takeOff`, `reachCruise`, `startReturn`, `finish`, `pause`, `resume`, `redirect`, `abort` |
+| missions | Abstract class | `BaseMissionState` | rejects every transition by default |
+| missions | Classes | `PendingState`, `TakeoffState`, `InProgressState`, `PausedState`, `ReturningState`, `CompletedState`, `AbortedState` | override only the valid transitions |
+| missions | Class | `MissionService` | `create`, `authorizeTakeoff`, `pause`, `resume`, `redirect`, `abort` |
+| missions | Interface | `MissionRepository` | `save`, `findById`, `find(MissionFilter)` |
+| assignment | Class | `AssignmentService` | `assignDrone(mission, drones, rule)`, `chooseMission(drone, missions, rule)` |
+| assignment | Interface | `AssignmentCriterion` | `score(drone, mission)` |
+| assignment | Classes | `BatteryCriterion`, `ProximityCriterion`, `PriorityCriterion` | implement `AssignmentCriterion` |
+| routes | Class | `RouteValidator` | `validate(route)` |
+| routes | Value object | `ValidationResult` | `authorized`, `reason` |
+| routes | Interface | `RestrictedZoneProvider` | `getZones()` |
+| monitoring | Class | `MonitoringService` | `evaluate(drone, mission, thresholds)` |
+| monitoring | Interface | `AlertRule` | `evaluate(drone, mission, thresholds): Optional<Alert>` |
+| monitoring | Classes | `LowBatteryRule`, `RouteDeviationRule`, `RestrictedZoneRule` | implement `AlertRule` |
+| monitoring | Class | `SeverityClassifier` | `classify(alert)` |
+| monitoring | Interface | `AlertRepository` | `save`, `findByMission` |
+| notification | Interface | `AlertPublisher` (Subject) | `subscribe`, `unsubscribe`, `publish(alert)` |
+| notification | Class | `AsyncAlertPublisher` | implements `AlertPublisher` |
+| notification | Interface | `AlertObserver` (Observer) | `onAlert(alert)` |
+| notification | Class | `UserNotificationChannel` | implements `AlertObserver` |
+| history | Class | `FlightHistoryService` | `onMissionCompleted(MissionCompleted)` |
+| history | Events | `MissionCompleted`, `HistoryUpdated` | published between modules |
+| history | Interface | `FlightHistoryRepository` | `save`, `findByDrone` |
+| maintenance | Class | `MaintenanceService` | `onHistoryUpdated(HistoryUpdated)`, `recordResult(drone, result)` |
+| maintenance | Interfaces | `MaintenanceRecordRepository`, `MaintenanceRecommendationRepository` | `save`, `findByDrone` |
+| configuration | Interface | `ConfigurationRepository` | `get`, `save` |
+| users | Classes | `AuthenticationService`, `UserService`, `Session` | `login`; `registerOperator`, `edit`, `delete` |
+| users | Interface | `PasswordHasher` | `hash`, `matches` |
+| users | Class | `BCryptHasher` | implements `PasswordHasher` |
+| users | Interface | `UserRepository` | `save`, `findById`, `findByUserName` |
+| panel | Class | `DashboardService` | `fleetSummary`, `queryMissions(filter)` |
+| panel | Value objects | `FleetSummary`, `MissionFilter` | |
+| shared | Interface | `Repository<T, ID>` | `save`, `findById` |
+| shared | Exception | `IllegalOperationException` | thrown by an invalid state transition |
