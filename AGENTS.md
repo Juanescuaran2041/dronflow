@@ -12,3 +12,4 @@ Instrucciones para agentes de IA que trabajen en este repositorio.
 
 - Backend: Spring Boot.
 - Base de datos: MongoDB.
+- Frontend: React + TS

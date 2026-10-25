@@ -1,14 +1,13 @@
 # Diagrama de clases — Dronflow
 
-Diseño orientado a objetos derivado de `docs/requeriments.md` (RF-01..RF-23, RNF-01..RNF-10).
-Los diagramas están en Mermaid (se renderizan en GitHub, VS Code con extensión Mermaid, etc.).
-Notación: `+` público, `-` privado, `#` protegido, `{abstract}` método abstracto.
+Diseño orientado a objetos derivado **únicamente** de las historias de usuario (`docs/historias-usuario/HU-01..HU-22`) y de `docs/requeriments.md`.
+Todo lo que una HU no define está marcado con ⚠ y listado en la sección [Vacíos y preguntas abiertas](#8-vacíos-y-preguntas-abiertas); no se modeló por iniciativa propia (ver `AGENTS.md`).
 
-El modelo se divide en 5 vistas para que sea legible; las clases compartidas se repiten solo como referencia.
+Stack: Spring Boot + MongoDB (el diseño anterior asumía JDBC/ACID; se corrigió). Notación: `+` público, `-` privado, `#` protegido. Diagramas en Mermaid.
 
 ---
 
-## 1. Drones: herencia, polimorfismo y patrón State (RF-01..RF-04, RNF-02)
+## 1. Drones (HU-01, HU-02, HU-03)
 
 ```mermaid
 classDiagram
@@ -17,68 +16,61 @@ classDiagram
     class Dron {
         <<abstract>>
         -CodigoDron codigo
+        -TipoOperacion tipo
         -Bateria bateria
         -double cargaUtilMaxKg
         -int autonomiaMin
-        -List~Equipamiento~ equipamiento
-        -Coordenada posicion
+        -List~String~ equipamiento
+        -Coordenada ubicacion
         -EstadoDron estado
-        +Dron(codigo, bateria, cargaUtilMaxKg, autonomiaMin, equipamiento)
+        #Dron(codigo, tipo, bateria, cargaUtilMaxKg, autonomiaMin, equipamiento)
         +getCodigo() CodigoDron
+        +getTipo() TipoOperacion
         +getEstado() NombreEstado
-        +getNivelBateria() double
-        +cumpleRequisitos(RequisitosMision) boolean
-        +asignarAMision(Mision)
-        +iniciarCarga()
-        +enviarAMantenimiento()
+        +getEquipamiento() List~String~
+        +puedeEjecutar(Mision) boolean
+        +asignarAMision()
+        +completarMision()
+        +finalizarCarga()
         +marcarFueraDeServicio()
-        +darDeBaja()
+        +enviarAMantenimiento()
         +reactivar()
-        +liberar()
+        +darDeBaja()
         +ejecutarTarea(Mision)* void
-        +tipo()* TipoMision
-        #cambiarEstado(EstadoDron)
+        ~cambiarEstado(EstadoDron)
     }
     class DronEntrega {
         +ejecutarTarea(Mision) void
-        +tipo() TipoMision
         -recogerCarga()
         -depositarCarga()
     }
     class DronInspeccion {
         +ejecutarTarea(Mision) void
-        +tipo() TipoMision
         -capturarPuntoRevision()
     }
     class DronMonitoreo {
         +ejecutarTarea(Mision) void
-        +tipo() TipoMision
         -transmitirVideo()
         -tomarFotografia()
     }
 
     class Bateria {
-        <<value object>>
-        -double nivelPorcentaje
+        <<VO>>
         -int capacidadMah
+        -double nivelPorcentaje
         +Bateria(capacidadMah, nivelPorcentaje)
-        +getNivel() double
-        +estaBajoUmbral(double) boolean
-        +consumir(double) Bateria
-        +recargar() Bateria
+        +estaPorDebajoDe(double umbral) boolean
     }
     class CodigoDron {
-        <<value object>>
+        <<VO>>
         -String valor
-        +equals(Object) boolean
     }
-    class Equipamiento {
-        <<value object>>
+    class TipoOperacion {
+        <<VO>>
         -String nombre
-        -CategoriaEquipo categoria
     }
     class Coordenada {
-        <<value object>>
+        <<VO>>
         -double latitud
         -double longitud
         -double altitud
@@ -87,14 +79,18 @@ classDiagram
 
     class EstadoDron {
         <<interface>>
-        +asignarAMision(Dron, Mision)
-        +iniciarCarga(Dron)
-        +enviarAMantenimiento(Dron)
+        +asignarAMision(Dron)
+        +completarMision(Dron)
+        +finalizarCarga(Dron)
         +marcarFueraDeServicio(Dron)
-        +darDeBaja(Dron)
+        +enviarAMantenimiento(Dron)
         +reactivar(Dron)
-        +liberar(Dron)
+        +darDeBaja(Dron)
         +nombre() NombreEstado
+    }
+    class EstadoDronBase {
+        <<abstract>>
+        rechaza toda transicion
     }
     class EstadoDisponible
     class EstadoEnMision
@@ -102,7 +98,6 @@ classDiagram
     class EstadoEnMantenimiento
     class EstadoFueraDeServicio
     class EstadoDeBaja
-
     class NombreEstado {
         <<enumeration>>
         DISPONIBLE
@@ -112,141 +107,157 @@ classDiagram
         FUERA_DE_SERVICIO
         DE_BAJA
     }
-    class TipoMision {
-        <<enumeration>>
-        ENTREGA
-        INSPECCION
-        MONITOREO
-    }
 
     class FabricaDron {
         <<interface>>
+        +tipo() TipoOperacion
         +crear(DatosDron) Dron
     }
     class FabricaDronEntrega
     class FabricaDronInspeccion
     class FabricaDronMonitoreo
     class RegistroFabricasDron {
-        -Map~TipoMision, FabricaDron~ fabricas
-        +registrar(TipoMision, FabricaDron)
-        +crear(TipoMision, DatosDron) Dron
+        -Map~TipoOperacion, FabricaDron~ fabricas
+        +soporta(TipoOperacion) boolean
+        +crear(DatosDron) Dron
+    }
+    class ServicioDrones {
+        <<GRASP Controller>>
+        -RepositorioDrones drones
+        -RegistroFabricasDron fabricas
+        +registrar(DatosDron) Dron
+        +reportarAveria(CodigoDron)
+        +darDeBaja(CodigoDron)
+        +reactivar(CodigoDron)
     }
 
     Dron <|-- DronEntrega
     Dron <|-- DronInspeccion
     Dron <|-- DronMonitoreo
-
-    Dron *-- Bateria : composición
-    Dron *-- CodigoDron
-    Dron *-- "0..*" Equipamiento
-    Dron *-- Coordenada
-    Dron o-- EstadoDron : delega comportamiento
-    Dron ..> TipoMision
-    Dron ..> NombreEstado
-
-    EstadoDron <|.. EstadoDisponible
-    EstadoDron <|.. EstadoEnMision
-    EstadoDron <|.. EstadoCargando
-    EstadoDron <|.. EstadoEnMantenimiento
-    EstadoDron <|.. EstadoFueraDeServicio
-    EstadoDron <|.. EstadoDeBaja
-
+    Dron *-- "1" Bateria
+    Dron *-- "1" CodigoDron
+    Dron --> "1" TipoOperacion
+    Dron *-- "1" Coordenada : ubicacion
+    Dron o-- "1" EstadoDron : estado actual
+    EstadoDron <|.. EstadoDronBase
+    EstadoDronBase <|-- EstadoDisponible
+    EstadoDronBase <|-- EstadoEnMision
+    EstadoDronBase <|-- EstadoCargando
+    EstadoDronBase <|-- EstadoEnMantenimiento
+    EstadoDronBase <|-- EstadoFueraDeServicio
+    EstadoDronBase <|-- EstadoDeBaja
+    EstadoDron ..> NombreEstado
     FabricaDron <|.. FabricaDronEntrega
     FabricaDron <|.. FabricaDronInspeccion
     FabricaDron <|.. FabricaDronMonitoreo
-    RegistroFabricasDron o-- FabricaDron
     FabricaDronEntrega ..> DronEntrega : crea
     FabricaDronInspeccion ..> DronInspeccion : crea
     FabricaDronMonitoreo ..> DronMonitoreo : crea
+    RegistroFabricasDron o-- "1..*" FabricaDron
+    ServicioDrones --> RegistroFabricasDron
 ```
 
-**Reglas de negocio encapsuladas en los estados (RF-03, RF-04):**
-`EstadoEnMision.darDeBaja()` lanza `OperacionNoPermitidaException` (no se da de baja con misión activa);
-`EstadoFueraDeServicio` y `EstadoEnMantenimiento` aceptan `reactivar()`; `EstadoDeBaja` rechaza toda operación.
-Agregar un tipo nuevo de dron = 2 clases (`DronX` + `FabricaDronX`) → cumple RNF-02.
+```mermaid
+stateDiagram-v2
+    direction LR
+    [*] --> Disponible : registro (HU-01/02)
+    Disponible --> EnMision : asignarAMision
+    EnMision --> Cargando : completarMision (HU-02 supuesto)
+    Cargando --> Disponible : finalizarCarga ⚠
+    Disponible --> FueraDeServicio : marcarFueraDeServicio (HU-02)
+    Disponible --> EnMantenimiento : enviarAMantenimiento ⚠
+    EnMantenimiento --> Disponible : reactivar (HU-03/15)
+    FueraDeServicio --> Disponible : reactivar (HU-03)
+    EnMantenimiento --> FueraDeServicio : requiere reparación (HU-15)
+    Disponible --> DeBaja : darDeBaja
+    FueraDeServicio --> DeBaja : darDeBaja
+    EnMantenimiento --> DeBaja : darDeBaja (HU-15)
+    note right of EnMision : darDeBaja() lanza OperacionNoPermitidaException (HU-03)
+    note right of DeBaja : estado terminal, no reactivable (HU-03)
+```
+
+**Decisiones y por qué (frente al diagrama anterior):**
+- `equipamiento` es `List<String>`: HU-01 dice "lista de texto libre, sin catálogo cerrado". Se eliminaron `Equipamiento` y `CategoriaEquipo` (inventados).
+- `TipoOperacion` es un objeto de valor (no un `enum`): con un `enum` agregar un tipo obliga a editar código existente y rompe RNF-02. Cada `FabricaDronX` declara su tipo y `RegistroFabricasDron` las recibe inyectadas; tipo nuevo = `DronX` + `FabricaDronX` (2 clases). HU-01 "tipo inválido" = `soporta()` devuelve `false`.
+- `Dron.puedeEjecutar(Mision)` (Information Expert) valida tipo igual, `cargaUtilMaxKg ≥` requerida y `autonomiaMin ≥` mínima (HU-01 "acordes a su tipo", HU-05).
+- `EstadoDronBase` rechaza por defecto toda transición; cada estado solo sobrescribe las válidas (evita 6×7 métodos repetidos).
+- Se eliminó `CategoriaEquipo`, `reiniciarContadores…`, `iniciarCarga()` manual y `liberar()`: ninguna HU los pide.
 
 ---
 
-## 2. Misiones, asignación y validación de ruta (RF-05..RF-09)
+## 2. Misiones, asignación y validación de ruta (HU-04..HU-08)
 
 ```mermaid
 classDiagram
     direction TB
 
     class Mision {
-        <<abstract>>
-        -UUID id
+        -CodigoMision codigo
+        -TipoOperacion tipo
         -Prioridad prioridad
-        -Coordenada origen
-        -Coordenada destino
+        -Ubicacion origen
+        -Ubicacion destino
         -RequisitosMision requisitos
         -Ruta ruta
-        -Dron dronAsignado
+        -CodigoDron dronAsignado
         -EstadoMision estado
-        -List~EventoMision~ bitacora
-        +Mision(prioridad, origen, destino, requisitos)
-        +asignarDron(Dron)
+        -Instant creadaEn
+        -Instant inicioVuelo
+        -Instant finVuelo
+        +Mision(codigo, tipo, prioridad, origen, destino, requisitos)
+        +asignarDron(CodigoDron)
         +despegar()
-        +iniciar()
+        +alcanzarCrucero()
+        +iniciarRetorno()
+        +finalizar()
         +pausar()
         +reanudar()
-        +redirigir(Coordenada nuevoDestino)
+        +redirigir(Ubicacion nuevoDestino)
         +abortar()
-        +retornar()
-        +finalizar()
         +getEstado() NombreEstadoMision
-        +tipo()* TipoMision
-        +crearTareaDron()* TareaMision
+        +duracionVuelo() Duration
     }
-    class MisionEntrega {
-        -double pesoCargaKg
-        +tipo() TipoMision
-        +crearTareaDron() TareaMision
+    class Ubicacion {
+        <<VO>>
+        -String nombre
+        -Coordenada coordenada
     }
-    class MisionInspeccion {
-        -List~Coordenada~ puntosRevision
-        +tipo() TipoMision
-        +crearTareaDron() TareaMision
-    }
-    class MisionMonitoreo {
-        -ModoCaptura modo
-        +tipo() TipoMision
-        +crearTareaDron() TareaMision
-    }
-
     class RequisitosMision {
-        <<value object>>
-        -double cargaUtilRequeridaKg
+        <<VO>>
+        -double cargaUtilKg
         -int autonomiaMinimaMin
-        +RequisitosMision(cargaKg, autonomiaMin)
     }
     class Prioridad {
         <<enumeration>>
         BAJA
         MEDIA
         ALTA
-        URGENTE
+        CRITICA
         +peso() int
     }
     class Ruta {
-        <<value object>>
+        <<VO>>
         -List~Coordenada~ puntos
-        +distanciaTotal() double
-        +desviacionMaxima(Coordenada actual) double
+        +entre(Ubicacion, Ubicacion) Ruta
+        +desviacionRespectoA(Coordenada) double
     }
 
     class EstadoMision {
         <<interface>>
-        +asignarDron(Mision, Dron)
+        +asignarDron(Mision, CodigoDron)
         +despegar(Mision)
-        +iniciar(Mision)
+        +alcanzarCrucero(Mision)
+        +iniciarRetorno(Mision)
+        +finalizar(Mision)
         +pausar(Mision)
         +reanudar(Mision)
-        +redirigir(Mision, Coordenada)
+        +redirigir(Mision, Ubicacion)
         +abortar(Mision)
-        +retornar(Mision)
-        +finalizar(Mision)
         +nombre() NombreEstadoMision
+    }
+    class EstadoMisionBase {
+        <<abstract>>
+        rechaza toda transicion
     }
     class EstadoPendiente
     class EstadoDespegue
@@ -256,132 +267,115 @@ classDiagram
     class EstadoFinalizada
     class EstadoAbortada
 
-    class FabricaMision {
-        <<interface>>
-        +crear(DatosMision) Mision
-    }
-    class FabricaMisionEntrega
-    class FabricaMisionInspeccion
-    class FabricaMisionMonitoreo
-
-    class ControladorMisiones {
-        <<controller GRASP>>
+    class ServicioMisiones {
+        <<GRASP Controller>>
         -RepositorioMisiones misiones
         -RepositorioDrones drones
+        -RegistroFabricasDron tiposSoportados
         -ServicioAsignacion asignacion
         -ValidadorRuta validador
-        -RegistroFabricasMision fabricas
-        +crearMision(DatosMision) Mision
-        +autorizarDespegue(UUID) void
-        +intervenir(UUID, Intervencion) void
-        +reasignarPendientes() void
+        +crear(DatosMision) Mision
+        +asignarPendientes()
+        +autorizarDespegue(CodigoMision)
+        +pausar(CodigoMision)
+        +reanudar(CodigoMision)
+        +redirigir(CodigoMision, Ubicacion)
+        +abortar(CodigoMision)
     }
-    class Intervencion {
-        <<interface>>
-        +aplicar(Mision)
-    }
-    class IntervencionPausar
-    class IntervencionReanudar
-    class IntervencionRedirigir
-    class IntervencionAbortar
 
     class ServicioAsignacion {
-        -EstrategiaAsignacion estrategia
-        +asignar(Mision, List~Dron~) Optional~Dron~
-    }
-    class EstrategiaAsignacion {
-        <<interface>>
-        +seleccionar(Mision, List~Dron~) Optional~Dron~
-    }
-    class AsignacionPonderada {
-        -ReglaAsignacion regla
         -List~CriterioAsignacion~ criterios
-        +seleccionar(Mision, List~Dron~) Optional~Dron~
+        +asignar(Mision, List~Dron~, ReglaAsignacion) Optional~Dron~
     }
     class CriterioAsignacion {
         <<interface>>
+        +nombre() String
         +puntuar(Dron, Mision) double
     }
     class CriterioBateria
     class CriterioCercania
     class CriterioPrioridad
     class ReglaAsignacion {
-        <<value object>>
-        -Map~Class, Double~ pesos
-        +peso(CriterioAsignacion) double
+        <<VO>>
+        -Map~String, Double~ pesos
+        +peso(String criterio) double
     }
 
     class ValidadorRuta {
         -ProveedorZonasRestringidas proveedor
         +validar(Ruta) ResultadoValidacion
     }
+    class ResultadoValidacion {
+        <<VO>>
+        -boolean autorizada
+        -String motivo
+    }
     class ProveedorZonasRestringidas {
         <<interface>>
         +obtenerZonas() List~ZonaRestringida~
     }
     class ZonaRestringida {
-        <<value object>>
+        <<VO>>
         -String nombre
         -List~Coordenada~ perimetro
         +intersecta(Ruta) boolean
         +contiene(Coordenada) boolean
     }
 
-    Mision <|-- MisionEntrega
-    Mision <|-- MisionInspeccion
-    Mision <|-- MisionMonitoreo
-    Mision *-- RequisitosMision
-    Mision *-- Ruta
-    Mision --> Prioridad
-    Mision o-- EstadoMision : delega comportamiento
-    Mision "0..*" --> "0..1" Dron : dronAsignado
+    Mision *-- "1" RequisitosMision
+    Mision *-- "1" Ruta
+    Mision *-- "2" Ubicacion : origen y destino
+    Mision --> "1" Prioridad
+    Mision o-- "1" EstadoMision : estado actual
+    Mision "0..*" ..> "0..1" Dron : dronAsignado por codigo
+    EstadoMision <|.. EstadoMisionBase
+    EstadoMisionBase <|-- EstadoPendiente
+    EstadoMisionBase <|-- EstadoDespegue
+    EstadoMisionBase <|-- EstadoEnCurso
+    EstadoMisionBase <|-- EstadoPausada
+    EstadoMisionBase <|-- EstadoRetorno
+    EstadoMisionBase <|-- EstadoFinalizada
+    EstadoMisionBase <|-- EstadoAbortada
 
-    EstadoMision <|.. EstadoPendiente
-    EstadoMision <|.. EstadoDespegue
-    EstadoMision <|.. EstadoEnCurso
-    EstadoMision <|.. EstadoPausada
-    EstadoMision <|.. EstadoRetorno
-    EstadoMision <|.. EstadoFinalizada
-    EstadoMision <|.. EstadoAbortada
-
-    FabricaMision <|.. FabricaMisionEntrega
-    FabricaMision <|.. FabricaMisionInspeccion
-    FabricaMision <|.. FabricaMisionMonitoreo
-    FabricaMisionEntrega ..> MisionEntrega : crea
-    FabricaMisionInspeccion ..> MisionInspeccion : crea
-    FabricaMisionMonitoreo ..> MisionMonitoreo : crea
-
-    Intervencion <|.. IntervencionPausar
-    Intervencion <|.. IntervencionReanudar
-    Intervencion <|.. IntervencionRedirigir
-    Intervencion <|.. IntervencionAbortar
-
-    ControladorMisiones ..> FabricaMision
-    ControladorMisiones --> ServicioAsignacion
-    ControladorMisiones --> ValidadorRuta
-    ControladorMisiones ..> Intervencion
-
-    ServicioAsignacion o-- EstrategiaAsignacion
-    EstrategiaAsignacion <|.. AsignacionPonderada
-    AsignacionPonderada o-- "1..*" CriterioAsignacion
-    AsignacionPonderada --> ReglaAsignacion
+    ServicioMisiones --> ServicioAsignacion
+    ServicioMisiones --> ValidadorRuta
+    ServicioMisiones ..> Mision
+    ServicioAsignacion o-- "1..*" CriterioAsignacion
+    ServicioAsignacion ..> ReglaAsignacion
     CriterioAsignacion <|.. CriterioBateria
     CriterioAsignacion <|.. CriterioCercania
     CriterioAsignacion <|.. CriterioPrioridad
-
     ValidadorRuta --> ProveedorZonasRestringidas
-    ProveedorZonasRestringidas ..> ZonaRestringida
+    ValidadorRuta ..> ResultadoValidacion : devuelve
+    ProveedorZonasRestringidas ..> "0..*" ZonaRestringida
 ```
 
-**Notas:**
-- `Mision.crearTareaDron()` es un *Factory Method*; `Dron.ejecutarTarea(Mision)` hace *double dispatch* para que cada tipo de dron ejecute su propia lógica.
-- `AsignacionPonderada` ordena por `Σ peso(criterio) · criterio.puntuar(dron, mision)` solo entre drones que `cumpleRequisitos`; si `Optional` vacío → la misión permanece en `EstadoPendiente` (RF-06).
-- `ZonaRestringida` viene de un `ProveedorZonasRestringidas` externo (RF-07: no es entidad editable).
-- `Intervencion` aplica *Command*: cada acción del operador es un objeto que se puede registrar en la bitácora (RF-09).
+```mermaid
+stateDiagram-v2
+    direction LR
+    [*] --> Pendiente : crear (HU-04)
+    Pendiente --> Despegue : asignación de dron (HU-05/07)
+    Despegue --> EnCurso : alcanza altitud de crucero
+    EnCurso --> Pausada : pausar (HU-08)
+    Pausada --> EnCurso : reanudar (HU-08)
+    EnCurso --> EnCurso : redirigir (HU-08)
+    EnCurso --> Retorno : dron inicia regreso
+    Retorno --> Finalizada : aterriza en base
+    EnCurso --> Abortada : abortar (HU-08)
+```
+
+**Decisiones y por qué:**
+- **`Mision` es una clase concreta, sin subclases por tipo.** Ninguna HU define atributos ni comportamiento propio por tipo de misión (HU-04 solo pide tipo, prioridad, origen, destino y requisitos). `MisionEntrega.pesoCargaKg`, `MisionInspeccion.puntosRevision` y `ModoCaptura` del diseño anterior eran inventados y se eliminaron. El comportamiento por tipo vive en `Dron.ejecutarTarea()` (RF-02).
+- **`Prioridad` ahora usa BAJA/MEDIA/ALTA/CRITICA** (HU-04: "misma escala que la severidad"). El diseño anterior tenía `URGENTE`, que contradice la HU.
+- Se eliminaron `Intervencion*` (Command) y `bitacora/EventoMision`: HU-08 no menciona bitácora; las 4 acciones son 4 métodos de `ServicioMisiones` que delegan en el `EstadoMision` (el estado valida que solo se pause/redirija/aborte estando "en curso").
+- `Mision` referencia al dron **por `CodigoDron`**, no por objeto: evita el acoplamiento bidireccional Dron↔Mision del diseño anterior y encaja con el modelo de documentos de MongoDB.
+- `ServicioAsignacion` es una sola clase con `CriterioAsignacion` (Strategy). Se eliminaron `EstrategiaAsignacion` y `AsignacionPonderada`: eran 3 capas para una única implementación. La `ReglaAsignacion` activa se pasa por parámetro (viene de `ConfiguracionSistema`), así un cambio de HU-18 aplica a la siguiente asignación sin objetos obsoletos.
+- `ValidadorRuta` devuelve `ResultadoValidacion` con `motivo`: HU-06 exige "notificar al operador el motivo del rechazo". `redirigir()` también lo invoca (supuesto de HU-08).
+- `Mision.inicioVuelo/finVuelo` (→ `duracionVuelo()`) son necesarios para "horas de vuelo de la misión" (HU-13); `creadaEn` para filtrar por fechas (HU-17).
 
 ---
 
-## 3. Monitoreo, alertas y notificación en tiempo real (RF-10..RF-13, RNF-08, RNF-09)
+## 3. Monitoreo, alertas y notificación (HU-09..HU-12)
 
 ```mermaid
 classDiagram
@@ -389,46 +383,33 @@ classDiagram
 
     class ServicioMonitoreo {
         -List~ReglaAlerta~ reglas
+        -ClasificadorSeveridad clasificador
+        -RepositorioAlertas alertas
         -PublicadorAlertas publicador
-        -RepositorioAlertas repositorio
-        +evaluar(Dron, Mision) void
-        +agregarRegla(ReglaAlerta) void
+        +evaluar(Dron, Mision, UmbralesAlerta) void
     }
     class ReglaAlerta {
         <<interface>>
-        +evaluar(ContextoMonitoreo) Optional~Alerta~
+        +evaluar(Dron, Mision, UmbralesAlerta) Optional~Alerta~
     }
-    class ReglaBateriaBaja {
-        -UmbralesAlerta umbrales
-        +evaluar(ContextoMonitoreo) Optional~Alerta~
-    }
-    class ReglaDesvioRuta {
-        -UmbralesAlerta umbrales
-        +evaluar(ContextoMonitoreo) Optional~Alerta~
-    }
+    class ReglaBateriaBaja
+    class ReglaDesvioRuta
     class ReglaZonaRestringida {
         -ProveedorZonasRestringidas proveedor
-        +evaluar(ContextoMonitoreo) Optional~Alerta~
-    }
-    class ContextoMonitoreo {
-        <<value object>>
-        -Dron dron
-        -Mision mision
-        -Instant momento
     }
 
     class Alerta {
         <<abstract>>
         -UUID id
         -Instant generadaEn
-        -Dron dron
-        -Mision mision
+        -CodigoDron dron
+        -CodigoMision mision
         -Severidad severidad
-        -boolean atendida
+        #Alerta(dron, mision)
         +getSeveridad() Severidad
         +esIncidencia() boolean
         +mensaje()* String
-        +marcarAtendida()
+        ~asignarSeveridad(Severidad)
     }
     class AlertaBateriaBaja {
         -double nivelActual
@@ -439,7 +420,7 @@ classDiagram
         +mensaje() String
     }
     class AlertaZonaRestringida {
-        -ZonaRestringida zona
+        -String nombreZona
         +mensaje() String
     }
     class Severidad {
@@ -448,19 +429,16 @@ classDiagram
         MEDIA
         ALTA
         CRITICA
-        +requiereNotificacionInmediata() boolean
+        +esIncidencia() boolean
     }
     class ClasificadorSeveridad {
-        <<interface>>
+        -Map~Class, Severidad~ tabla
         +clasificar(Alerta) Severidad
     }
-    class ClasificadorPorTipo
-
     class UmbralesAlerta {
-        <<value object>>
+        <<VO>>
         -double bateriaMinimaPorcentaje
         -double desvioMaximoMetros
-        +UmbralesAlerta(bateria, desvio)
     }
 
     class PublicadorAlertas {
@@ -470,389 +448,423 @@ classDiagram
         +publicar(Alerta)
     }
     class PublicadorAlertasAsincrono {
-        -List~ObservadorAlertas~ observadores
-        -ExecutorService hilos
+        -Set~ObservadorAlertas~ observadores
         +publicar(Alerta)
     }
     class ObservadorAlertas {
         <<interface Observer>>
         +alRecibirAlerta(Alerta)
     }
-    class PanelNotificaciones
-    class RegistroHistorialVuelos
-    class ServicioMantenimiento
+    class CanalNotificacionOperador {
+        -UUID idSesion
+        +alRecibirAlerta(Alerta)
+    }
 
     Alerta <|-- AlertaBateriaBaja
     Alerta <|-- AlertaDesvioRuta
     Alerta <|-- AlertaZonaRestringida
-    Alerta --> Severidad
-
+    Alerta --> "1" Severidad
     ServicioMonitoreo o-- "1..*" ReglaAlerta
+    ServicioMonitoreo --> ClasificadorSeveridad
     ServicioMonitoreo --> PublicadorAlertas
-    ServicioMonitoreo ..> ContextoMonitoreo
-
     ReglaAlerta <|.. ReglaBateriaBaja
     ReglaAlerta <|.. ReglaDesvioRuta
     ReglaAlerta <|.. ReglaZonaRestringida
     ReglaBateriaBaja ..> AlertaBateriaBaja : crea
     ReglaDesvioRuta ..> AlertaDesvioRuta : crea
     ReglaZonaRestringida ..> AlertaZonaRestringida : crea
-    ReglaBateriaBaja --> UmbralesAlerta
-    ReglaDesvioRuta --> UmbralesAlerta
-    ReglaZonaRestringida ..> ZonaRestringida
-
-    ReglaAlerta ..> ClasificadorSeveridad : usa
-    ClasificadorSeveridad <|.. ClasificadorPorTipo
-
+    ReglaAlerta ..> UmbralesAlerta : lee
     PublicadorAlertas <|.. PublicadorAlertasAsincrono
-    PublicadorAlertasAsincrono o-- "0..*" ObservadorAlertas
-    ObservadorAlertas <|.. PanelNotificaciones
-    ObservadorAlertas <|.. RegistroHistorialVuelos
-    ObservadorAlertas <|.. ServicioMantenimiento
+    PublicadorAlertasAsincrono o-- "0..*" ObservadorAlertas : operadores con sesión activa
+    ObservadorAlertas <|.. CanalNotificacionOperador
 ```
 
-**Notas:**
-- Nueva regla de alerta = 1 clase que implementa `ReglaAlerta` (Open/Closed, *Protected Variations*).
-- `ClasificadorPorTipo` centraliza el mapeo tipo→severidad (HU-12); cambiar la política no toca las alertas.
-- `PublicadorAlertasAsincrono` entrega a los observadores en hilos aparte para cumplir RNF-08 (≤ 1 s) y RNF-09 (50 drones).
-- `Alerta.esIncidencia()` = severidad ALTA o CRITICA → alimenta el historial de vuelos (RF-14).
+**Decisiones y por qué:**
+- **Bug corregido:** antes cada `ReglaXxx` guardaba su propio `UmbralesAlerta` (objeto inmutable). Si el administrador lo cambiaba (HU-18) las reglas seguían con el valor viejo. Ahora el umbral vigente se pasa en cada `evaluar()`.
+- **El Observer ya no incluye `RegistroHistorialVuelos` ni `ServicioMantenimiento`.** HU-13 registra las incidencias **cuando la misión finaliza**, no cuando nace la alerta; y HU-14 se evalúa al completar una misión. Los suscriptores reales de alertas son los operadores con sesión activa (HU-11): `0..*` observadores.
+- `Alerta` guarda `CodigoDron`/`CodigoMision` y no los objetos: el historial necesita consultar "alertas de la misión X con severidad alta/crítica".
+- La severidad la asigna `ClasificadorSeveridad` (tabla tipo→severidad, HU-12: batería=media, desvío=alta, zona=crítica). Es clase concreta: HU-12 dice que la tabla "debe validarse", no que haya políticas intercambiables. `Severidad.esIncidencia()` (ALTA|CRITICA, RF-14) reemplaza el booleano `atendida`/`marcarAtendida()` inventado.
+- `PublicadorAlertasAsincrono` entrega fuera del hilo de evaluación para cumplir RNF-08 (≤ 1 s) y RNF-09 (50 drones).
+- Se eliminaron `ContextoMonitoreo`, `ClasificadorPorTipo` (interfaz con 1 implementación), `PanelNotificaciones`.
 
 ---
 
-## 4. Historial de vuelos y mantenimiento (RF-14..RF-16)
+## 4. Historial de vuelos y mantenimiento (HU-13, HU-14, HU-15)
 
 ```mermaid
 classDiagram
     direction TB
 
+    class MisionFinalizada {
+        <<event>>
+        -CodigoMision mision
+        -CodigoDron dron
+        -Duration duracionVuelo
+    }
+    class HistorialActualizado {
+        <<event>>
+        -CodigoDron dron
+    }
+
+    class ServicioHistorialVuelos {
+        -RepositorioHistoriales historiales
+        -RepositorioAlertas alertas
+        +alFinalizarMision(MisionFinalizada) void
+    }
     class HistorialVuelos {
-        -CodigoDron codigoDron
+        -CodigoDron dron
         -Duration horasVuelo
         -int misionesCompletadas
         -List~Incidencia~ incidencias
-        -List~RegistroVuelo~ vuelos
-        +registrarVuelo(RegistroVuelo)
+        +registrarMisionCompletada(Duration)
         +registrarIncidencia(Incidencia)
-        +getHorasVuelo() double
+        +getHorasVuelo() Duration
         +getMisionesCompletadas() int
-        +reiniciarContadoresTrasMantenimiento()
-    }
-    class RegistroVuelo {
-        <<value object>>
-        -UUID idMision
-        -Instant inicio
-        -Instant fin
-        -ResultadoMision resultado
-        +duracion() Duration
+        +getIncidencias() List~Incidencia~
     }
     class Incidencia {
-        <<value object>>
+        <<VO>>
         -UUID idAlerta
+        -CodigoMision mision
         -Severidad severidad
         -Instant momento
     }
 
     class ServicioMantenimiento {
-        -PoliticaMantenimiento politica
         -RepositorioHistoriales historiales
+        -RepositorioDrones drones
         -RepositorioMantenimientos mantenimientos
-        +evaluarRecomendacion(Dron) Optional~RecomendacionMantenimiento~
-        +registrarResultado(Dron, ResultadoMantenimiento, Usuario)
-    }
-    class PoliticaMantenimiento {
-        <<interface>>
-        +requiereMantenimiento(HistorialVuelos) boolean
-    }
-    class PoliticaPorUmbrales {
-        -UmbralesMantenimiento umbrales
-        +requiereMantenimiento(HistorialVuelos) boolean
+        -RepositorioRecomendaciones recomendaciones
+        +alActualizarHistorial(HistorialActualizado) void
+        +registrarResultado(CodigoDron, ResultadoMantenimiento)
     }
     class UmbralesMantenimiento {
-        <<value object>>
-        -double horasMaximas
+        <<VO>>
+        -Duration horasMaximas
         -int misionesMaximas
+        +superadoPor(HistorialVuelos) boolean
     }
     class RecomendacionMantenimiento {
-        <<value object>>
-        -CodigoDron codigoDron
+        -UUID id
+        -CodigoDron dron
         -String motivo
         -Instant generadaEn
     }
     class RegistroMantenimiento {
         -UUID id
-        -CodigoDron codigoDron
+        -CodigoDron dron
         -ResultadoMantenimiento resultado
         -Instant fecha
-        -String responsable
-        -String observaciones
     }
     class ResultadoMantenimiento {
         <<enumeration>>
         APROBADO
         REQUIERE_REPARACION
         DADO_DE_BAJA
+        +aplicarA(Dron)
     }
 
-    HistorialVuelos *-- "0..*" RegistroVuelo
+    ServicioHistorialVuelos ..> MisionFinalizada : escucha
+    ServicioHistorialVuelos ..> HistorialActualizado : publica
+    ServicioHistorialVuelos --> HistorialVuelos
     HistorialVuelos *-- "0..*" Incidencia
-    HistorialVuelos "1" --> "1" Dron : pertenece a
-    ServicioMantenimiento o-- PoliticaMantenimiento
-    PoliticaMantenimiento <|.. PoliticaPorUmbrales
-    PoliticaPorUmbrales --> UmbralesMantenimiento
+    HistorialVuelos "1" ..> "1" Dron : de un dron
+    ServicioMantenimiento ..> HistorialActualizado : escucha
+    ServicioMantenimiento ..> UmbralesMantenimiento : usa
     ServicioMantenimiento ..> RecomendacionMantenimiento : genera
     ServicioMantenimiento ..> RegistroMantenimiento : crea
-    RegistroMantenimiento --> ResultadoMantenimiento
-    ServicioMantenimiento ..> HistorialVuelos : consulta
-    ServicioMantenimiento ..> Dron : aplica resultado
+    RegistroMantenimiento --> "1" ResultadoMantenimiento
+    RecomendacionMantenimiento "0..*" ..> "1" Dron
+    RegistroMantenimiento "0..*" ..> "1" Dron
 ```
 
-**Notas:**
-- `registrarResultado`: `APROBADO` → `dron.reactivar()`; `REQUIERE_REPARACION` → `dron.marcarFueraDeServicio()`; `DADO_DE_BAJA` → `dron.darDeBaja()` (la transición la valida el `EstadoDron` actual).
-- `HistorialVuelos` es *Information Expert* de horas, misiones e incidencias.
+**Decisiones y por qué:**
+- Flujo (HU-13 → HU-14): `Mision.finalizar()` publica `MisionFinalizada` → `ServicioHistorialVuelos` suma horas/misión y copia como `Incidencia` las alertas de esa misión con `esIncidencia()` → publica `HistorialActualizado` → `ServicioMantenimiento` evalúa umbrales. Encadenar los eventos garantiza que mantenimiento vea el historial ya actualizado (con dos suscriptores independientes el orden no estaría asegurado).
+- `UmbralesMantenimiento.superadoPor(historial)` (Information Expert) reemplaza `PoliticaMantenimiento`/`PoliticaPorUmbrales` (interfaz con 1 implementación; HU-14: "regla simple por umbral"). Se cumple si horas **o** misiones superan el umbral.
+- `ResultadoMantenimiento.aplicarA(dron)` (cada constante sobrescribe: `reactivar()`, `marcarFueraDeServicio()`, `darDeBaja()`) evita el `switch` y cumple HU-15; el `EstadoEnMantenimiento` del dron valida la precondición.
+- Se eliminaron `RegistroVuelo` (duplicaba lo que ya guarda `Mision` — HU-17 lo consulta ahí), `responsable`/`observaciones` y `reiniciarContadoresTrasMantenimiento()` (ninguna HU los pide, ver ⚠ 4).
 
 ---
 
-## 5. Usuarios, seguridad, configuración y persistencia (RF-17..RF-23, RNF-04, RNF-05, RNF-10)
+## 5. Usuarios, configuración, consultas y persistencia (HU-16..HU-22)
 
 ```mermaid
 classDiagram
     direction TB
 
     class Usuario {
-        <<abstract>>
         -UUID id
         -String nombreUsuario
-        -String nombreCompleto
         -CredencialHash credencial
+        -Rol rol
         -boolean activo
+        +Usuario(nombreUsuario, credencial, rol)
         +autenticar(String contrasena, HasherContrasena) boolean
-        +cambiarContrasena(String, HasherContrasena)
-        +actualizarDatos(String nombreCompleto)
-        +rol()* Rol
-        +tienePermiso(Permiso) boolean
-    }
-    class Administrador {
-        +rol() Rol
-    }
-    class Operador {
-        +rol() Rol
+        +cambiarContrasena(CredencialHash)
+        +cambiarNombreUsuario(String)
+        +desactivar()
+        +puede(Permiso) boolean
+        +getRol() Rol
+        +estaActivo() boolean
     }
     class Rol {
         <<enumeration>>
         ADMINISTRADOR
         OPERADOR
-        +permisos() Set~Permiso~
+        +permite(Permiso) boolean
     }
     class Permiso {
         <<enumeration>>
         GESTIONAR_DRONES
-        GESTIONAR_MISIONES
+        CREAR_MISION
         INTERVENIR_MISION
         REGISTRAR_MANTENIMIENTO
-        CONSULTAR_FLOTA
-        CONSULTAR_HISTORIAL
-        CONFIGURAR_REGLAS
+        CONSULTAR_PANEL
+        RECIBIR_ALERTAS
+        RECIBIR_RECOMENDACIONES
+        CONFIGURAR_SISTEMA
         GESTIONAR_USUARIOS
     }
     class CredencialHash {
-        <<value object>>
-        -byte[] hash
-        -byte[] sal
-        +coincideCon(String, HasherContrasena) boolean
+        <<VO>>
+        -String hashConSal
     }
     class HasherContrasena {
         <<interface>>
         +hashear(String) CredencialHash
-        +verificar(String, CredencialHash) boolean
+        +coincide(String, CredencialHash) boolean
     }
-    class HasherPBKDF2
     class HasherBCrypt
 
     class ServicioAutenticacion {
+        <<GRASP Controller>>
         -RepositorioUsuarios usuarios
         -HasherContrasena hasher
         +iniciarSesion(String, String) Sesion
-        +cerrarSesion(Sesion)
     }
     class Sesion {
-        -Usuario usuario
+        <<VO>>
+        -UUID usuarioId
+        -Rol rol
         -Instant inicio
-        +exigirPermiso(Permiso)
     }
     class ServicioUsuarios {
+        <<GRASP Controller>>
         -RepositorioUsuarios usuarios
         -HasherContrasena hasher
-        +registrarOperador(Sesion, DatosUsuario) Operador
-        +editar(Sesion, UUID, DatosUsuario)
-        +eliminar(Sesion, UUID)
+        +registrarOperador(DatosUsuario) Usuario
+        +editar(UUID, DatosEdicion)
+        +eliminar(UUID)
     }
 
     class ConfiguracionSistema {
         -ReglaAsignacion reglaAsignacion
         -UmbralesAlerta umbralesAlerta
         -UmbralesMantenimiento umbralesMantenimiento
-        +actualizarReglaAsignacion(Sesion, ReglaAsignacion)
-        +actualizarUmbralesAlerta(Sesion, UmbralesAlerta)
-        +actualizarUmbralesMantenimiento(Sesion, UmbralesMantenimiento)
+        +actualizarReglaAsignacion(ReglaAsignacion)
+        +actualizarUmbralesAlerta(UmbralesAlerta)
+        +actualizarUmbralesMantenimiento(UmbralesMantenimiento)
     }
 
     class ServicioPanelControl {
-        <<fachada>>
         -RepositorioDrones drones
         -RepositorioMisiones misiones
         +resumenFlota() ResumenFlota
-        +consultarHistorial(FiltroMisiones) List~Mision~
+        +consultarMisiones(FiltroMisiones) List~Mision~
     }
     class ResumenFlota {
-        <<value object>>
+        <<VO>>
         -Map~NombreEstado, Integer~ conteoPorEstado
     }
     class FiltroMisiones {
-        <<value object>>
+        <<VO>>
         -LocalDate desde
         -LocalDate hasta
-        -CodigoDron dron
-        -NombreEstadoMision estado
+        -Optional~CodigoDron~ dron
+        -Optional~NombreEstadoMision~ estado
     }
 
     class Repositorio~T, ID~ {
         <<interface>>
         +guardar(T)
         +buscarPorId(ID) Optional~T~
-        +listar() List~T~
-        +eliminar(ID)
     }
     class RepositorioDrones
     class RepositorioMisiones
-    class RepositorioUsuarios
     class RepositorioAlertas
     class RepositorioHistoriales
     class RepositorioMantenimientos
-    class RepositorioJdbc {
-        <<implementación>>
-        transacciones ACID
+    class RepositorioRecomendaciones
+    class RepositorioUsuarios
+    class RepositorioConfiguracion
+    class AdaptadorMongo {
+        <<Spring Data MongoDB>>
     }
 
-    Usuario <|-- Administrador
-    Usuario <|-- Operador
-    Usuario *-- CredencialHash
-    Usuario ..> Rol
+    Usuario *-- "1" CredencialHash
+    Usuario --> "1" Rol
     Rol --> "1..*" Permiso
-    HasherContrasena <|.. HasherPBKDF2
     HasherContrasena <|.. HasherBCrypt
-    CredencialHash ..> HasherContrasena
-
+    HasherContrasena ..> CredencialHash : produce
     ServicioAutenticacion --> HasherContrasena
     ServicioAutenticacion ..> Sesion : crea
-    Sesion --> Usuario
     ServicioUsuarios --> HasherContrasena
-    ServicioUsuarios ..> Sesion
-    ConfiguracionSistema ..> Sesion
-
     ServicioPanelControl ..> ResumenFlota
     ServicioPanelControl ..> FiltroMisiones
+    ConfiguracionSistema *-- "1" ReglaAsignacion
+    ConfiguracionSistema *-- "1" UmbralesAlerta
+    ConfiguracionSistema *-- "1" UmbralesMantenimiento
 
     Repositorio <|-- RepositorioDrones
     Repositorio <|-- RepositorioMisiones
-    Repositorio <|-- RepositorioUsuarios
     Repositorio <|-- RepositorioAlertas
     Repositorio <|-- RepositorioHistoriales
     Repositorio <|-- RepositorioMantenimientos
-    RepositorioDrones <|.. RepositorioJdbc
-    RepositorioMisiones <|.. RepositorioJdbc
-    RepositorioUsuarios <|.. RepositorioJdbc
-    ServicioUsuarios --> RepositorioUsuarios
-    ServicioAutenticacion --> RepositorioUsuarios
-    ServicioPanelControl --> RepositorioDrones
-    ServicioPanelControl --> RepositorioMisiones
+    Repositorio <|-- RepositorioRecomendaciones
+    Repositorio <|-- RepositorioUsuarios
+    Repositorio <|-- RepositorioConfiguracion
+    RepositorioDrones <|.. AdaptadorMongo
+    RepositorioMisiones <|.. AdaptadorMongo
+    RepositorioUsuarios <|.. AdaptadorMongo
 ```
+
+**Decisiones y por qué:**
+- **`Administrador`/`Operador` como subclases se eliminaron.** Solo diferían en `rol()` (un enum disfrazado de herencia, sin comportamiento propio). HU-20/22 tratan el rol como dato. Los permisos salen de `Rol.permite()`.
+- `Sesion` ya no viaja como parámetro en cada método de dominio (el diseño anterior firmaba `registrarOperador(Sesion, …)`): la autorización (RNF-04) se aplica en el borde REST con el `Rol` de la sesión; el dominio no conoce sesiones.
+- `Usuario.activo` implementa la eliminación lógica (supuesto de HU-21): `eliminar()` → `desactivar()`; `autenticar` rechaza usuarios inactivos. Se quitó `nombreCompleto` (ninguna HU lo define, ver ⚠ 8).
+- Una sola implementación de hash (`HasherBCrypt`, hash y sal incluidos, RNF-05). Se eliminó `HasherPBKDF2` y los campos `byte[] hash/sal` separados.
+- `ServicioPanelControl` ya no se rotula "Facade" ni expone `eliminar()/listar()` genéricos: HU-16/17 son solo lectura. `ResumenFlota` **excluye** `DE_BAJA` (HU-03: "deja de aparecer entre los drones operativos"). `FiltroMisiones.dron` es opcional ("de un dron o de toda la flota").
+- **Persistencia = MongoDB**, no JDBC. Un documento por agregado: `Dron` (con `Bateria`, equipamiento y estado embebidos), `Mision`, `Alerta`, `HistorialVuelos` (con incidencias embebidas), `Usuario`, `ConfiguracionSistema` (documento único). RNF-10: escritura con `WriteConcern` `majority` + `journal=true` para no perder registros confirmados.
 
 ---
 
-## Encapsulamiento
+## 6. Verificación
 
-| Mecanismo | Dónde se aplica |
-|---|---|
-| Atributos `private`, sin setters públicos | Toda entidad (`Dron`, `Mision`, `Alerta`, `Usuario`). Los cambios se hacen con métodos de negocio (`asignarAMision()`, `pausar()`), nunca con `setEstado()`. |
-| Métodos de transición `protected`/package-private | `Dron.cambiarEstado()` solo lo invocan las clases `EstadoXxx` del mismo paquete. |
-| Objetos de valor inmutables | `Bateria`, `Coordenada`, `CodigoDron`, `Ruta`, `UmbralesAlerta`, `CredencialHash`: `consumir()` devuelve una nueva `Bateria`. Invariantes validadas en el constructor (ej. nivel 0-100, origen ≠ destino). |
-| Colecciones protegidas | `getEquipamiento()` devuelve `List.copyOf(...)` / vista no modificable. |
-| Invariantes dentro de la clase | Código único (`RepositorioDrones`), autonomía > 0, carga ≥ 0, origen ≠ destino en el constructor de `Mision`. |
-| Contraseña oculta | `Usuario` nunca expone la contraseña; solo `CredencialHash` (RNF-05). |
+### 6.1 Encapsulamiento
 
-## Polimorfismo
-
-| Punto de variación | Abstracción | Implementaciones |
+| Criterio | Cómo se cumple | Dónde |
 |---|---|---|
-| Tipo de dron (RF-02) | `Dron.ejecutarTarea()` | `DronEntrega`, `DronInspeccion`, `DronMonitoreo` |
-| Tipo de misión | `Mision.crearTareaDron()` | `MisionEntrega`, `MisionInspeccion`, `MisionMonitoreo` |
-| Comportamiento por estado | `EstadoDron`, `EstadoMision` | 6 estados de dron, 7 estados de misión (elimina `switch`/`if` por estado) |
-| Criterio de asignación (RF-06) | `CriterioAsignacion` | batería, cercanía, prioridad |
-| Estrategia de asignación | `EstrategiaAsignacion` | `AsignacionPonderada` (extensible) |
-| Reglas de alerta (RF-10, RF-11) | `ReglaAlerta` | batería, desvío, zona restringida |
-| Tipo de alerta | `Alerta.mensaje()` | 3 subclases |
-| Acción del operador (RF-09) | `Intervencion` | pausar, reanudar, redirigir, abortar |
-| Política de mantenimiento | `PoliticaMantenimiento` | `PoliticaPorUmbrales` |
-| Hash de contraseñas | `HasherContrasena` | PBKDF2, BCrypt |
-| Rol de usuario | `Usuario.rol()` | `Administrador`, `Operador` |
+| Atributos privados, sin setters | Cambios solo por métodos de negocio (`asignarAMision()`, `pausar()`); nunca `setEstado()` | `Dron`, `Mision`, `Alerta`, `Usuario`, `HistorialVuelos` |
+| Transición controlada | `cambiarEstado()` es package-private: solo las clases `EstadoXxx` del mismo paquete lo invocan | `Dron`, `Mision` |
+| Invariantes en el constructor | batería 0–100 %, `autonomiaMin > 0`, `cargaUtilMaxKg ≥ 0`, origen ≠ destino (HU-04), pesos ≥ 0, umbrales > 0 | `Bateria`, `Dron`, `Mision`, `ReglaAsignacion`, `UmbralesAlerta` |
+| Objetos de valor inmutables | `Bateria`, `Coordenada`, `Ruta`, `RequisitosMision`, `UmbralesAlerta`, `CredencialHash`, `ReglaAsignacion` | VO |
+| Colecciones no expuestas | `getEquipamiento()`/`getIncidencias()` devuelven `List.copyOf` | `Dron`, `HistorialVuelos` |
+| Unicidad (código dron, nombre de usuario) | La regla se aplica en el servicio con el repositorio + índice único en MongoDB | `ServicioDrones`, `ServicioUsuarios` |
+| Contraseña oculta | `Usuario` solo conoce `CredencialHash`; nunca la contraseña en claro (RNF-05) | `Usuario` |
+| Referencias entre agregados por identidad | `Mision→CodigoDron`, `Alerta→CodigoMision`, `Incidencia→UUID` | evita modificar un agregado desde otro |
 
-## Patrones de diseño utilizados
+### 6.2 Abstracción y polimorfismo (cada abstracción tiene ≥ 2 implementaciones reales o un requisito que la exige)
 
-| Patrón | Clases | Problema que resuelve |
+| Punto de variación | Abstracción | Implementaciones | Origen |
+|---|---|---|---|
+| Comportamiento por tipo de dron | `Dron.ejecutarTarea()` | Entrega, Inspección, Monitoreo | RF-02, HU-01 |
+| Creación por tipo | `FabricaDron` | 3 fábricas | RNF-02 |
+| Comportamiento por estado | `EstadoDron`, `EstadoMision` | 6 y 7 estados | HU-02, 03, 07, 08 |
+| Criterio de asignación | `CriterioAsignacion` | Batería, Cercanía, Prioridad | HU-05, 18 |
+| Regla de alerta | `ReglaAlerta` | Batería, Desvío, Zona | HU-09, 10 |
+| Mensaje de alerta | `Alerta.mensaje()` | 3 subclases | HU-09, 10 |
+| Suscriptores de alertas | `ObservadorAlertas` | 1 por operador con sesión activa | HU-11 |
+| Resultado de mantenimiento | `ResultadoMantenimiento.aplicarA()` | 3 constantes | HU-15 |
+| Zonas restringidas externas | `ProveedorZonasRestringidas` | configuración fija (1 hoy) | RF-07, HU-06 |
+
+Abstracciones **retiradas** por tener una sola implementación y ninguna HU que pida variabilidad: `EstrategiaAsignacion`, `PoliticaMantenimiento`, `ClasificadorSeveridad` (interfaz), `HasherPBKDF2`, `Intervencion`, subclases de `Mision` y de `Usuario`.
+`ProveedorZonasRestringidas` y `HasherContrasena` se conservan aunque hoy tengan una implementación: aíslan una dependencia externa/de seguridad (Indirection / Protected Variations) y RF-07 dice explícitamente que las zonas son externas.
+
+### 6.3 Multiplicidad (con evidencia en las HU)
+
+| Relación | Multiplicidad | Evidencia / invariante |
 |---|---|---|
-| **State** | `EstadoDron`, `EstadoMision` | Comportamiento dinámico por estado y transiciones válidas (RF-03, RF-04, RF-08). |
-| **Strategy** | `EstrategiaAsignacion`, `CriterioAsignacion`, `ReglaAlerta`, `PoliticaMantenimiento`, `ClasificadorSeveridad`, `HasherContrasena` | Algoritmos intercambiables y configurables sin modificar al cliente. |
-| **Factory Method / Registro de fábricas** | `FabricaDron`, `FabricaMision`, `RegistroFabricasDron` | Crear el dron/misión correcto sin `if/switch` por tipo (RNF-02). |
-| **Observer** | `PublicadorAlertas`, `ObservadorAlertas` | Notificación en tiempo real y desacople entre monitoreo, panel, historial y mantenimiento (RF-12). |
-| **Command** | `Intervencion` y subclases | Encapsular acciones del operador, permitir bitácora (RF-09). |
-| **Template Method / Double dispatch** | `Dron.ejecutarTarea()` + `Mision.crearTareaDron()` | Flujo común, paso específico por tipo. |
-| **Repository** | `Repositorio<T, ID>` | Aislar persistencia (RNF-10). |
-| **Facade** | `ServicioPanelControl` | Punto único de consulta para la UI del panel (RF-17, RF-18). |
-| **Value Object** | `Bateria`, `Coordenada`, `Ruta`, `RequisitosMision`... | Inmutabilidad y validación en la construcción. |
+| Dron ◆— Bateria | 1 — 1 | HU-01: capacidad mAh; HU-09: nivel % |
+| Dron ◆— equipamiento | 1 — 0..* | HU-01: lista libre (puede estar vacía) |
+| Dron — EstadoDron | 1 — 1 | HU-02: siempre tiene un estado |
+| Mision — Dron | 0..* — 0..1 | Pendiente: 0 drones (HU-05). Un dron acumula muchas misiones en el tiempo, pero **a lo sumo una activa** (invariante: `EstadoEnMision`) |
+| Mision ◆— Ruta | 1 — 1 | HU-06: "la ruta de la misión" |
+| Ruta — Coordenada | 1 — 2..* | mínimo origen y destino |
+| Mision ◆— Ubicacion | 1 — 2 | HU-04: origen y destino, distintos |
+| Mision — RequisitosMision | 1 — 1 | HU-04 (obligatorios) |
+| Alerta — Mision / Dron | 0..* — 1 / 0..* — 1 | HU-09/13: se genera durante la misión de un dron |
+| Dron — HistorialVuelos | 1 — 1 | HU-13: historial de cada dron |
+| HistorialVuelos ◆— Incidencia | 1 — 0..* | HU-13 |
+| Dron — RegistroMantenimiento / Recomendacion | 1 — 0..* | HU-14/15: puede haber varios mantenimientos |
+| ServicioMonitoreo — ReglaAlerta | 1 — 1..* | HU-09, 10 |
+| PublicadorAlertas — Observador | 1 — 0..* | HU-11: puede no haber nadie con sesión |
+| ReglaAsignacion — pesos | 1 — 1..* | HU-18: batería, cercanía, prioridad |
+| ConfiguracionSistema | 1 (única) | HU-18: configuración global ⚠ 1 |
+| Usuario — Rol | * — 1 | HU-19/20 |
+| Rol — Permiso | 1 — 1..* | un rol sin permisos no tiene sentido |
+| ProveedorZonas — ZonaRestringida | 1 — 0..* | RF-07 |
 
-## Principios GRASP
+### 6.4 GRASP
 
-| Principio | Aplicación |
-|---|---|
-| **Information Expert** | `Bateria` sabe si está bajo umbral; `Ruta` calcula su distancia y desviación; `HistorialVuelos` calcula horas y misiones; `ZonaRestringida` sabe si intersecta una ruta. |
-| **Creator** | `FabricaDron`/`FabricaMision` crean entidades; `ReglaXxx` crea la `AlertaXxx` correspondiente (tiene los datos para inicializarla); `ServicioAutenticacion` crea `Sesion`. |
-| **Controller** | `ControladorMisiones` coordina los casos de uso de misión sin que la UI toque el dominio; `ServicioAutenticacion` y `ServicioUsuarios` para usuarios. |
-| **Low Coupling** | Dependencias hacia interfaces (`EstrategiaAsignacion`, `Repositorio`, `ProveedorZonasRestringidas`); CBO ≤ 8 (RNF-01). |
-| **High Cohesion** | Cada clase una responsabilidad: `ValidadorRuta` solo valida; `ServicioAsignacion` solo asigna; `ServicioMonitoreo` solo evalúa reglas. |
-| **Polymorphism** | Sustituye condicionales por tipo/estado (ver tabla anterior). |
-| **Pure Fabrication** | `ServicioAsignacion`, `ValidadorRuta`, `ServicioMonitoreo`, `Repositorio*`, `HasherPBKDF2`: clases que no existen en el dominio real pero mantienen cohesión alta. |
-| **Indirection** | `ProveedorZonasRestringidas` entre el sistema y la fuente externa; `PublicadorAlertas` entre monitoreo y receptores; repositorios entre dominio y BD. |
-| **Protected Variations** | Interfaces estables en los puntos de cambio: tipos de dron/misión, reglas, hash, zonas, persistencia. |
+| Principio | ¿Se aplica? | Evidencia en el diseño | Hallazgo / corrección |
+|---|---|---|---|
+| **Information Expert** | ✅ | `Dron.puedeEjecutar(Mision)`, `Bateria.estaPorDebajoDe()`, `Ruta.desviacionRespectoA()`, `ZonaRestringida.intersecta()`, `UmbralesMantenimiento.superadoPor()`, `Severidad.esIncidencia()`, `Mision.duracionVuelo()` | Antes `ServicioMantenimiento` decidía con una política externa; ahora lo decide quien tiene los datos |
+| **Creator** | ✅ | `FabricaDron` crea `Dron` (agrega los datos de inicialización); `ReglaXxx` crea `AlertaXxx`; `ServicioHistorialVuelos` crea `Incidencia`; `ServicioAutenticacion` crea `Sesion` | Se eliminó `FabricaMision*` (mismo creador, sin variación real) |
+| **Controller** | ✅ | `ServicioDrones`, `ServicioMisiones`, `ServicioAutenticacion`, `ServicioUsuarios` (casos de uso, detrás de los `@RestController`) | El diseño anterior solo tenía controlador de misiones; faltaba el de drones. `ServicioMisiones` tiene 5 dependencias (< 8 de RNF-01): vigilar que no crezca |
+| **Low Coupling** | ✅ | Dependencias hacia interfaces (`Repositorio`, `ProveedorZonas`, `PublicadorAlertas`); `Mision` y `Alerta` referencian por código, no por objeto; Historial→Mantenimiento por evento | Se eliminó el acoplamiento bidireccional `Dron.asignarAMision(Mision)` ↔ `Mision.asignarDron(Dron)` |
+| **High Cohesion** | ✅ | Asignar ≠ validar ruta ≠ monitorear ≠ notificar ≠ historial ≠ mantenimiento | `ServicioPanelControl` mezcla 2 consultas de solo lectura: aceptable, se separa si crece |
+| **Polymorphism** | ✅ | Ver 6.2: sin `switch` por tipo/estado/resultado | — |
+| **Pure Fabrication** | ✅ | `ServicioAsignacion`, `ValidadorRuta`, `ServicioMonitoreo`, `ClasificadorSeveridad`, `Repositorio*`, `HasherBCrypt` | Justificadas: sin ellas `Dron`/`Mision` perderían cohesión |
+| **Indirection** | ✅ | `ProveedorZonasRestringidas`, `PublicadorAlertas`, `Repositorio*`, eventos `MisionFinalizada`/`HistorialActualizado` | — |
+| **Protected Variations** | ✅ | Tipos de dron (RNF-02), criterios, reglas de alerta, hash, zonas, persistencia | `TipoOperacion` como VO (no `enum`) evita editar código existente al agregar un tipo |
 
-## Principios SOLID (RNF-01)
+### 6.5 Principios SOLID (RNF-01)
 
 | Principio | Evidencia |
 |---|---|
-| **S**ingle Responsibility | Servicios y políticas pequeñas separadas (asignar ≠ validar ruta ≠ monitorear ≠ notificar). |
-| **O**pen/Closed | Nuevo dron o misión = 2 clases (RNF-02); nueva regla de alerta = 1 clase; ninguna modifica código existente. |
-| **L**iskov | Cualquier `Dron` o `Mision` concreta sustituye a su base; los estados respetan el contrato de `EstadoDron`/`EstadoMision` (lanzan `OperacionNoPermitidaException` de forma uniforme). |
-| **I**nterface Segregation | Interfaces pequeñas: `CriterioAsignacion`, `ReglaAlerta`, `ObservadorAlertas`, `HasherContrasena`. |
-| **D**ependency Inversion | Servicios dependen de abstracciones (`Repositorio`, `EstrategiaAsignacion`, `PublicadorAlertas`), inyectadas por constructor. |
+| S | Un servicio por responsabilidad (ver cohesión) |
+| O | Nuevo tipo de dron = `DronX` + `FabricaDronX`; nueva regla de alerta = 1 clase `ReglaAlerta`; nuevo criterio = 1 clase `CriterioAsignacion` |
+| L | Cualquier `Dron` sustituye a su base; todos los `EstadoXxx` lanzan la misma `OperacionNoPermitidaException` |
+| I | Interfaces pequeñas: `CriterioAsignacion`, `ReglaAlerta`, `ObservadorAlertas`, `HasherContrasena` |
+| D | Servicios reciben `Repositorio*`, `PublicadorAlertas`, `HasherContrasena` por constructor (inyección de Spring) |
 
-## Trazabilidad requerimiento → clases
+---
 
-| Requerimiento | Clases principales |
+## 7. Trazabilidad HU → clases
+
+| HU | Clases principales |
 |---|---|
-| RF-01, RF-02 | `Dron`, subclases, `Bateria`, `Equipamiento`, `FabricaDron`, `RegistroFabricasDron` |
-| RF-03, RF-04 | `EstadoDron` y 6 estados, `NombreEstado` |
-| RF-05 | `Mision`, subclases, `FabricaMision`, `RequisitosMision`, `ControladorMisiones` |
-| RF-06 | `ServicioAsignacion`, `AsignacionPonderada`, `CriterioAsignacion`, `ReglaAsignacion` |
-| RF-07 | `ValidadorRuta`, `ProveedorZonasRestringidas`, `ZonaRestringida` |
-| RF-08, RF-09 | `EstadoMision` y 7 estados, `Intervencion` y subclases |
-| RF-10, RF-11 | `ServicioMonitoreo`, `ReglaBateriaBaja`, `ReglaDesvioRuta`, `ReglaZonaRestringida` |
-| RF-12 | `PublicadorAlertas`, `ObservadorAlertas`, `PanelNotificaciones` |
-| RF-13 | `Severidad`, `ClasificadorSeveridad` |
-| RF-14 | `HistorialVuelos`, `RegistroVuelo`, `Incidencia` |
-| RF-15, RF-16 | `ServicioMantenimiento`, `PoliticaMantenimiento`, `RegistroMantenimiento`, `ResultadoMantenimiento` |
-| RF-17, RF-18 | `ServicioPanelControl`, `ResumenFlota`, `FiltroMisiones` |
-| RF-19 | `ConfiguracionSistema`, `ReglaAsignacion`, `UmbralesAlerta`, `UmbralesMantenimiento` |
-| RF-20..RF-23 | `Usuario`, `Administrador`, `Operador`, `ServicioAutenticacion`, `ServicioUsuarios`, `Sesion` |
-| RNF-02 | Fábricas + herencia (≤ 2 clases por tipo nuevo) |
-| RNF-04, RNF-05 | `Sesion.exigirPermiso()`, `CredencialHash`, `HasherContrasena` |
-| RNF-08, RNF-09 | `PublicadorAlertasAsincrono` |
-| RNF-10 | `Repositorio<T, ID>` + `RepositorioJdbc` con transacciones |
+| HU-01 | `Dron` + subclases, `FabricaDron*`, `RegistroFabricasDron`, `ServicioDrones`, `Bateria`, `TipoOperacion` |
+| HU-02 | `EstadoDron` + 6 estados, `NombreEstado` |
+| HU-03 | `ServicioDrones.darDeBaja/reactivar`, `EstadoEnMision`, `EstadoDeBaja` |
+| HU-04 | `Mision`, `RequisitosMision`, `Prioridad`, `Ubicacion`, `ServicioMisiones.crear` |
+| HU-05 | `ServicioAsignacion`, `CriterioAsignacion` (3), `ReglaAsignacion`, `ServicioMisiones.asignarPendientes` |
+| HU-06 | `ValidadorRuta`, `ProveedorZonasRestringidas`, `ZonaRestringida`, `ResultadoValidacion` |
+| HU-07 | `EstadoMision` + 7 estados |
+| HU-08 | `ServicioMisiones.pausar/reanudar/redirigir/abortar`, `EstadoEnCurso`, `EstadoPausada` |
+| HU-09, HU-10 | `ServicioMonitoreo`, `ReglaBateriaBaja`, `ReglaDesvioRuta`, `ReglaZonaRestringida`, `Alerta*`, `UmbralesAlerta` |
+| HU-11 | `PublicadorAlertas`, `PublicadorAlertasAsincrono`, `ObservadorAlertas`, `CanalNotificacionOperador` |
+| HU-12 | `Severidad`, `ClasificadorSeveridad` |
+| HU-13 | `ServicioHistorialVuelos`, `HistorialVuelos`, `Incidencia`, `MisionFinalizada` |
+| HU-14 | `ServicioMantenimiento`, `UmbralesMantenimiento`, `RecomendacionMantenimiento`, `HistorialActualizado` |
+| HU-15 | `ServicioMantenimiento.registrarResultado`, `ResultadoMantenimiento`, `RegistroMantenimiento` |
+| HU-16, HU-17 | `ServicioPanelControl`, `ResumenFlota`, `FiltroMisiones` |
+| HU-18 | `ConfiguracionSistema`, `ReglaAsignacion`, `UmbralesAlerta` |
+| HU-19 | `ServicioAutenticacion`, `Sesion`, `Usuario`, `HasherContrasena`, `CredencialHash` |
+| HU-20, 21, 22 | `ServicioUsuarios`, `Usuario`, `Rol`, `Permiso` |
+| RNF-02 | `TipoOperacion` + fábricas |
+| RNF-04, 05 | `Rol.permite`, `CredencialHash`, `HasherBCrypt` |
+| RNF-08, 09 | `PublicadorAlertasAsincrono` |
+| RNF-10 | `Repositorio*` sobre MongoDB (`WriteConcern` majority, journal) |
+
+---
+
+## 8. Vacíos y preguntas abiertas
+
+Detectados al contrastar HU entre sí. **No se resolvieron por suposición** salvo lo indicado; requieren decisión del autor.
+
+| # | Vacío / contradicción | HU | Tratamiento actual en el diseño |
+|---|---|---|---|
+| 1 | **¿Quién define el umbral de batería y a qué nivel?** HU-09/RF-10 dicen "que **yo (operador)** defino… para el dron DRN-001"; HU-18/RF-19 dicen que lo modifica el **administrador**, y HU-10 lo liga a HU-18. | 09, 10, 18 | `UmbralesAlerta` **global** en `ConfiguracionSistema`. Si es por dron: agregar `umbralBateria` a `Dron` |
+| 2 | **No hay HU que lleve un dron a `EN_MANTENIMIENTO`** (HU-15 y HU-03 lo suponen como estado de partida). ¿Lo envía el operador, la recomendación de HU-14 o ambos? | 02, 14, 15 | Existe `Dron.enviarAMantenimiento()`, sin caso de uso que lo invoque (marcado ⚠) |
+| 3 | **Criterio "prioridad" en la asignación**: la prioridad es de la misión, no del dron, así que no distingue entre drones candidatos. ¿Sirve para elegir entre varias misiones pendientes cuando se libera un dron? | 05 | `CriterioAsignacion.puntuar(Dron, Mision)` permite ambas lecturas; falta definir cuál |
+| 4 | **¿Se reinician horas/misiones tras un mantenimiento aprobado?** Si no, HU-14 volverá a recomendar mantenimiento tras cada misión. | 14, 15 | No se modeló reinicio (nadie lo pidió); se acumula |
+| 5 | **Orden despegue / validación de ruta**: HU-05 pasa la misión a "despegue" al asignar el dron, pero HU-06 exige validar la ruta *antes* de autorizar el despegue. | 05, 06 | `ServicioMisiones.autorizarDespegue()` valida; falta definir en qué momento exacto ocurre y qué pasa si se rechaza |
+| 6 | **Canal de entrega de la recomendación de mantenimiento** al administrador (HU-14 no lo dice; HU-11 solo cubre alertas). | 11, 14 | `RecomendacionMantenimiento` se persiste para poder consultarse; la forma de mostrarla queda abierta |
+| 7 | **Umbrales de mantenimiento**: RF-15 dice que los define el administrador, pero HU-18 solo cubre ponderación y umbrales de alerta. | 14, 18 | `UmbralesMantenimiento` dentro de `ConfiguracionSistema` (decisión pendiente de confirmar) |
+| 8 | **HU-20 no menciona contraseña inicial**; HU-22 no define los campos editables ("datos de perfil"). | 20, 22 | `DatosUsuario` incluye contraseña inicial; solo `nombreUsuario` y contraseña editables. Sin `nombreCompleto` |
+| 9 | **Origen de la telemetría** (batería, posición) que alimenta `ServicioMonitoreo` y el avance de estado: HU-07 la declara fuera de alcance. | 07, 09, 10 | `Dron.ubicacion` y `Bateria` se actualizan desde un origen no definido |
+| 10 | **Cálculo de la ruta** al crear/redirigir ("recalcula su ruta"). | 06, 08 | `Ruta.entre(origen, destino)` (tramo directo) como mínimo; algoritmo no definido |
+| 11 | **Alerta de batería**: ¿una sola vez al cruzar el umbral o en cada lectura bajo el umbral? | 09 | Se asume al cruzar (HU-09 la describe como cruce 25 %→19 %) |
+| 12 | **Visibilidad del panel y alertas para el administrador**: las HU 11, 16, 17 son solo del operador. | 11, 16, 17 | `Permiso.CONSULTAR_PANEL` y `RECIBIR_ALERTAS` asignados solo a `OPERADOR` |
+| 13 | **Transiciones no explícitas del dron**: `CARGANDO → DISPONIBLE` (HU-05 lo supone) y `Abortada/Finalizada → CARGANDO`. | 02, 05 | Modeladas con ⚠ en el diagrama de estados |
