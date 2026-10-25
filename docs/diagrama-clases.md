@@ -187,13 +187,19 @@ Drone state rules:
 
 ### 1.6 Configuration (modified only by the administrator)
 
-**SystemConfiguration** (single instance in the system)
+**SystemConfiguration** `«singleton»` (single instance in the system)
 
 | Attributes | Operations |
 |---|---|
-| `-assignmentRule: AssignmentRule` | `+updateAssignmentRule(rule: AssignmentRule)` |
-| `-alertThresholds: AlertThresholds` | `+updateAlertThresholds(thresholds: AlertThresholds)` |
-| `-maintenanceThresholds: MaintenanceThresholds` | `+updateMaintenanceThresholds(thresholds: MaintenanceThresholds)` |
+| `-instance: SystemConfiguration` `{static}` | `+getInstance(): SystemConfiguration` `{static}` |
+| `-assignmentRule: AssignmentRule` | `+getAssignmentRule(): AssignmentRule` |
+| `-alertThresholds: AlertThresholds` | `+getAlertThresholds(): AlertThresholds` |
+| `-maintenanceThresholds: MaintenanceThresholds` | `+getMaintenanceThresholds(): MaintenanceThresholds` |
+| | `+updateAssignmentRule(rule: AssignmentRule)` |
+| | `+updateAlertThresholds(thresholds: AlertThresholds)` |
+| | `+updateMaintenanceThresholds(thresholds: MaintenanceThresholds)` |
+
+The constructor is private; the only way to get the instance is `getInstance()`. The update operations change the instance and save it, so every reader (assignment, monitoring, maintenance, end of mission) sees the new values on its next call. Implementation in Spring Boot: a singleton-scoped bean that loads the single MongoDB document (fixed id) at startup, instead of a hand-written static field.
 
 **AssignmentRule**: `-batteryWeight: double`, `-proximityWeight: double`, `-priorityWeight: double`
 
@@ -247,6 +253,7 @@ Drone state rules:
 | Visibility | Control panel and alerts are for the administrator only |
 | Users | All user data is editable |
 | Telemetry | Unchanged: its origin is out of scope |
+| System configuration | Singleton pattern: one instance holds the assignment rule and both threshold groups |
 
 **Pending validation:** severity LOW for `MaintenanceAlert` (analyst proposal, noted in HU-12).
 
