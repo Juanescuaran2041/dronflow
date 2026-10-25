@@ -31,4 +31,5 @@ Backlog derivado de `docs/requeriments.md`. RF-02 se fusionó dentro de HU-01 (v
 - Registrar/dar de baja/reactivar drones: **administrador u operador**, sin distinción de permisos (HU-01, HU-03).
 - Registrar resultado de mantenimiento: **operador** (HU-15).
 - Mapeo tipo de alerta → severidad: definido como ejemplo razonable por el analista, sujeto a validación de negocio (HU-12).
+- Decisiones posteriores del autor: umbrales globales modificados por el administrador; panel de control y alertas solo para el administrador; la recomendación de mantenimiento envía el dron a mantenimiento y se muestra como alerta en pantalla; un mantenimiento aprobado reinicia horas y misiones; el dron que termina una misión pasa a disponible o cargando según su batería; si la ruta no se calcula el dron queda reservado hasta 3 intentos.
 - "Redirigir" una misión: significa asignar un **nuevo destino**, no forzar el regreso a origen (HU-08).

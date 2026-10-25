@@ -1,6 +1,6 @@
 ### HU-12: Clasificación de alertas por severidad
 
-**Como** operador
+**Como** administrador
 **Quiero** que cada alerta se clasifique automáticamente por nivel de severidad (baja, media, alta, crítica)
 **Para** priorizar mi atención sobre las alertas más urgentes
 
@@ -27,7 +27,9 @@ Característica: Clasificación de alertas por severidad
       | batería baja               | media     |
       | desvío de ruta             | alta      |
       | ingreso a zona restringida | crítica   |
+      | recomendación de mantenimiento | baja  |
 ```
 
 **Supuestos / preguntas abiertas**
+- La severidad "baja" para la recomendación de mantenimiento es una propuesta del analista, pendiente de validar.
 - El mapeo tipo de alerta → severidad es un ejemplo razonable propuesto por el analista (confirmado con el usuario); la tabla definitiva debe validarse con el equipo de producto.

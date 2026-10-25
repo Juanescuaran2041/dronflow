@@ -1,6 +1,6 @@
 ### HU-10: Alerta de desvío de ruta o ingreso a zona restringida
 
-**Como** operador
+**Como** administrador
 **Quiero** recibir una alerta cuando un dron se desvíe más de una distancia configurable de su ruta planificada o ingrese a una zona restringida
 **Para** detectar comportamientos anómalos durante la misión
 

@@ -27,7 +27,12 @@ Característica: Registro de resultado de mantenimiento
       | aprobado            | disponible         |
       | requiere reparación | fuera de servicio  |
       | dron dado de baja   | dado de baja       |
+
+  Escenario: Mantenimiento aprobado reinicia los contadores
+    Dado que el dron "DRN-001" está en estado "en mantenimiento" con 105 horas de vuelo y 40 misiones completadas
+    Cuando un operador registra el resultado "aprobado"
+    Entonces las horas de vuelo y las misiones completadas del dron "DRN-001" vuelven a 0
 ```
 
 **Supuestos / preguntas abiertas**
-- Ninguno relevante.
+- El historial de incidencias no se borra; solo se reinician las horas de vuelo y las misiones completadas.

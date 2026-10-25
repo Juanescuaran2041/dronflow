@@ -1,7 +1,7 @@
-### HU-18: Configurar reglas de asignación y umbrales de alerta
+### HU-18: Configurar reglas de asignación y umbrales
 
 **Como** administrador
-**Quiero** crear o modificar las reglas de ponderación de asignación automática y los umbrales de alerta
+**Quiero** crear o modificar las reglas de ponderación de asignación automática, los umbrales de alerta (batería y desvío) y los umbrales de mantenimiento (horas de vuelo y misiones)
 **Para** ajustar el comportamiento del sistema a las necesidades operativas de la flota
 
 **Validación INVEST**
@@ -26,7 +26,19 @@ Característica: Configuración de reglas de asignación y umbrales de alerta
     Dado que un administrador tiene sesión activa
     Cuando modifica el umbral de desvío de ruta a 80 metros
     Entonces el sistema utiliza 80 metros como nuevo umbral para generar alertas de desvío
+
+  Escenario: Modificación exitosa del umbral de batería
+    Dado que un administrador tiene sesión activa
+    Cuando modifica el umbral de batería a 25%
+    Entonces el sistema genera alertas de batería baja con lecturas inferiores a 25%
+    Y usa 25% para decidir si un dron que termina una misión pasa a "disponible" o "cargando"
+
+  Escenario: Modificación exitosa de los umbrales de mantenimiento
+    Dado que un administrador tiene sesión activa
+    Cuando modifica el umbral de mantenimiento a 120 horas de vuelo y 50 misiones
+    Entonces el sistema usa esos valores para recomendar mantenimiento preventivo (HU-14)
+    Y los umbrales de alerta no cambian
 ```
 
 **Supuestos / preguntas abiertas**
-- Ninguno relevante.
+- Los umbrales de mantenimiento son independientes de los umbrales de alerta.

@@ -1,7 +1,7 @@
 ### HU-14: Recomendación de mantenimiento preventivo
 
 **Como** administrador
-**Quiero** que el sistema me recomiende mantenimiento preventivo cuando un dron supere un umbral configurable de horas de vuelo o misiones completadas
+**Quiero** que el sistema me recomiende mantenimiento preventivo cuando un dron supere un umbral de mantenimiento configurable de horas de vuelo o misiones completadas
 **Para** anticipar fallas antes de que ocurran
 
 **Validación INVEST**
@@ -22,6 +22,8 @@ Característica: Recomendación de mantenimiento preventivo
     Y el dron "DRN-001" acumula 95 horas de vuelo
     Cuando el dron completa una misión que suma 6 horas de vuelo
     Entonces el sistema genera una recomendación de mantenimiento preventivo para el dron "DRN-001"
+    Y el estado del dron "DRN-001" cambia a "en mantenimiento"
+    Y se muestra al administrador una alerta en pantalla con la recomendación
 
   Escenario: Sin recomendación mientras no se supera el umbral
     Dado que el umbral configurado es 100 horas de vuelo
@@ -31,4 +33,5 @@ Característica: Recomendación de mantenimiento preventivo
 ```
 
 **Supuestos / preguntas abiertas**
-- 100 horas es un valor de ejemplo; el umbral real lo define un administrador.
+- 100 horas es un valor de ejemplo; el umbral real lo define un administrador (HU-18, umbrales de mantenimiento).
+- La recomendación es la que lleva el dron a "en mantenimiento"; no hay otro disparador.

@@ -22,8 +22,8 @@ Característica: Asignación automática de dron a misión
     Y existe un dron "DRN-001" disponible que cumple esos requisitos
     Cuando el sistema evalúa la asignación
     Entonces la misión "M-001" se asigna al dron "DRN-001"
-    Y el estado del dron cambia a "en misión"
-    Y el estado de la misión cambia a "despegue"
+    Y el estado del dron cambia a "en misión" (dron reservado)
+    Y la misión permanece en estado "pendiente" hasta que su ruta sea validada (HU-06)
 
   Escenario: Ninguna asignación posible por falta de dron compatible
     Dado que existe una misión "M-002" en estado "pendiente"
@@ -35,7 +35,14 @@ Característica: Asignación automática de dron a misión
     Dado que la misión "M-002" está en estado "pendiente" por falta de dron compatible
     Cuando un dron "DRN-002" que cumple sus requisitos pasa a estado "disponible"
     Entonces el sistema asigna automáticamente la misión "M-002" al dron "DRN-002"
+
+  Escenario: Elección entre varias misiones pendientes por prioridad
+    Dado que las misiones "M-004" de prioridad "alta" y "M-005" de prioridad "baja" están pendientes
+    Y ambas son compatibles con el dron "DRN-003"
+    Cuando el dron "DRN-003" pasa a estado "disponible"
+    Entonces el sistema le asigna la misión "M-004"
 ```
 
 **Supuestos / preguntas abiertas**
+- La prioridad de la misión no distingue entre drones candidatos: sirve para elegir entre varias misiones pendientes cuando un dron queda disponible.
 - La ponderación de criterios tiene valores por defecto configurados por un administrador antes de la primera asignación (ligado a HU-18).

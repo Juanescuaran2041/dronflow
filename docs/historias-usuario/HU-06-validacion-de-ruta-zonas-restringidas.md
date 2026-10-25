@@ -27,7 +27,20 @@ Característica: Validación de ruta contra zonas restringidas
     Cuando el sistema valida la ruta antes del despegue
     Entonces el despegue es rechazado
     Y se notifica al operador el motivo del rechazo
+
+  Escenario: Ruta que no se logra calcular mantiene el dron reservado
+    Dado que la misión "M-004" tiene un dron asignado
+    Cuando el sistema no logra calcular o validar su ruta
+    Entonces el dron permanece reservado para la misión
+    Y el sistema reintenta el cálculo
+
+  Escenario: Dron liberado tras agotar los intentos
+    Dado que el sistema ya intentó calcular la ruta de la misión "M-004" 3 veces sin éxito
+    Cuando falla el tercer intento
+    Entonces el dron pasa a estado "disponible"
+    Y la misión "M-004" queda en estado "pendiente" sin dron asignado
 ```
 
 **Supuestos / preguntas abiertas**
+- El máximo de intentos de cálculo de ruta es 3 (valor inicial, sujeto a cambio).
 - Las zonas restringidas son datos de configuración fija/externa (RF-07); esta historia solo cubre su consulta, no su gestión.
