@@ -1,126 +1,126 @@
-# Diagrama de componentes — Dronflow
+# Component Diagram — Dronflow
 
-Derivado **solo** de las historias de usuario (`docs/historias-usuario/`) y de `docs/requeriments.md`. Stack obligatorio (`AGENTS.md`): React + TypeScript, Spring Boot, MongoDB.
-Cada componente del backend es un módulo (paquete) de la aplicación Spring Boot; no son microservicios. Lo no definido por las HU está marcado con ⚠ y detallado en `diagrama-clases.md` §8.
+Derived **only** from the user stories (`docs/historias-usuario/`) and `docs/requeriments.md`. Mandatory stack (`AGENTS.md`): React + TypeScript, Spring Boot, MongoDB.
+Each backend component is a module (package) of the Spring Boot application; they are not microservices. Anything the user stories do not define is marked with ⚠ and listed in section 5.
 
-## 1. Vista general
+## 1. Overview
 
 ```mermaid
 flowchart LR
-    subgraph CLI["Cliente web"]
-        SPA["Aplicación web<br/>React + TypeScript<br/>HU-16, 17 y pantallas de todas las HU"]
+    subgraph CLI["Web client"]
+        SPA["Web application<br/>React + TypeScript<br/>HU-16, 17 and screens for all HU"]
     end
 
     subgraph BE["Backend — Spring Boot"]
         direction TB
-        API["API REST<br/>(@RestController por módulo)"]
+        API["REST API<br/>(@RestController per module)"]
 
-        SEG["Autenticación y Autorización<br/>HU-19 · RNF-04, 05"]
-        USR["Administración de Usuarios<br/>HU-20, 21, 22"]
-        FLO["Gestión de Flota<br/>HU-01, 02, 03"]
-        MIS["Gestión de Misiones<br/>HU-04, 07, 08"]
-        ASG["Asignación de Drones<br/>HU-05"]
-        RUT["Validación de Rutas<br/>HU-06"]
-        MON["Monitoreo y Alertas<br/>HU-09, 10, 12"]
-        NOT["Notificación en Tiempo Real<br/>HU-11 · RNF-08, 09"]
-        HIS["Historial de Vuelos<br/>HU-13"]
-        MAN["Mantenimiento<br/>HU-14, 15"]
-        PAN["Panel de Control (consultas)<br/>HU-16, 17"]
-        CFG["Configuración del Sistema<br/>HU-18"]
-        PER["Persistencia<br/>(repositorios Spring Data)<br/>RNF-10"]
+        SEC["Authentication and Authorization<br/>HU-19 · RNF-04, 05"]
+        USR["User Administration<br/>HU-20, 21, 22"]
+        FLT["Fleet Management<br/>HU-01, 02, 03"]
+        MIS["Mission Management<br/>HU-04, 06, 07, 08"]
+        ASG["Drone Assignment<br/>HU-05"]
+        RTE["Route Validation<br/>HU-06"]
+        MON["Monitoring and Alerts<br/>HU-09, 10, 12"]
+        NOT["Real-Time Notification<br/>HU-11 · RNF-08, 09"]
+        HIS["Flight History<br/>HU-13"]
+        MNT["Maintenance<br/>HU-14, 15"]
+        DSH["Control Panel (queries)<br/>HU-16, 17"]
+        CFG["System Configuration<br/>HU-18"]
+        PER["Persistence<br/>(Spring Data repositories)<br/>RNF-10"]
     end
 
     DB[("MongoDB")]
-    ZON["Proveedor de zonas restringidas<br/>(externo, RF-07)"]
-    TEL["Fuente de telemetría<br/>(fuera de alcance, HU-07) ⚠"]
+    ZON["Restricted zones provider<br/>(external, RF-07)"]
+    TEL["Telemetry source<br/>(out of scope, HU-07) ⚠"]
 
     SPA -- "HTTPS / JSON" --> API
-    NOT -. "alertas en vivo<br/>(canal por definir ⚠ HU-11)" .-> SPA
+    NOT -. "live alerts<br/>(channel to be defined ⚠ HU-11)" .-> SPA
 
-    API --> SEG
+    API --> SEC
     API --> USR
-    API --> FLO
+    API --> FLT
     API --> MIS
-    API --> PAN
+    API --> DSH
     API --> CFG
-    API --> MAN
+    API --> MNT
 
-    USR --> SEG
-    SEG --> PER
+    USR --> SEC
+    SEC --> PER
     USR --> PER
 
-    MIS --> FLO
+    MIS --> FLT
     MIS --> ASG
-    MIS --> RUT
-    ASG --> FLO
+    MIS --> RTE
+    ASG --> FLT
     ASG --> CFG
-    RUT --> ZON
+    RTE --> ZON
 
     TEL -.-> MON
     MON --> MIS
-    MON --> FLO
-    MON --> RUT
+    MON --> FLT
+    MON --> RTE
     MON --> CFG
     MON --> NOT
 
-    MIS -. "evento MisionFinalizada" .-> HIS
-    HIS -. "evento HistorialActualizado" .-> MAN
+    MIS -. "event MissionCompleted" .-> HIS
+    HIS -. "event HistoryUpdated" .-> MNT
     HIS --> MON
-    MAN --> FLO
-    MAN --> NOT
-    MAN --> CFG
-    FLO -. "evento DronDisponible" .-> MIS
+    MNT --> FLT
+    MNT --> NOT
+    MNT --> CFG
+    FLT -. "event DroneAvailable" .-> MIS
 
-    PAN --> FLO
-    PAN --> MIS
+    DSH --> FLT
+    DSH --> MIS
 
-    FLO --> PER
+    FLT --> PER
     MIS --> PER
     MON --> PER
     HIS --> PER
-    MAN --> PER
+    MNT --> PER
     CFG --> PER
     PER --> DB
 ```
 
-Leyenda: flecha continua = el origen invoca la interfaz del destino; flecha punteada = comunicación por evento o canal asíncrono; `⚠` = no definido en las HU.
+Legend: solid arrow = the source calls the target's interface; dotted arrow = event or asynchronous channel; `⚠` = not defined in the user stories.
 
-## 2. Componentes, responsabilidades e interfaces
+## 2. Components, responsibilities and interfaces
 
-| Componente | HU / RNF | Responsabilidad | Interfaz que **provee** | Interfaz que **requiere** |
+| Component | HU / RNF | Responsibility | Interface it **provides** | Interface it **requires** |
 |---|---|---|---|---|
-| **Aplicación web** (React + TS) | HU-16, 17 + UI de todas las HU, RNF-06, 07 | Pantallas por rol, mensajes de error claros | — | API REST, canal de notificaciones |
-| **API REST** | todas | Adaptadores HTTP: validan entrada y delegan a los casos de uso; aplican la autorización por rol antes de invocar el módulo (RNF-04) | HTTP/JSON | `Autenticación y Autorización` + módulo destino |
-| **Autenticación y Autorización** | HU-19, RNF-04, 05 | Iniciar sesión, verificar hash de contraseña, resolver rol y permisos | `iniciarSesion`, `autorizar(rol, permiso)` | `Persistencia` (usuarios) |
-| **Administración de Usuarios** | HU-20, 21, 22 | Registrar operador, editar, eliminar (lógico) | `registrarOperador`, `editar`, `eliminar` | `Autenticación` (hash), `Persistencia` |
-| **Gestión de Flota** | HU-01, 02, 03 | Registrar drones por tipo, estado operativo, baja/reactivación. Registro de fábricas por tipo (RNF-02) | `registrar`, `cambiarEstado`, `reportarAveria`, `darDeBaja`, `reactivar`, `consultarDisponibles`; publica `DronDisponible` | `Persistencia` |
-| **Gestión de Misiones** | HU-04, 06, 07, 08 | Crear misión, máquina de estados, pausar/reanudar/redirigir/abortar. Si la ruta no se calcula mantiene el dron reservado y reintenta hasta 3 veces; luego lo libera y la misión vuelve a pendiente | `crear`, `autorizarDespegue`, `pausar`, `reanudar`, `redirigir`, `abortar`; publica `MisionFinalizada` | `Gestión de Flota`, `Asignación`, `Validación de Rutas`, `Persistencia` |
-| **Asignación de Drones** | HU-05 | Elegir el dron compatible con mayor puntaje (batería, cercanía, prioridad ponderados) | `asignar(misión)` | `Gestión de Flota` (candidatos), `Configuración` (ponderación) |
-| **Validación de Rutas** | HU-06 | Verificar que la ruta no cruce zonas restringidas; informar el motivo | `validar(ruta)` | `Proveedor de zonas restringidas` |
-| **Monitoreo y Alertas** | HU-09, 10, 12 | Evaluar batería, desvío y zona restringida; crear y clasificar la alerta | `evaluar(dron, misión)`, `alertasDeMision(misión)` | `Gestión de Flota`, `Gestión de Misiones`, `Validación de Rutas`, `Configuración` (umbrales), `Notificación`, `Persistencia`; telemetría ⚠ |
-| **Notificación en Tiempo Real** | HU-11, RNF-08, 09 | Entregar cada alerta (incluida la de recomendación de mantenimiento) como alerta en pantalla a los administradores con sesión activa en ≤ 1 s, de forma asíncrona | `publicar(alerta)`, `suscribir(sesión)` | canal hacia la web ⚠ |
-| **Historial de Vuelos** | HU-13 | Acumular horas, misiones completadas e incidencias (alertas alta/crítica de la misión) al finalizar | `consultarHistorial(dron)`; publica `HistorialActualizado` | evento `MisionFinalizada`, `Monitoreo` (alertas), `Persistencia` |
-| **Mantenimiento** | HU-14, 15 | Al superar el umbral de mantenimiento: generar la recomendación, enviar el dron a mantenimiento y avisar al administrador con una alerta en pantalla. Registrar el resultado; si es "aprobado" reinicia horas y misiones del dron | `registrarResultado` | evento `HistorialActualizado`, `Gestión de Flota`, `Configuración`, `Notificación`, `Persistencia` |
-| **Panel de Control (consultas)** | HU-16, 17 | Resumen de flota por estado e historial de misiones filtrable (solo administrador) | `resumenFlota`, `consultarMisiones(filtro)` | `Gestión de Flota`, `Gestión de Misiones` |
-| **Configuración del Sistema** | HU-18 | Ponderación de asignación, umbrales de alerta (batería, desvío) y umbrales de mantenimiento, separados entre sí. Solo el administrador los modifica | `obtener…`, `actualizar…` | `Persistencia` |
-| **Persistencia** | RNF-10 | Repositorios por agregado sobre MongoDB; escritura con `majority` + journal | `Repositorio<T,ID>` | MongoDB |
+| **Web application** (React + TS) | HU-16, 17 + UI for all HU, RNF-06, 07 | Screens per role, clear error messages | — | REST API, notification channel |
+| **REST API** | all | HTTP adapters: validate input and delegate to the use cases; enforce role-based authorization before calling the module (RNF-04) | HTTP/JSON | `Authentication and Authorization` + target module |
+| **Authentication and Authorization** | HU-19, RNF-04, 05 | Log in, verify the password hash, resolve role and permissions | `login`, `authorize(role, permission)` | `Persistence` (users) |
+| **User Administration** | HU-20, 21, 22 | Register operator, edit, delete (logical) | `registerOperator`, `edit`, `delete` | `Authentication` (hash), `Persistence` |
+| **Fleet Management** | HU-01, 02, 03 | Register drones by type, operational state, decommission/reactivation. Factory registry per type (RNF-02) | `register`, `changeState`, `reportFault`, `decommission`, `reactivate`, `findAvailable`; publishes `DroneAvailable` | `Persistence` |
+| **Mission Management** | HU-04, 06, 07, 08 | Create mission, state machine, pause/resume/redirect/abort. If the route cannot be calculated it keeps the drone reserved and retries up to 3 times; then it releases the drone and the mission goes back to pending | `create`, `authorizeTakeoff`, `pause`, `resume`, `redirect`, `abort`; publishes `MissionCompleted` | `Fleet Management`, `Assignment`, `Route Validation`, `Persistence` |
+| **Drone Assignment** | HU-05 | Choose the compatible drone with the highest score (weighted battery, proximity, priority) | `assign(mission)` | `Fleet Management` (candidates), `Configuration` (weights) |
+| **Route Validation** | HU-06 | Check that the route does not cross restricted zones; report the reason | `validate(route)` | `Restricted zones provider` |
+| **Monitoring and Alerts** | HU-09, 10, 12 | Evaluate battery, deviation and restricted zone; create and classify the alert | `evaluate(drone, mission)`, `alertsOfMission(mission)` | `Fleet Management`, `Mission Management`, `Route Validation`, `Configuration` (thresholds), `Notification`, `Persistence`; telemetry ⚠ |
+| **Real-Time Notification** | HU-11, RNF-08, 09 | Deliver each alert (including the maintenance recommendation) as an on-screen alert to administrators with an active session in ≤ 1 s, asynchronously | `publish(alert)`, `subscribe(session)` | channel to the web ⚠ |
+| **Flight History** | HU-13 | Accumulate hours, completed missions and incidents (high/critical alerts of the mission) when a mission ends | `getHistory(drone)`; publishes `HistoryUpdated` | event `MissionCompleted`, `Monitoring` (alerts), `Persistence` |
+| **Maintenance** | HU-14, 15 | When the maintenance threshold is exceeded: generate the recommendation, send the drone to maintenance and warn the administrator with an on-screen alert. Record the result; if it is APPROVED, reset the drone's hours and missions | `recordResult` | event `HistoryUpdated`, `Fleet Management`, `Configuration`, `Notification`, `Persistence` |
+| **Control Panel (queries)** | HU-16, 17 | Fleet summary by state and filterable mission history (administrator only) | `fleetSummary`, `queryMissions(filter)` | `Fleet Management`, `Mission Management` |
+| **System Configuration** | HU-18 | Assignment weights, alert thresholds (battery, deviation) and maintenance thresholds, kept separate. Only the administrator modifies them | `get…`, `update…` | `Persistence` |
+| **Persistence** | RNF-10 | Repositories per aggregate on MongoDB; writes with `majority` + journal | `Repository<T,ID>` | MongoDB |
 
-## 3. Decisiones de arquitectura
+## 3. Architecture decisions
 
-- **Monolito modular**: los 12 módulos viven en una sola aplicación Spring Boot, desplegable como un artefacto. Nada en las HU pide servicios independientes.
-- **Dependencias por interfaz**: un módulo nunca usa el repositorio de otro; usa la interfaz del módulo dueño del agregado (`Monitoreo` pide alertas por `alertasDeMision`, no lee la colección de otro). Mantiene CBO ≤ 8 (RNF-01).
-- **Eventos internos solo donde las HU lo piden**: `MisionFinalizada` → Historial (HU-13), `HistorialActualizado` → Mantenimiento (HU-14), `DronDisponible` → reasignar misiones pendientes (HU-05, escenario 3). El orden Historial → Mantenimiento queda garantizado por el encadenamiento.
-- **Sin ciclos entre módulos**: `Gestión de Misiones → Monitoreo` no existe; es `Monitoreo → Gestión de Misiones`. La única vuelta (`Flota → Misiones`) es por evento.
-- **Autorización en el borde**: la API REST comprueba el rol (HU-19, RNF-04) antes de entrar al módulo, por lo que los módulos de dominio no manejan sesiones.
-- **Capacidades por rol según las HU**: administrador = Usuarios (HU-20–22), Configuración (HU-18), panel y consulta de misiones (HU-16–17), alertas y recomendaciones de mantenimiento (HU-11, 14); operador = misiones, intervención (HU-04–08), resultado de mantenimiento (HU-15); ambos = registrar/baja/reactivar drones (HU-01, 03).
-- **Fin de misión**: `Gestión de Flota` decide `disponible` o `cargando` según la batería del dron frente al umbral de batería de `Configuración`.
+- **Modular monolith**: the 12 modules live in a single Spring Boot application, deployable as one artifact. Nothing in the user stories asks for independent services.
+- **Dependencies through interfaces**: a module never uses another module's repository; it uses the interface of the module that owns the aggregate (`Monitoring` asks for alerts through `alertsOfMission`, it does not read another module's collection). Keeps CBO ≤ 8 (RNF-01).
+- **Internal events only where the user stories require them**: `MissionCompleted` → History (HU-13), `HistoryUpdated` → Maintenance (HU-14), `DroneAvailable` → reassign pending missions (HU-05, scenario 3). The History → Maintenance order is guaranteed by the chaining.
+- **No cycles between modules**: `Mission Management → Monitoring` does not exist; it is `Monitoring → Mission Management`. The only way back (`Fleet → Missions`) is through an event.
+- **Authorization at the edge**: the REST API checks the role (HU-19, RNF-04) before entering the module, so domain modules do not handle sessions.
+- **Capabilities per role according to the user stories**: administrator = Users (HU-20–22), Configuration (HU-18), control panel and mission queries (HU-16–17), alerts and maintenance recommendations (HU-11, 14); operator = missions, intervention (HU-04–08), maintenance result (HU-15); both = register/decommission/reactivate drones (HU-01, 03).
+- **End of mission**: `Fleet Management` decides `AVAILABLE` or `CHARGING` depending on the drone's battery versus the battery threshold from `Configuration`.
 
-## 4. No incluido (no está en las HU)
+## 4. Not included (not in the user stories)
 
-Servicio de correo/SMS (HU-11 lo descarta), gestor de zonas restringidas (RF-07: datos externos fijos), simulador o integración con hardware de drones (HU-07), bloqueo de cuenta por intentos fallidos (HU-19), auditoría/bitácora, bróker de mensajes, API gateway, caché.
+Email/SMS service (HU-11 rules it out), restricted-zone manager (RF-07: fixed external data), drone hardware simulator or integration (HU-07), account lockout after failed attempts (HU-19), audit log, message broker, API gateway, cache.
 
-## 5. Pendientes que afectan a los componentes
+## 5. Open items affecting the components
 
-1. Canal de notificación hacia la web (HU-11 no lo especifica; es decisión técnica a aprobar por el autor).
-2. Origen de la telemetría que alimenta `Monitoreo` (HU-07 la deja fuera de alcance).
-3. Severidad de la alerta de mantenimiento: se propuso "baja" (HU-12), pendiente de validar.
+1. Notification channel to the web (HU-11 does not specify it; technical decision to be approved by the author).
+2. Origin of the telemetry that feeds `Monitoring` (HU-07 leaves it out of scope).
+3. Severity of the maintenance alert: LOW was proposed (HU-12), pending validation.
