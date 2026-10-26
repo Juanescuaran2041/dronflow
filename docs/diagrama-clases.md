@@ -14,8 +14,8 @@ Notation: `-` private, `+` public; `{abstract}` = abstract class or operation. T
 | Attributes | Operations |
 |---|---|
 | `-id: UUID` | `+authenticate(password: String): boolean` |
-| `-userName: String` | `+editData(userName: String, password: String, role: Role)` |
-| `-passwordHash: String` | `+deactivate()` |
+| `-userName: String` | `+editData(userName: String, password: String, role: Role): void` |
+| `-passwordHash: String` | `+deactivate(): void` |
 | `-role: Role` | `+hasPermission(permission: Permission): boolean` |
 | `-active: boolean` | |
 
@@ -35,21 +35,21 @@ Notation: `-` private, `+` public; `{abstract}` = abstract class or operation. T
 | Attributes | Operations |
 |---|---|
 | `-code: String` (unique) | `+canExecute(mission: Mission): boolean` |
-| `-type: String` | `+assignToMission()` |
-| `-batteryCapacityMah: int` | `+completeMission(batteryThreshold: double)` |
-| `-batteryLevelPercent: double` | `+finishCharging()` |
-| `-enduranceMin: int` | `+releaseReservation()` |
-| `-maxPayloadKg: double` | `+markOutOfService()` |
-| `-equipment: List<String>` | `+sendToMaintenance()` |
-| `-location: Location` | `+reactivate()` |
-| `-state: DroneState` | `+decommission()` |
-| | `+executeTask(mission: Mission)` `{abstract}` |
+| `-type: String` | `+assignToMission(): void` |
+| `-batteryCapacityMah: int` | `+completeMission(batteryThreshold: double): void` |
+| `-batteryLevelPercent: double` | `+finishCharging(): void` |
+| `-enduranceMin: int` | `+releaseReservation(): void` |
+| `-maxPayloadKg: double` | `+markOutOfService(): void` |
+| `-equipment: List<String>` | `+sendToMaintenance(): void` |
+| `-location: Location` | `+reactivate(): void` |
+| `-state: DroneState` | `+decommission(): void` |
+| | `+executeTask(mission: Mission): void` `{abstract}` |
 
-**DeliveryDrone** (extends Drone): `+executeTask(mission: Mission)`, `-pickUpCargo()`, `-dropOffCargo()`
+**DeliveryDrone** (extends Drone): `+executeTask(mission: Mission): void`, `-pickUpCargo(): void`, `-dropOffCargo(): void`
 
-**InspectionDrone** (extends Drone): `+executeTask(mission: Mission)`, `-captureInspectionPoint()`
+**InspectionDrone** (extends Drone): `+executeTask(mission: Mission): void`, `-captureInspectionPoint(): void`
 
-**MonitoringDrone** (extends Drone): `+executeTask(mission: Mission)`, `-streamVideo()`, `-takePhoto()`
+**MonitoringDrone** (extends Drone): `+executeTask(mission: Mission): void`, `-streamVideo(): void`, `-takePhoto(): void`
 
 **DroneState** `«enumeration»`: `AVAILABLE`, `ON_MISSION`, `CHARGING`, `IN_MAINTENANCE`, `OUT_OF_SERVICE`, `DECOMMISSIONED`
 
@@ -75,17 +75,17 @@ Drone state rules:
 
 | Attributes | Operations |
 |---|---|
-| `-code: String` | `+assignDrone(drone: Drone)` |
-| `-type: String` | `+releaseDrone()` |
+| `-code: String` | `+assignDrone(drone: Drone): void` |
+| `-type: String` | `+releaseDrone(): void` |
 | `-priority: Priority` | `+registerRouteAttempt(): int` |
-| `-origin: Location` | `+takeOff()` |
-| `-destination: Location` | `+reachCruise()` |
-| `-requiredPayloadKg: double` | `+pause()` |
-| `-minEnduranceMin: int` | `+resume()` |
-| `-route: Route` | `+redirect(newDestination: Location)` |
-| `-assignedDrone: Drone` (0..1) | `+startReturn()` |
-| `-state: MissionState` | `+finish()` |
-| `-routeAttempts: int` | `+abort()` |
+| `-origin: Location` | `+takeOff(): void` |
+| `-destination: Location` | `+reachCruise(): void` |
+| `-requiredPayloadKg: double` | `+pause(): void` |
+| `-minEnduranceMin: int` | `+resume(): void` |
+| `-route: Route` | `+redirect(newDestination: Location): void` |
+| `-assignedDrone: Drone` (0..1) | `+startReturn(): void` |
+| `-state: MissionState` | `+finish(): void` |
+| `-routeAttempts: int` | `+abort(): void` |
 | `-createdAt: LocalDateTime` | `+flightDuration(): Duration` |
 | `-flightStart: LocalDateTime` | |
 | `-flightEnd: LocalDateTime` | |
@@ -145,9 +145,9 @@ Drone state rules:
 
 | Attributes | Operations |
 |---|---|
-| `-drone: Drone` | `+registerCompletedMission(duration: Duration)` |
-| `-flightHours: Duration` | `+registerIncident(alert: Alert)` |
-| `-completedMissions: int` | `+resetCounters()` |
+| `-drone: Drone` | `+registerCompletedMission(duration: Duration): void` |
+| `-flightHours: Duration` | `+registerIncident(alert: Alert): void` |
+| `-completedMissions: int` | `+resetCounters(): void` |
 | `-incidents: List<Incident>` | |
 
 **Incident**
@@ -177,7 +177,7 @@ Drone state rules:
 | `-result: MaintenanceResult` | |
 | `-date: LocalDateTime` | |
 
-**MaintenanceResult** `«enumeration»`: `APPROVED`, `REQUIRES_REPAIR`, `DECOMMISSION`. Operation: `+applyTo(drone: Drone, history: FlightHistory)`
+**MaintenanceResult** `«enumeration»`: `APPROVED`, `REQUIRES_REPAIR`, `DECOMMISSION`. Operation: `+applyTo(drone: Drone, history: FlightHistory): void`
 
 | Result | Effect |
 |---|---|
@@ -195,9 +195,9 @@ Drone state rules:
 | `-assignmentRule: AssignmentRule` | `+getAssignmentRule(): AssignmentRule` |
 | `-alertThresholds: AlertThresholds` | `+getAlertThresholds(): AlertThresholds` |
 | `-maintenanceThresholds: MaintenanceThresholds` | `+getMaintenanceThresholds(): MaintenanceThresholds` |
-| | `+updateAssignmentRule(rule: AssignmentRule)` |
-| | `+updateAlertThresholds(thresholds: AlertThresholds)` |
-| | `+updateMaintenanceThresholds(thresholds: MaintenanceThresholds)` |
+| | `+updateAssignmentRule(rule: AssignmentRule): void` |
+| | `+updateAlertThresholds(thresholds: AlertThresholds): void` |
+| | `+updateMaintenanceThresholds(thresholds: MaintenanceThresholds): void` |
 
 The constructor is private; the only way to get the instance is `getInstance()`. The update operations change the instance and save it, so every reader (assignment, monitoring, maintenance, end of mission) sees the new values on its next call. Implementation in Spring Boot: a singleton-scoped bean that loads the single MongoDB document (fixed id) at startup, instead of a hand-written static field.
 
@@ -225,7 +225,7 @@ The constructor is private; the only way to get the instance is `getInstance()`.
 | Mission | Composition | Route | 1 — 1 | HU-06 |
 | Route | Composition | Location (points) | 1 — 2..* | at least origin and destination |
 | Mission | Association | Drone (assigned drone) | 0..* — 0..1 | HU-05: pending without a drone; a drone has at most one active mission |
-| RestrictedZone | Dependency | Route (must not cross it) | 0..* — 0..* | HU-06 |
+| Route | Dependency (arrow to RestrictedZone) | RestrictedZone (must not cross it) | 0..* — 0..* | HU-06 |
 | Alert | Association | Drone | 0..* — 1 | HU-09, 10 |
 | Alert | Association | Mission | 0..* — 0..1 | mission is null in MaintenanceAlert |
 | Alert | Association | Severity | * — 1 | HU-12 |
