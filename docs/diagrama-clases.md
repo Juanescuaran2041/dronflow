@@ -36,10 +36,10 @@ Notation: `-` private, `+` public; `{abstract}` = abstract class or operation. T
 |---|---|
 | `-code: String` (unique) | `+canExecute(mission: Mission): boolean` |
 | `-type: String` | `+assignToMission(): void` |
-| `-batteryCapacityMah: int` | `+completeMission(batteryThreshold: double): void` |
+| `-batteryCapacity: int` (mAh) | `+completeMission(batteryThreshold: double): void` |
 | `-batteryLevelPercent: double` | `+finishCharging(): void` |
 | `-enduranceMin: int` | `+releaseReservation(): void` |
-| `-maxPayloadKg: double` | `+markOutOfService(): void` |
+| `-maxPayload: double` (kg) | `+markOutOfService(): void` |
 | `-equipment: List<String>` | `+sendToMaintenance(): void` |
 | `-location: Location` | `+reactivate(): void` |
 | `-state: DroneState` | `+decommission(): void` |
@@ -80,15 +80,15 @@ Drone state rules:
 | `-priority: Priority` | `+registerRouteAttempt(): int` |
 | `-origin: Location` | `+takeOff(): void` |
 | `-destination: Location` | `+reachCruise(): void` |
-| `-requiredPayloadKg: double` | `+pause(): void` |
-| `-minEnduranceMin: int` | `+resume(): void` |
+| `-requiredPayload: double` (kg) | `+pause(): void` |
+| `-minEndurance: int` (minutes) | `+resume(): void` |
 | `-route: Route` | `+redirect(newDestination: Location): void` |
 | `-assignedDrone: Drone` (0..1) | `+startReturn(): void` |
 | `-state: MissionState` | `+finish(): void` |
 | `-routeAttempts: int` | `+abort(): void` |
 | `-createdAt: LocalDateTime` | `+flightDuration(): Duration` |
-| `-flightStart: LocalDateTime` | |
-| `-flightEnd: LocalDateTime` | |
+| `-start: LocalDateTime` | |
+| `-end: LocalDateTime` | |
 
 **MissionState** `«enumeration»`: `PENDING`, `TAKEOFF`, `IN_PROGRESS`, `PAUSED`, `RETURNING`, `COMPLETED`, `ABORTED`
 
@@ -119,23 +119,28 @@ Drone state rules:
 
 ### 1.4 Alerts
 
-**Alert** `{abstract}`
+**Alert**
 
 | Attributes | Operations |
 |---|---|
-| `-id: UUID` | `+message(): String` `{abstract}` |
+| `-id: UUID` | `+message(): String` |
 | `-generatedAt: LocalDateTime` | `+isIncident(): boolean` |
 | `-severity: Severity` | |
 | `-drone: Drone` | |
 | `-mission: Mission` (0..1) | |
+| `-type: AlertType` | |
+| `-detail: String` | |
 
-**LowBatteryAlert** (extends Alert): `-currentLevel: double`; `+message(): String`. Severity: MEDIUM
+**AlertType** `«enumeration»`: `LOW_BATTERY`, `ROUTE_DEVIATION`, `RESTRICTED_ZONE`, `MAINTENANCE`
 
-**RouteDeviationAlert** (extends Alert): `-metersDeviated: double`; `+message(): String`. Severity: HIGH
+| AlertType | Severity | `detail` holds | Mission |
+|---|---|---|---|
+| LOW_BATTERY | MEDIUM | current battery level | yes |
+| ROUTE_DEVIATION | HIGH | meters deviated | yes |
+| RESTRICTED_ZONE | CRITICAL | zone name | yes |
+| MAINTENANCE | LOW | the maintenance recommendation text | none (null) |
 
-**RestrictedZoneAlert** (extends Alert): `-zoneName: String`; `+message(): String`. Severity: CRITICAL
-
-**MaintenanceAlert** (extends Alert): `-recommendation: MaintenanceRecommendation`; `+message(): String`. Severity: LOW. Has no associated mission
+`message()` builds the text from `type` and `detail`. `isIncident()` delegates to `severity.isIncident()`.
 
 **Severity** `«enumeration»`: `LOW`, `MEDIUM`, `HIGH`, `CRITICAL`. Operation: `+isIncident(): boolean` (true for HIGH and CRITICAL)
 
@@ -211,32 +216,34 @@ The constructor is private; the only way to get the instance is `getInstance()`.
 
 ## 2. Relationships and multiplicities
 
-| Source | Relationship | Target | Multiplicity (source — target) | Evidence |
-|---|---|---|---|---|
-| Drone | Generalization | DeliveryDrone, InspectionDrone, MonitoringDrone | — | HU-01, RF-02 |
-| Alert | Generalization | LowBatteryAlert, RouteDeviationAlert, RestrictedZoneAlert, MaintenanceAlert | — | HU-09, 10, 14 |
-| User | Association | Role | * — 1 | HU-19, 20 |
-| Role | Dependency | Permission | 1 — 1..* | RNF-04 |
-| Drone | Association | DroneState | * — 1 | HU-02 |
-| Drone | Composition | Location (current location) | 1 — 1 | HU-10 |
-| Mission | Association | MissionState | * — 1 | HU-07 |
-| Mission | Association | Priority | * — 1 | HU-04 |
-| Mission | Composition | Location (origin and destination) | 1 — 2 | HU-04 |
-| Mission | Composition | Route | 1 — 1 | HU-06 |
-| Route | Composition | Location (points) | 1 — 2..* | at least origin and destination |
-| Mission | Association | Drone (assigned drone) | 0..* — 0..1 | HU-05: pending without a drone; a drone has at most one active mission |
-| Route | Dependency (arrow to RestrictedZone) | RestrictedZone (must not cross it) | 0..* — 0..* | HU-06 |
-| Alert | Association | Drone | 0..* — 1 | HU-09, 10 |
-| Alert | Association | Mission | 0..* — 0..1 | mission is null in MaintenanceAlert |
-| Alert | Association | Severity | * — 1 | HU-12 |
-| MaintenanceAlert | Association | MaintenanceRecommendation | 1 — 1 | HU-14 |
-| Drone | Association | FlightHistory | 1 — 1 | HU-13 |
-| FlightHistory | Composition | Incident | 1 — 0..* | HU-13 |
-| Incident | Association | Mission | 0..* — 1 | HU-13 |
-| Drone | Association | MaintenanceRecommendation | 1 — 0..* | HU-14 |
-| Drone | Association | MaintenanceRecord | 1 — 0..* | HU-15 |
-| MaintenanceRecord | Association | MaintenanceResult | * — 1 | HU-15 |
-| SystemConfiguration | Composition | AssignmentRule, AlertThresholds, MaintenanceThresholds | 1 — 1 each | HU-18 |
+Relationship names are one verb, read in the direction of the arrow. Where the association is a field of the class, the field name is the role. Associations to enumerations carry no name or multiplicity.
+
+| Source | Relationship | Name / role | Target | Multiplicity (source — target) | Evidence |
+|---|---|---|---|---|---|
+| Drone | Generalization | | DeliveryDrone, InspectionDrone, MonitoringDrone | — | HU-01, RF-02 |
+| User | Association | | Role (enum) | * — 1 | HU-19, 20 |
+| Drone | Association | | DroneState (enum) | * — 1 | HU-02 |
+| Drone | Association | `is located at` | Location (current location) | 1 — 1 | HU-10 |
+| Drone | Association | `has` | FlightHistory | 1 — 1 | HU-13 |
+| Drone | Association | `receives` | MaintenanceRecommendation | 1 — 0..* | HU-14 |
+| Drone | Association | `has` | MaintenanceRecord | 1 — 0..* | HU-15 |
+| Mission | Association | | MissionState (enum) | * — 1 | HU-07 |
+| Mission | Association | | Priority (enum) | * — 1 | HU-04 |
+| Mission | Association | `origin`, `destination` | Location | 1 — 2 | HU-04 |
+| Mission | Association | `is executed by` (role `assignedDrone`) | Drone | 0..* — 0..1 | HU-05: pending without a drone; a drone has at most one active mission |
+| Mission | Composition | `follows` | Route | 1 — 1 | HU-06 |
+| Route | Composition | `passes through` | Location (points) | 1 — 2..* | at least origin and destination |
+| Route | Dependency | `avoids` | RestrictedZone | no multiplicity (dependencies have none) | HU-06 |
+| Alert | Association | `is raised for` | Drone | 0..* — 1 | HU-09, 10 |
+| Alert | Association | `occurs during` | Mission | 0..* — 0..1 | mission is null for type MAINTENANCE |
+| Alert | Association | | AlertType (enum) | * — 1 | HU-09, 10, 14 |
+| Alert | Association | | Severity (enum) | * — 1 | HU-12 |
+| FlightHistory | Composition | `records` | Incident | 1 — 0..* | HU-13 |
+| Incident | Association | `happened in` | Mission | 0..* — 1 | HU-13 |
+| Incident | Association | | Severity (enum) | * — 1 | HU-13 |
+| MaintenanceRecord | Association | | MaintenanceResult (enum) | * — 1 | HU-15 |
+
+Only `Route ◆ Location` and `Mission ◆ Route` are compositions: `Location` is shared by `Drone` and `Mission`, so it cannot be owned by either.
 
 ---
 
@@ -255,7 +262,7 @@ The constructor is private; the only way to get the instance is `getInstance()`.
 | Telemetry | Unchanged: its origin is out of scope |
 | System configuration | Singleton pattern: one instance holds the assignment rule and both threshold groups |
 
-**Pending validation:** severity LOW for `MaintenanceAlert` (analyst proposal, noted in HU-12).
+**Pending validation:** severity LOW for alerts of type `MAINTENANCE` (analyst proposal, noted in HU-12).
 
 ---
 
@@ -263,7 +270,7 @@ The constructor is private; the only way to get the instance is `getInstance()`.
 
 - `equipment` is `List<String>` (free text, no closed catalog, HU-01).
 - `location` is a `Location` object (name, latitude, longitude, altitude), not a date type.
-- All date-time attributes use `LocalDateTime`: `createdAt`, `flightStart`, `flightEnd`, `generatedAt`, `moment`, `date`. Durations use `Duration`.
+- All date-time attributes use `LocalDateTime`: `createdAt`, `start`, `end`, `generatedAt`, `moment`, `date`. Durations use `Duration`.
 - **State** is an attribute whose type is an enumeration: `Drone.state: DroneState` and `Mission.state: MissionState`. In the logical view it is just that enum; the allowed transitions are the table in section 1.2 (for missions, the state diagram of HU-07/08). An invalid transition throws `IllegalOperationException`.
 - In the development view the enum is paired with an interface, one class per state, so each state decides which transitions are valid (State pattern): `DroneStateHandler` with `AvailableState`, `OnMissionState`, `ChargingState`, `InMaintenanceState`, `OutOfServiceState`, `DecommissionedState`; and `MissionStateHandler` with `PendingState`, `TakeoffState`, `InProgressState`, `PausedState`, `ReturningState`, `CompletedState`, `AbortedState`. `Drone.state` stays the enum; the handler is looked up from it.
 
@@ -275,9 +282,9 @@ The constructor is private; the only way to get the instance is `getInstance()`.
 
 | Kind | Name |
 |---|---|
-| Abstract class | `Drone`, `Alert` |
-| Class | `User`, `DeliveryDrone`, `InspectionDrone`, `MonitoringDrone`, `Mission`, `Location`, `Route`, `RestrictedZone`, `LowBatteryAlert`, `RouteDeviationAlert`, `RestrictedZoneAlert`, `MaintenanceAlert`, `FlightHistory`, `Incident`, `MaintenanceRecommendation`, `MaintenanceRecord`, `SystemConfiguration`, `AssignmentRule`, `AlertThresholds`, `MaintenanceThresholds` |
-| Enumeration | `Role`, `Permission`, `DroneState`, `MissionState`, `Priority`, `Severity`, `MaintenanceResult` |
+| Abstract class | `Drone` |
+| Class | `User`, `DeliveryDrone`, `InspectionDrone`, `MonitoringDrone`, `Mission`, `Location`, `Route`, `RestrictedZone`, `Alert`, `FlightHistory`, `Incident`, `MaintenanceRecommendation`, `MaintenanceRecord`, `SystemConfiguration`, `AssignmentRule`, `AlertThresholds`, `MaintenanceThresholds` |
+| Enumeration | `Role`, `Permission`, `DroneState`, `MissionState`, `Priority`, `Severity`, `AlertType`, `MaintenanceResult` |
 | Interface | none (the logical view only has domain concepts) |
 
 ### 5.2 Development view
