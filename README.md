@@ -28,6 +28,12 @@ El proyecto se desarrolla en Java como trabajo final de la asignatura de Diseño
 - **Backend:** obligatoriamente con **Spring Boot** (Java).
 - **Base de datos:** **MongoDB**.
 
+## Diagrama de clases (vista lógica)
+
+![Diagrama de clases de Dronflow](dronflow-backend.jpg)
+
+La especificación de cada clase, atributo, operación y relación está en [`docs/diagrama-clases.md`](docs/diagrama-clases.md).
+
 ## Autor
 
 -🧑‍💻 Juan Esteban Cuaran Santander — Estudiante de Ingeniería de Software 
