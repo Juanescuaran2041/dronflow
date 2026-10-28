@@ -1,46 +1,48 @@
-# Component Diagram — Dronflow
+# Diagrama de componentes — Dronflow
 
-Derived **only** from the user stories (`docs/historias-usuario/`), `docs/requeriments.md` and the class diagram (`dronflow-backend.jpg`, `docs/diagrama-clases.md`). Mandatory stack (`AGENTS.md`): React + TypeScript, Spring Boot, MongoDB.
-Each backend component is a module (package) of the Spring Boot application; they are not microservices. Anything the user stories do not define is marked with ⚠ and listed in section 7.
+Derivado **solo** de las historias de usuario (`docs/historias-usuario/`), `docs/requeriments.md` y el diagrama de clases (`dronflow-backend.jpg`, `docs/diagrama-clases.md`). Stack obligatorio (`AGENTS.md`): React + TypeScript, Spring Boot, MongoDB.
+Cada componente del backend es un módulo (paquete) de la aplicación Spring Boot; no son microservicios. Lo que las historias de usuario no definen está marcado con ⚠ y listado en la sección 7.
 
-## 1. Drawing rules
+Nota de nombres: los componentes llevan nombre en español; los puertos, interfaces y operaciones llevan el identificador en inglés, igual que las clases del diagrama de clases.
 
-1. **One port per functionality, one interface per operation.** Each port provides exactly one interface and each interface has exactly one operation. Port name = functionality (`RegisterDrone`); interface name = `I` + the same name (`IRegisterDrone`).
-2. **There is no "REST API" component.** REST is the transport technology, not a part of the design. `@RestController` and the Spring Security filter are the *implementation* of the provided ports; they do not appear in the diagram. The web application connects its required ports straight to the provided ports of the backend components (the line means "HTTPS / JSON").
-3. **A component never uses another component's repository.** It requires the other component's interface. Only the `Persistence` component touches MongoDB.
-4. **No cycles between components.** The only way back goes through an event (`«event»` interface).
-5. **Authorization is cross-cutting.** `IAuthorize` is applied to every port that a user reaches from the web (Spring Security filter). Draw it once as a note on `Authentication`, not as a line from every component.
-6. Provided = circle (lollipop) on a port; required = half circle (socket) on a port.
+## 1. Reglas de dibujo
 
-## 2. Overview (components only, no ports)
+1. **Un puerto por funcionalidad y una interfaz por operación.** Cada puerto ofrece exactamente una interfaz y cada interfaz tiene exactamente una operación. Nombre del puerto = funcionalidad (`RegisterDrone`); nombre de la interfaz = `I` + el mismo nombre (`IRegisterDrone`).
+2. **No existe un componente "REST API".** REST es la tecnología de transporte, no una parte del diseño. `@RestController` y el filtro de Spring Security son la *implementación* de los puertos ofrecidos; no aparecen en el diagrama. La aplicación web conecta sus puertos requeridos directamente con los puertos ofrecidos de los componentes del backend (la línea significa "HTTPS / JSON").
+3. **Un componente nunca usa el repositorio de otro.** Requiere la interfaz del otro componente. Solo el componente `Persistencia` toca MongoDB.
+4. **No hay ciclos entre componentes.** El único camino de regreso pasa por un evento (interfaz `«event»`).
+5. **La autorización es transversal.** `IAuthorize` se aplica a todo puerto al que el usuario llega desde la web (filtro de Spring Security). Se dibuja una sola vez como nota en `Autenticación`, no como línea desde cada componente.
+6. Ofrecida = círculo (paleta) en el puerto; requerida = semicírculo (socket) en el puerto.
+
+## 2. Vista general (solo componentes, sin puertos)
 
 ```mermaid
 flowchart LR
-    WEB["Web Application<br/>React + TypeScript"]
+    WEB["Aplicación Web<br/>React + TypeScript"]
 
     subgraph BE["Backend — Spring Boot"]
         direction TB
-        AUT["Authentication"]
-        USR["User Administration"]
-        FLT["Fleet Management"]
-        MIS["Mission Management"]
-        ASG["Drone Assignment"]
-        RTE["Route Validation"]
-        MON["Monitoring and Alerts"]
-        NOT["Real-Time Notification"]
-        HIS["Flight History"]
-        MNT["Maintenance"]
-        DSH["Control Panel"]
-        CFG["System Configuration"]
-        PER["Persistence"]
+        AUT["Autenticación"]
+        USR["Administración de Usuarios"]
+        FLT["Gestión de Flota"]
+        MIS["Gestión de Misiones"]
+        ASG["Asignación de Drones"]
+        RTE["Validación de Rutas"]
+        MON["Monitoreo y Alertas"]
+        NOT["Notificación en Tiempo Real"]
+        HIS["Historial de Vuelos"]
+        MNT["Mantenimiento"]
+        DSH["Panel de Control"]
+        CFG["Configuración del Sistema"]
+        PER["Persistencia"]
     end
 
     DB[("MongoDB")]
-    ZON["Restricted Zones Provider<br/>(external)"]
-    TEL["Telemetry Source ⚠<br/>(out of scope)"]
+    ZON["Proveedor de Zonas Restringidas<br/>(externo)"]
+    TEL["Fuente de Telemetría ⚠<br/>(fuera de alcance)"]
 
     WEB --> AUT & USR & FLT & MIS & MNT & DSH & CFG
-    WEB -. "alerts ⚠" .-> NOT
+    WEB -. "alertas ⚠" .-> NOT
 
     USR --> AUT
     MIS --> FLT & ASG & RTE
@@ -61,35 +63,35 @@ flowchart LR
     PER --> DB
 ```
 
-## 3. Components, ports and interfaces
+## 3. Componentes, puertos e interfaces
 
-"Requires" lists interfaces of other components (section 4 wires each one).
+"Requiere" lista interfaces de otros componentes (la sección 4 conecta cada una).
 
-### 3.1 Authentication — HU-19 · RNF-04, 05
+### 3.1 Autenticación — HU-19 · RNF-04, 05
 
-| Port | Provided interface | Operation | Class diagram |
+| Puerto | Interfaz ofrecida | Operación | Diagrama de clases |
 |---|---|---|---|
 | Login | `ILogin` | `login(userName, password): Session` | `User.authenticate` |
 | Authorize | `IAuthorize` | `authorize(session, role): boolean` | `Role` |
 | HashPassword | `IHashPassword` | `hash(password): String` | `User.passwordHash` |
 
-Requires: `IRepository` (users).
+Requiere: `IRepository` (usuarios).
 
-### 3.2 User Administration — HU-20, 21, 22
+### 3.2 Administración de Usuarios — HU-20, 21, 22
 
-| Port | Provided interface | Operation | Class diagram |
+| Puerto | Interfaz ofrecida | Operación | Diagrama de clases |
 |---|---|---|---|
 | RegisterOperator | `IRegisterOperator` | `registerOperator(userName, password)` | `User` |
 | EditUser | `IEditUser` | `edit(id, userName, password, role)` | `User.editData` |
-| DeleteUser | `IDeleteUser` | `delete(id)` (logical) | `User.deactivate` |
+| DeleteUser | `IDeleteUser` | `delete(id)` (lógica) | `User.deactivate` |
 
-Requires: `IHashPassword`, `IRepository`.
+Requiere: `IHashPassword`, `IRepository`.
 
-### 3.3 Fleet Management — HU-01, 02, 03
+### 3.3 Gestión de Flota — HU-01, 02, 03
 
-| Port | Provided interface | Operation | Class diagram |
+| Puerto | Interfaz ofrecida | Operación | Diagrama de clases |
 |---|---|---|---|
-| RegisterDrone | `IRegisterDrone` | `register(droneData)` | `Drone`, subclasses |
+| RegisterDrone | `IRegisterDrone` | `register(droneData)` | `Drone` y subclases |
 | ReserveDrone | `IReserveDrone` | `assignToMission(code)` | `Drone.assignToMission` |
 | ReleaseDrone | `IReleaseDrone` | `releaseReservation(code)` | `Drone.releaseReservation` |
 | CompleteDroneMission | `ICompleteDroneMission` | `completeMission(code)` | `Drone.completeMission` |
@@ -101,16 +103,16 @@ Requires: `IHashPassword`, `IRepository`.
 | FindAvailableDrones | `IFindAvailableDrones` | `findAvailable(): List<Drone>` | `DroneState.AVAILABLE` |
 | FindDrone | `IFindDrone` | `findByCode(code): Drone` | `Drone.code` |
 | ListDrones | `IListDrones` | `listAll(): List<Drone>` | `DroneState` |
-| DroneAvailable | `«event» IDroneAvailable` | published when a drone becomes available | HU-05, scenario 3 |
+| DroneAvailable | `«event» IDroneAvailable` | se publica cuando un dron queda disponible | HU-05, escenario 3 |
 
-Requires: `IGetAlertThresholds` (end of mission: AVAILABLE or CHARGING by battery), `IRepository`. The creation of each drone type goes through a factory registry inside the component (RNF-02); it is not a port.
+Requiere: `IGetAlertThresholds` (fin de misión: DISPONIBLE o CARGANDO según la batería), `IRepository`. La creación de cada tipo de dron pasa por un registro de fábricas dentro del componente (RNF-02); no es un puerto.
 
-### 3.4 Mission Management — HU-04, 06, 07, 08
+### 3.4 Gestión de Misiones — HU-04, 06, 07, 08
 
-| Port | Provided interface | Operation | Class diagram |
+| Puerto | Interfaz ofrecida | Operación | Diagrama de clases |
 |---|---|---|---|
 | CreateMission | `ICreateMission` | `create(missionData)` | `Mission` |
-| AuthorizeTakeoff | `IAuthorizeTakeoff` | `authorizeTakeoff(code)` (validates route, 3 attempts) | `Mission.registerRouteAttempt` |
+| AuthorizeTakeoff | `IAuthorizeTakeoff` | `authorizeTakeoff(code)` (valida la ruta, 3 intentos) | `Mission.registerRouteAttempt` |
 | TakeOff | `ITakeOff` | `takeOff(code)` | `Mission.takeOff` |
 | ReachCruise | `IReachCruise` | `reachCruise(code)` | `Mission.reachCruise` |
 | StartReturn | `IStartReturn` | `startReturn(code)` | `Mission.startReturn` |
@@ -121,76 +123,76 @@ Requires: `IGetAlertThresholds` (end of mission: AVAILABLE or CHARGING by batter
 | AbortMission | `IAbortMission` | `abort(code)` | `Mission.abort` |
 | FindMission | `IFindMission` | `findByCode(code): Mission` | `Mission.code` |
 | FindMissions | `IFindMissions` | `find(filter): List<Mission>` | HU-17 |
-| MissionCompleted | `«event» IMissionCompleted` | published when a mission ends | HU-13 |
+| MissionCompleted | `«event» IMissionCompleted` | se publica cuando termina una misión | HU-13 |
 
-Requires: `IAssignDrone`, `IChooseMission`, `IReserveDrone`, `IReleaseDrone`, `ICompleteDroneMission`, `IValidateRoute`, `«event» IDroneAvailable`, `IRepository`.
+Requiere: `IAssignDrone`, `IChooseMission`, `IReserveDrone`, `IReleaseDrone`, `ICompleteDroneMission`, `IValidateRoute`, `«event» IDroneAvailable`, `IRepository`.
 
-### 3.5 Drone Assignment — HU-05
+### 3.5 Asignación de Drones — HU-05
 
-| Port | Provided interface | Operation | Class diagram |
+| Puerto | Interfaz ofrecida | Operación | Diagrama de clases |
 |---|---|---|---|
 | AssignDrone | `IAssignDrone` | `assignDrone(mission): Drone` | `Drone.canExecute`, `AssignmentRule` |
 | ChooseMission | `IChooseMission` | `chooseMission(drone, pendingMissions): Mission` | `Priority` |
 
-Requires: `IFindAvailableDrones`, `IGetAssignmentRule`.
+Requiere: `IFindAvailableDrones`, `IGetAssignmentRule`.
 
-### 3.6 Route Validation — HU-06
+### 3.6 Validación de Rutas — HU-06
 
-| Port | Provided interface | Operation | Class diagram |
+| Puerto | Interfaz ofrecida | Operación | Diagrama de clases |
 |---|---|---|---|
 | ValidateRoute | `IValidateRoute` | `validate(route): ValidationResult` | `Route.crosses` |
 | CheckPosition | `ICheckPosition` | `isInRestrictedZone(position): boolean` | `RestrictedZone.contains` |
 
-Requires: `IGetRestrictedZones` (external provider).
+Requiere: `IGetRestrictedZones` (proveedor externo).
 
-### 3.7 Monitoring and Alerts — HU-09, 10, 12
+### 3.7 Monitoreo y Alertas — HU-09, 10, 12
 
-| Port | Provided interface | Operation | Class diagram |
+| Puerto | Interfaz ofrecida | Operación | Diagrama de clases |
 |---|---|---|---|
 | EvaluateDrone | `IEvaluateDrone` | `evaluate(droneCode, missionCode)` | `Alert`, `AlertType`, `Severity` |
 | GetAlertsOfMission | `IGetAlertsOfMission` | `alertsOfMission(missionCode): List<Alert>` | `Alert.mission` |
 
-Requires: `IReadTelemetry` ⚠, `IFindMission`, `IFindDrone`, `IGetAlertThresholds`, `ICheckPosition`, `IPublishAlert`, `IRepository`.
+Requiere: `IReadTelemetry` ⚠, `IFindMission`, `IFindDrone`, `IGetAlertThresholds`, `ICheckPosition`, `IPublishAlert`, `IRepository`.
 
-### 3.8 Real-Time Notification — HU-11 · RNF-08, 09
+### 3.8 Notificación en Tiempo Real — HU-11 · RNF-08, 09
 
-| Port | Provided interface | Operation | Class diagram |
+| Puerto | Interfaz ofrecida | Operación | Diagrama de clases |
 |---|---|---|---|
 | PublishAlert | `IPublishAlert` | `publish(alert)` | `Alert` |
 | SubscribeToAlerts | `ISubscribeToAlerts` | `subscribe(session)` | — |
 
-Requires: `IAuthorize` (only administrators with an active session receive alerts).
+Requiere: `IAuthorize` (solo reciben alertas los administradores con sesión activa).
 
-### 3.9 Flight History — HU-13
+### 3.9 Historial de Vuelos — HU-13
 
-| Port | Provided interface | Operation | Class diagram |
+| Puerto | Interfaz ofrecida | Operación | Diagrama de clases |
 |---|---|---|---|
 | GetFlightHistory | `IGetFlightHistory` | `getHistory(droneCode): FlightHistory` | `FlightHistory` |
 | ResetHistory | `IResetHistory` | `resetCounters(droneCode)` | `FlightHistory.resetCounters` |
-| HistoryUpdated | `«event» IHistoryUpdated` | published after updating the history | HU-14 |
+| HistoryUpdated | `«event» IHistoryUpdated` | se publica tras actualizar el historial | HU-14 |
 
-Requires: `«event» IMissionCompleted`, `IGetAlertsOfMission` (high/critical alerts become incidents), `IRepository`.
+Requiere: `«event» IMissionCompleted`, `IGetAlertsOfMission` (las alertas altas o críticas se vuelven incidencias), `IRepository`.
 
-### 3.10 Maintenance — HU-14, 15
+### 3.10 Mantenimiento — HU-14, 15
 
-| Port | Provided interface | Operation | Class diagram |
+| Puerto | Interfaz ofrecida | Operación | Diagrama de clases |
 |---|---|---|---|
 | RecordMaintenanceResult | `IRecordMaintenanceResult` | `recordResult(droneCode, result)` | `MaintenanceRecord`, `MaintenanceResult.applyTo` |
 
-Requires: `«event» IHistoryUpdated`, `IGetMaintenanceThresholds`, `ISendToMaintenance`, `IReportFault`, `IReactivateDrone`, `IDecommissionDrone`, `IResetHistory`, `IPublishAlert`, `IRepository`. The recommendation itself (`MaintenanceRecommendation`) is generated when `IHistoryUpdated` arrives and `MaintenanceThresholds.exceededBy(history)` is true.
+Requiere: `«event» IHistoryUpdated`, `IGetMaintenanceThresholds`, `ISendToMaintenance`, `IReportFault`, `IReactivateDrone`, `IDecommissionDrone`, `IResetHistory`, `IPublishAlert`, `IRepository`. La recomendación (`MaintenanceRecommendation`) se genera cuando llega `IHistoryUpdated` y `MaintenanceThresholds.exceededBy(history)` es verdadero.
 
-### 3.11 Control Panel — HU-16, 17
+### 3.11 Panel de Control — HU-16, 17
 
-| Port | Provided interface | Operation | Class diagram |
+| Puerto | Interfaz ofrecida | Operación | Diagrama de clases |
 |---|---|---|---|
 | GetFleetSummary | `IGetFleetSummary` | `fleetSummary(): FleetSummary` | `DroneState` |
 | QueryMissions | `IQueryMissions` | `queryMissions(filter): List<Mission>` | `Mission`, `MissionState` |
 
-Requires: `IListDrones`, `IFindMissions`.
+Requiere: `IListDrones`, `IFindMissions`.
 
-### 3.12 System Configuration — HU-18
+### 3.12 Configuración del Sistema — HU-18
 
-| Port | Provided interface | Operation | Class diagram |
+| Puerto | Interfaz ofrecida | Operación | Diagrama de clases |
 |---|---|---|---|
 | GetAssignmentRule | `IGetAssignmentRule` | `getAssignmentRule()` | `SystemConfiguration`, `AssignmentRule` |
 | GetAlertThresholds | `IGetAlertThresholds` | `getAlertThresholds()` | `AlertThresholds` |
@@ -199,27 +201,27 @@ Requires: `IListDrones`, `IFindMissions`.
 | UpdateAlertThresholds | `IUpdateAlertThresholds` | `updateAlertThresholds(thresholds)` | `SystemConfiguration` |
 | UpdateMaintenanceThresholds | `IUpdateMaintenanceThresholds` | `updateMaintenanceThresholds(thresholds)` | `SystemConfiguration` |
 
-Requires: `IRepository`. Only the administrator reaches the three update ports.
+Requiere: `IRepository`. Solo el administrador llega a los tres puertos de actualización.
 
-### 3.13 Persistence — RNF-10
+### 3.13 Persistencia — RNF-10
 
-| Port | Provided interface | Operations |
+| Puerto | Interfaz ofrecida | Operaciones |
 |---|---|---|
-| Storage | `IRepository<T, ID>` | `save`, `findById` (infrastructure exception to the one-operation rule) |
+| Storage | `IRepository<T, ID>` | `save`, `findById` (excepción de infraestructura a la regla de una operación) |
 
-Requires: MongoDB (writes with `majority` + journal).
+Requiere: MongoDB (escrituras con `majority` + journal).
 
-### 3.14 External and client elements
+### 3.14 Elementos externos y cliente
 
-| Element | Provides | Requires |
+| Elemento | Ofrece | Requiere |
 |---|---|---|
-| Restricted Zones Provider (external, RF-07) | `IGetRestrictedZones`: `getZones()` | — |
-| Telemetry Source ⚠ (out of scope, HU-07) | `IReadTelemetry`: `readTelemetry(droneCode)` | — |
-| Web Application (React + TS) | — | one port per screen, below |
+| Proveedor de Zonas Restringidas (externo, RF-07) | `IGetRestrictedZones`: `getZones()` | — |
+| Fuente de Telemetría ⚠ (fuera de alcance, HU-07) | `IReadTelemetry`: `readTelemetry(droneCode)` | — |
+| Aplicación Web (React + TS) | — | un puerto por pantalla, abajo |
 
-Web Application ports (each one is a required port with one socket per interface listed):
+Puertos de la Aplicación Web (cada uno es un puerto requerido con un socket por cada interfaz listada):
 
-| Port (screen) | Required interfaces |
+| Puerto (pantalla) | Interfaces requeridas |
 |---|---|
 | LoginScreen | `ILogin` |
 | UsersScreen | `IRegisterOperator`, `IEditUser`, `IDeleteUser` |
@@ -230,62 +232,62 @@ Web Application ports (each one is a required port with one socket per interface
 | PanelScreen | `IGetFleetSummary`, `IQueryMissions` |
 | AlertsScreen | `ISubscribeToAlerts` ⚠ |
 
-## 4. Wiring (required → provided)
+## 4. Conexiones (requerida → ofrecida)
 
-| Component | Required interface | Provided by |
+| Componente | Interfaz requerida | La ofrece |
 |---|---|---|
-| User Administration | `IHashPassword` | Authentication |
-| Fleet Management | `IGetAlertThresholds` | System Configuration |
-| Mission Management | `IAssignDrone`, `IChooseMission` | Drone Assignment |
-| Mission Management | `IReserveDrone`, `IReleaseDrone`, `ICompleteDroneMission` | Fleet Management |
-| Mission Management | `IValidateRoute` | Route Validation |
-| Drone Assignment | `IFindAvailableDrones` | Fleet Management |
-| Drone Assignment | `IGetAssignmentRule` | System Configuration |
-| Route Validation | `IGetRestrictedZones` | Restricted Zones Provider |
-| Monitoring and Alerts | `IReadTelemetry` ⚠ | Telemetry Source |
-| Monitoring and Alerts | `IFindMission` | Mission Management |
-| Monitoring and Alerts | `IFindDrone` | Fleet Management |
-| Monitoring and Alerts | `IGetAlertThresholds` | System Configuration |
-| Monitoring and Alerts | `ICheckPosition` | Route Validation |
-| Monitoring and Alerts | `IPublishAlert` | Real-Time Notification |
-| Real-Time Notification | `IAuthorize` | Authentication |
-| Flight History | `IGetAlertsOfMission` | Monitoring and Alerts |
-| Maintenance | `IGetMaintenanceThresholds` | System Configuration |
-| Maintenance | `ISendToMaintenance`, `IReportFault`, `IReactivateDrone`, `IDecommissionDrone` | Fleet Management |
-| Maintenance | `IResetHistory` | Flight History |
-| Maintenance | `IPublishAlert` | Real-Time Notification |
-| Control Panel | `IListDrones` | Fleet Management |
-| Control Panel | `IFindMissions` | Mission Management |
-| Authentication, User Administration, Fleet, Mission, Monitoring, History, Maintenance, Configuration | `IRepository` | Persistence |
+| Administración de Usuarios | `IHashPassword` | Autenticación |
+| Gestión de Flota | `IGetAlertThresholds` | Configuración del Sistema |
+| Gestión de Misiones | `IAssignDrone`, `IChooseMission` | Asignación de Drones |
+| Gestión de Misiones | `IReserveDrone`, `IReleaseDrone`, `ICompleteDroneMission` | Gestión de Flota |
+| Gestión de Misiones | `IValidateRoute` | Validación de Rutas |
+| Asignación de Drones | `IFindAvailableDrones` | Gestión de Flota |
+| Asignación de Drones | `IGetAssignmentRule` | Configuración del Sistema |
+| Validación de Rutas | `IGetRestrictedZones` | Proveedor de Zonas Restringidas |
+| Monitoreo y Alertas | `IReadTelemetry` ⚠ | Fuente de Telemetría |
+| Monitoreo y Alertas | `IFindMission` | Gestión de Misiones |
+| Monitoreo y Alertas | `IFindDrone` | Gestión de Flota |
+| Monitoreo y Alertas | `IGetAlertThresholds` | Configuración del Sistema |
+| Monitoreo y Alertas | `ICheckPosition` | Validación de Rutas |
+| Monitoreo y Alertas | `IPublishAlert` | Notificación en Tiempo Real |
+| Notificación en Tiempo Real | `IAuthorize` | Autenticación |
+| Historial de Vuelos | `IGetAlertsOfMission` | Monitoreo y Alertas |
+| Mantenimiento | `IGetMaintenanceThresholds` | Configuración del Sistema |
+| Mantenimiento | `ISendToMaintenance`, `IReportFault`, `IReactivateDrone`, `IDecommissionDrone` | Gestión de Flota |
+| Mantenimiento | `IResetHistory` | Historial de Vuelos |
+| Mantenimiento | `IPublishAlert` | Notificación en Tiempo Real |
+| Panel de Control | `IListDrones` | Gestión de Flota |
+| Panel de Control | `IFindMissions` | Gestión de Misiones |
+| Autenticación, Administración de Usuarios, Flota, Misiones, Monitoreo, Historial, Mantenimiento, Configuración | `IRepository` | Persistencia |
 
-Events (dashed arrow with `«event»`): `IMissionCompleted` Mission Management → Flight History; `IHistoryUpdated` Flight History → Maintenance; `IDroneAvailable` Fleet Management → Mission Management.
+Eventos (flecha punteada con `«event»`): `IMissionCompleted` de Gestión de Misiones a Historial de Vuelos; `IHistoryUpdated` de Historial de Vuelos a Mantenimiento; `IDroneAvailable` de Gestión de Flota a Gestión de Misiones.
 
-## 5. Step by step in Visual Paradigm
+## 5. Paso a paso en Visual Paradigm
 
 1. **Diagram → New → Component Diagram.**
-2. Draw the 13 backend components, `Web Application`, `Restricted Zones Provider`, `Telemetry Source` and a `MongoDB` node. Use the **Component** tool.
-3. **Ports:** select a component → **Port** tool → click on its border. Name it with the functionality (`RegisterDrone`). Create one port per row of section 3.
-4. **Provided interface:** on the port, **Provided Interface** tool → name it (`IRegisterDrone`). In its specification, add the single operation from the table.
-5. **Required interface:** on the consuming component, create a port and use the **Required Interface** tool; name it with the interface it needs (`IGetAlertThresholds`).
-6. **Connect:** drag the required socket onto the provided circle, or join the two ports with an **Assembly Connector** (ball-and-socket).
-7. **Events:** use a dashed dependency with the stereotype `«event»` between the two ports.
-8. Group the 13 backend components inside a boundary named **Backend — Spring Boot**.
-9. If the diagram is too crowded, draw it in two pictures: *Fleet and missions* (3.3–3.6) and *Monitoring, history and maintenance* (3.7–3.12), both with the same names.
+2. Dibuja los 13 componentes del backend, `Aplicación Web`, `Proveedor de Zonas Restringidas`, `Fuente de Telemetría` y un nodo `MongoDB`. Usa la herramienta **Component**.
+3. **Puertos:** selecciona un componente → herramienta **Port** → clic en su borde. Ponle el nombre de la funcionalidad (`RegisterDrone`). Crea un puerto por cada fila de la sección 3.
+4. **Interfaz ofrecida:** sobre el puerto, herramienta **Provided Interface** → ponle el nombre (`IRegisterDrone`). En su especificación agrega la única operación de la tabla.
+5. **Interfaz requerida:** en el componente que consume, crea un puerto y usa la herramienta **Required Interface**; ponle el nombre de la interfaz que necesita (`IGetAlertThresholds`).
+6. **Conectar:** arrastra el semicírculo requerido sobre el círculo ofrecido, o une los dos puertos con un **Assembly Connector** (bola y socket).
+7. **Eventos:** usa una dependencia punteada con el estereotipo `«event»` entre los dos puertos.
+8. Agrupa los 13 componentes del backend dentro de un límite llamado **Backend — Spring Boot**.
+9. Si el diagrama queda muy cargado, dibújalo en dos imágenes: *Flota y misiones* (3.3 a 3.6) y *Monitoreo, historial y mantenimiento* (3.7 a 3.12), con los mismos nombres.
 
-## 6. Architecture decisions
+## 6. Decisiones de arquitectura
 
-- **Modular monolith**: one Spring Boot artifact. Nothing in the user stories asks for independent services.
-- **Dependencies through interfaces**: no module reads another module's collection (keeps CBO ≤ 8, RNF-01).
-- **Internal events only where the user stories require them**: `MissionCompleted` (HU-13), `HistoryUpdated` (HU-14), `DroneAvailable` (HU-05, scenario 3).
-- **Domain classes do not read the configuration**: the services (components) read it through `IGet…` and pass the values as parameters.
-- **Capabilities per role**: administrator = users (HU-20–22), configuration (HU-18), control panel and queries (HU-16–17), alerts and recommendations (HU-11, 14); operator = missions and intervention (HU-04–08), maintenance result (HU-15); both = register, decommission and reactivate drones (HU-01, 03).
+- **Monolito modular**: un solo artefacto Spring Boot. Nada en las historias de usuario pide servicios independientes.
+- **Dependencias por interfaces**: ningún módulo lee la colección de otro (mantiene CBO ≤ 8, RNF-01).
+- **Eventos internos solo donde las historias de usuario los requieren**: `MissionCompleted` (HU-13), `HistoryUpdated` (HU-14), `DroneAvailable` (HU-05, escenario 3).
+- **Las clases de dominio no leen la configuración**: los servicios (componentes) la leen mediante `IGet…` y pasan los valores como parámetros.
+- **Capacidades por rol**: administrador = usuarios (HU-20 a 22), configuración (HU-18), panel de control y consultas (HU-16 y 17), alertas y recomendaciones (HU-11 y 14); operador = misiones e intervención (HU-04 a 08), resultado de mantenimiento (HU-15); ambos = registrar, dar de baja y reactivar drones (HU-01 y 03).
 
-## 7. Not included and open items
+## 7. Lo que no se incluye y pendientes
 
-Not included (not in the user stories): email/SMS service (HU-11 rules it out), restricted-zone manager (RF-07), drone hardware simulator (HU-07), account lockout (HU-19), audit log, message broker, API gateway, cache, a REST API component.
+No incluido (no está en las historias de usuario): servicio de correo o SMS (HU-11 lo descarta), gestor de zonas restringidas (RF-07), simulador de hardware de drones (HU-07), bloqueo de cuenta (HU-19), registro de auditoría, bróker de mensajes, API gateway, caché, un componente REST API.
 
-Open items:
-1. Notification channel to the web (HU-11 does not specify it; technical decision to be approved by the author).
-2. Origin of the telemetry that feeds `Monitoring` (HU-07 leaves it out of scope).
-3. Severity of the maintenance alert: LOW proposed (HU-12), pending validation.
-4. The ports `CheckPosition` and `ListDrones` / `FindDrone` are derived from the class diagram (`RestrictedZone.contains`, `DroneState`, `Drone.code`) and are not named in the user stories; confirm them with the author.
+Pendientes:
+1. Canal de notificación hacia la web (HU-11 no lo especifica; decisión técnica por aprobar por el autor).
+2. Origen de la telemetría que alimenta a `Monitoreo` (HU-07 lo deja fuera de alcance).
+3. Severidad de la alerta de mantenimiento: se propuso BAJA (HU-12), pendiente de validar.
+4. Los puertos `CheckPosition`, `ListDrones`, `FindDrone` y `FindAvailableDrones` se derivan del diagrama de clases (`RestrictedZone.contains`, `DroneState`, `Drone.code`) y las historias de usuario no los nombran; confirmarlos con el autor.
