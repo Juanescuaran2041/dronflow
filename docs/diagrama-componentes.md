@@ -232,35 +232,108 @@ Puertos de la Aplicación Web (cada uno es un puerto requerido con un socket por
 | PanelScreen | `IGetFleetSummary`, `IQueryMissions` |
 | AlertsScreen | `ISubscribeToAlerts` ⚠ |
 
-## 4. Conexiones (requerida → ofrecida)
+## 4. Relaciones entre componentes
 
-| Componente | Interfaz requerida | La ofrece |
+### 4.1 Notación UML usada
+
+| Elemento | Símbolo | Significado |
 |---|---|---|
-| Administración de Usuarios | `IHashPassword` | Autenticación |
-| Gestión de Flota | `IGetAlertThresholds` | Configuración del Sistema |
-| Gestión de Misiones | `IAssignDrone`, `IChooseMission` | Asignación de Drones |
-| Gestión de Misiones | `IReserveDrone`, `IReleaseDrone`, `ICompleteDroneMission` | Gestión de Flota |
-| Gestión de Misiones | `IValidateRoute` | Validación de Rutas |
-| Asignación de Drones | `IFindAvailableDrones` | Gestión de Flota |
-| Asignación de Drones | `IGetAssignmentRule` | Configuración del Sistema |
-| Validación de Rutas | `IGetRestrictedZones` | Proveedor de Zonas Restringidas |
-| Monitoreo y Alertas | `IReadTelemetry` ⚠ | Fuente de Telemetría |
-| Monitoreo y Alertas | `IFindMission` | Gestión de Misiones |
-| Monitoreo y Alertas | `IFindDrone` | Gestión de Flota |
-| Monitoreo y Alertas | `IGetAlertThresholds` | Configuración del Sistema |
-| Monitoreo y Alertas | `ICheckPosition` | Validación de Rutas |
-| Monitoreo y Alertas | `IPublishAlert` | Notificación en Tiempo Real |
-| Notificación en Tiempo Real | `IAuthorize` | Autenticación |
-| Historial de Vuelos | `IGetAlertsOfMission` | Monitoreo y Alertas |
-| Mantenimiento | `IGetMaintenanceThresholds` | Configuración del Sistema |
-| Mantenimiento | `ISendToMaintenance`, `IReportFault`, `IReactivateDrone`, `IDecommissionDrone` | Gestión de Flota |
-| Mantenimiento | `IResetHistory` | Historial de Vuelos |
-| Mantenimiento | `IPublishAlert` | Notificación en Tiempo Real |
-| Panel de Control | `IListDrones` | Gestión de Flota |
-| Panel de Control | `IFindMissions` | Gestión de Misiones |
-| Autenticación, Administración de Usuarios, Flota, Misiones, Monitoreo, Historial, Mantenimiento, Configuración | `IRepository` | Persistencia |
+| Componente | rectángulo con `«component»` | módulo del backend |
+| Puerto | cuadrado pequeño en el borde del componente | punto de interacción de **una** funcionalidad |
+| Interfaz ofrecida | círculo (paleta) unido al puerto | el componente implementa la operación |
+| Interfaz requerida | semicírculo (socket) unido al puerto | el componente necesita la operación |
+| Conector de ensamble | paleta encajada en el socket | une un puerto requerido con el ofrecido del mismo nombre |
+| Evento | flecha punteada `«event»` | comunicación asíncrona entre dos puertos |
 
-Eventos (flecha punteada con `«event»`): `IMissionCompleted` de Gestión de Misiones a Historial de Vuelos; `IHistoryUpdated` de Historial de Vuelos a Mantenimiento; `IDroneAvailable` de Gestión de Flota a Gestión de Misiones.
+Regla de nombres: el puerto requerido lleva **el mismo nombre** que el puerto ofrecido al que se conecta. Así cada conector se lee como `Consumidor.Puerto → Proveedor.Puerto`, y cada fila de las tablas siguientes es una línea del diagrama.
+
+### 4.2 Conectores de ensamble del backend
+
+| N.º | Consumidor (puerto requerido) | Interfaz | Proveedor (puerto ofrecido) | HU |
+|---|---|---|---|---|
+| 1 | Administración de Usuarios.`HashPassword` | `IHashPassword` | Autenticación.`HashPassword` | HU-20, 22 |
+| 2 | Gestión de Flota.`GetAlertThresholds` | `IGetAlertThresholds` | Configuración del Sistema.`GetAlertThresholds` | HU-18 |
+| 3 | Gestión de Misiones.`AssignDrone` | `IAssignDrone` | Asignación de Drones.`AssignDrone` | HU-05 |
+| 4 | Gestión de Misiones.`ChooseMission` | `IChooseMission` | Asignación de Drones.`ChooseMission` | HU-05 |
+| 5 | Gestión de Misiones.`ReserveDrone` | `IReserveDrone` | Gestión de Flota.`ReserveDrone` | HU-05 |
+| 6 | Gestión de Misiones.`ReleaseDrone` | `IReleaseDrone` | Gestión de Flota.`ReleaseDrone` | HU-06 |
+| 7 | Gestión de Misiones.`CompleteDroneMission` | `ICompleteDroneMission` | Gestión de Flota.`CompleteDroneMission` | HU-02, 07 |
+| 8 | Gestión de Misiones.`ValidateRoute` | `IValidateRoute` | Validación de Rutas.`ValidateRoute` | HU-06 |
+| 9 | Asignación de Drones.`FindAvailableDrones` | `IFindAvailableDrones` | Gestión de Flota.`FindAvailableDrones` | HU-05 |
+| 10 | Asignación de Drones.`GetAssignmentRule` | `IGetAssignmentRule` | Configuración del Sistema.`GetAssignmentRule` | HU-05, 18 |
+| 11 | Monitoreo y Alertas.`FindMission` | `IFindMission` | Gestión de Misiones.`FindMission` | HU-09, 10 |
+| 12 | Monitoreo y Alertas.`FindDrone` | `IFindDrone` | Gestión de Flota.`FindDrone` | HU-09, 10 |
+| 13 | Monitoreo y Alertas.`GetAlertThresholds` | `IGetAlertThresholds` | Configuración del Sistema.`GetAlertThresholds` | HU-09, 10 |
+| 14 | Monitoreo y Alertas.`CheckPosition` | `ICheckPosition` | Validación de Rutas.`CheckPosition` | HU-10 |
+| 15 | Monitoreo y Alertas.`PublishAlert` | `IPublishAlert` | Notificación en Tiempo Real.`PublishAlert` | HU-11 |
+| 16 | Notificación en Tiempo Real.`Authorize` | `IAuthorize` | Autenticación.`Authorize` | HU-11 |
+| 17 | Historial de Vuelos.`GetAlertsOfMission` | `IGetAlertsOfMission` | Monitoreo y Alertas.`GetAlertsOfMission` | HU-13 |
+| 18 | Mantenimiento.`GetMaintenanceThresholds` | `IGetMaintenanceThresholds` | Configuración del Sistema.`GetMaintenanceThresholds` | HU-14 |
+| 19 | Mantenimiento.`SendToMaintenance` | `ISendToMaintenance` | Gestión de Flota.`SendToMaintenance` | HU-14 |
+| 20 | Mantenimiento.`ReportFault` | `IReportFault` | Gestión de Flota.`ReportFault` | HU-15 |
+| 21 | Mantenimiento.`ReactivateDrone` | `IReactivateDrone` | Gestión de Flota.`ReactivateDrone` | HU-15 |
+| 22 | Mantenimiento.`DecommissionDrone` | `IDecommissionDrone` | Gestión de Flota.`DecommissionDrone` | HU-15 |
+| 23 | Mantenimiento.`ResetHistory` | `IResetHistory` | Historial de Vuelos.`ResetHistory` | HU-15 |
+| 24 | Mantenimiento.`PublishAlert` | `IPublishAlert` | Notificación en Tiempo Real.`PublishAlert` | HU-14 |
+| 25 | Panel de Control.`ListDrones` | `IListDrones` | Gestión de Flota.`ListDrones` | HU-16 |
+| 26 | Panel de Control.`FindMissions` | `IFindMissions` | Gestión de Misiones.`FindMissions` | HU-17 |
+
+### 4.3 Eventos (`«event»`)
+
+| N.º | Publica (puerto ofrecido) | Interfaz | Recibe (puerto requerido) | HU |
+|---|---|---|---|---|
+| E1 | Gestión de Misiones.`MissionCompleted` | `IMissionCompleted` | Historial de Vuelos.`MissionCompleted` | HU-13 |
+| E2 | Historial de Vuelos.`HistoryUpdated` | `IHistoryUpdated` | Mantenimiento.`HistoryUpdated` | HU-14 |
+| E3 | Gestión de Flota.`DroneAvailable` | `IDroneAvailable` | Gestión de Misiones.`DroneAvailable` | HU-05 |
+
+### 4.4 Persistencia
+
+Todos usan el mismo puerto ofrecido de Persistencia, `Storage` (`IRepository`). Cada componente tiene su propio puerto requerido `Storage` y lo conecta con ese puerto, de modo que ningún componente lee las colecciones de otro.
+
+| N.º | Consumidor | Interfaz | Proveedor |
+|---|---|---|---|
+| P1 a P8 | Autenticación, Administración de Usuarios, Gestión de Flota, Gestión de Misiones, Monitoreo y Alertas, Historial de Vuelos, Mantenimiento, Configuración del Sistema (cada uno con su puerto `Storage`) | `IRepository` | Persistencia.`Storage` |
+| P9 | Persistencia | MongoDB | nodo `MongoDB` |
+
+### 4.5 Elementos externos
+
+| N.º | Consumidor (puerto requerido) | Interfaz | Proveedor (puerto ofrecido) | HU |
+|---|---|---|---|---|
+| X1 | Validación de Rutas.`GetRestrictedZones` | `IGetRestrictedZones` | Proveedor de Zonas Restringidas.`GetRestrictedZones` | HU-06 |
+| X2 | Monitoreo y Alertas.`ReadTelemetry` ⚠ | `IReadTelemetry` | Fuente de Telemetría.`ReadTelemetry` | HU-07, 09, 10 |
+
+### 4.6 Aplicación Web (cliente)
+
+Cada pantalla es un puerto requerido de la Aplicación Web y se conecta, por línea, al puerto ofrecido del mismo nombre. El transporte es HTTPS / JSON y no se dibuja como componente.
+
+| Pantalla (puerto requerido) | Se conecta a | Componente proveedor | HU |
+|---|---|---|---|
+| LoginScreen → `Login` | `ILogin` | Autenticación | HU-19 |
+| UsersScreen → `RegisterOperator` | `IRegisterOperator` | Administración de Usuarios | HU-20 |
+| UsersScreen → `EditUser` | `IEditUser` | Administración de Usuarios | HU-22 |
+| UsersScreen → `DeleteUser` | `IDeleteUser` | Administración de Usuarios | HU-21 |
+| FleetScreen → `RegisterDrone` | `IRegisterDrone` | Gestión de Flota | HU-01 |
+| FleetScreen → `ReportFault` | `IReportFault` | Gestión de Flota | HU-02 |
+| FleetScreen → `DecommissionDrone` | `IDecommissionDrone` | Gestión de Flota | HU-03 |
+| FleetScreen → `ReactivateDrone` | `IReactivateDrone` | Gestión de Flota | HU-03 |
+| MissionsScreen → `CreateMission` | `ICreateMission` | Gestión de Misiones | HU-04 |
+| MissionsScreen → `PauseMission` | `IPauseMission` | Gestión de Misiones | HU-08 |
+| MissionsScreen → `ResumeMission` | `IResumeMission` | Gestión de Misiones | HU-08 |
+| MissionsScreen → `RedirectMission` | `IRedirectMission` | Gestión de Misiones | HU-08 |
+| MissionsScreen → `AbortMission` | `IAbortMission` | Gestión de Misiones | HU-08 |
+| MaintenanceScreen → `RecordMaintenanceResult` | `IRecordMaintenanceResult` | Mantenimiento | HU-15 |
+| ConfigurationScreen → `GetAssignmentRule` y `UpdateAssignmentRule` | `IGetAssignmentRule`, `IUpdateAssignmentRule` | Configuración del Sistema | HU-18 |
+| ConfigurationScreen → `GetAlertThresholds` y `UpdateAlertThresholds` | `IGetAlertThresholds`, `IUpdateAlertThresholds` | Configuración del Sistema | HU-18 |
+| ConfigurationScreen → `GetMaintenanceThresholds` y `UpdateMaintenanceThresholds` | `IGetMaintenanceThresholds`, `IUpdateMaintenanceThresholds` | Configuración del Sistema | HU-18 |
+| PanelScreen → `GetFleetSummary` | `IGetFleetSummary` | Panel de Control | HU-16 |
+| PanelScreen → `QueryMissions` | `IQueryMissions` | Panel de Control | HU-17 |
+| AlertsScreen → `SubscribeToAlerts` ⚠ | `ISubscribeToAlerts` | Notificación en Tiempo Real | HU-11 |
+
+### 4.7 Lo que no se conecta
+
+- **No hay conector** de las clases de dominio con `Configuración del Sistema`: la leen los servicios y pasan los valores por parámetro.
+- **No hay conector** entre `Gestión de Flota` y `Gestión de Misiones` por llamada directa en sentido contrario: el único camino de regreso es el evento E3.
+- **No hay conector** `Gestión de Misiones` → `Monitoreo y Alertas`; es al revés (11).
 
 ## 5. Paso a paso en Visual Paradigm
 
@@ -291,3 +364,83 @@ Pendientes:
 2. Origen de la telemetría que alimenta a `Monitoreo` (HU-07 lo deja fuera de alcance).
 3. Severidad de la alerta de mantenimiento: se propuso BAJA (HU-12), pendiente de validar.
 4. Los puertos `CheckPosition`, `ListDrones`, `FindDrone` y `FindAvailableDrones` se derivan del diagrama de clases (`RestrictedZone.contains`, `DroneState`, `Drone.code`) y las historias de usuario no los nombran; confirmarlos con el autor.
+
+## 8. Hoja de dibujo: conexiones con los nombres que están en el `.vpp`
+
+Esta sección es la lista de trabajo para terminar el diagrama. Usa **los nombres tal como ya están en el archivo de Visual Paradigm** (sin tildes, `Gestion de Vuelos`, `ICompleteMission`, `IReactivate`, `ISendMaintenance`), no los nombres normalizados de la sección 3.
+
+Filtro aplicado: **solo lo explícito en las historias de usuario**. Quedan fuera `Persistencia`/`IRepository` y el nodo MongoDB (RNF-10), la `Aplicación Web` y sus pantallas (ninguna HU define pantallas) y la `Fuente de Telemetría` (HU-07 la deja fuera de alcance).
+
+Marcas: ▲ = el comportamiento está en la HU pero el nombre de la interfaz se derivó del diagrama de clases (pendiente 4 de la sección 7). ✱ = viene de un RNF, no de una HU.
+
+### 8.1 Faltan por crear
+
+**Componente:** `Asignacion de Drones` — hoy Asignación de Drones y Panel de Control comparten una sola caja (su elemento de modelo se llama `Panel de Control`). Deja esa caja como Panel de Control y dibuja una nueva.
+
+**Interfaces (11):** `IAssignDrone`, `IChooseMission` (Asignacion de Drones) · `IGetFleetSummary`, `IQueryMissions` (Panel de Control) · `IEvaluateDrone`, `IGetAlertsOfMission` (Gestion Monitoreo y Alertas, que ya tiene dos puertos vacíos) · `IReachCruise`, `IRedirectMission`, `IMissionCompleted` (Gestion de Misiones) · `IDroneAvailable` (Gestion de Flota) · `IGetRestrictedZones` (Proveedor de Zonas Restringidas, externo).
+
+### 8.2 Conectores de ensamble (28)
+
+Técnica: hover sobre el **consumidor** → Resource Catalog → soltar **sobre la bolita** del proveedor → **Usage**.
+
+| N.º | Consumidor | Interfaz (bolita destino) | Proveedor | HU | Bolita |
+|---|---|---|---|---|---|
+| 1 | Gestion de Usuarios | `IHashPassword` | Autenticacion | ✱ RNF-05 | existe, pero hoy está como **Association**: bórrala y rehazla como Realization |
+| 2 | Gestion de Misiones | `IAssignDrone` | Asignacion de Drones | HU-04, 05 | crear |
+| 3 | Gestion de Misiones | `IChooseMission` | Asignacion de Drones | HU-05 | crear |
+| 4 | Gestion de Misiones | `IReserveDrone` | Gestion de Flota | HU-05 | existe |
+| 5 | Gestion de Misiones | `IReleaseDrone` | Gestion de Flota | HU-06 | existe |
+| 6 | Gestion de Misiones | `ICompleteMission` | Gestion de Flota | HU-02, 07 | existe |
+| 7 | Gestion de Misiones | `IValidateRoute` | Validacion de Rutas | HU-06, 08 | existe |
+| 8 | Asignacion de Drones | `IFindAvailableDrones` | Gestion de Flota | HU-05 | existe |
+| 9 | Asignacion de Drones | `IGetAssignmentRule` | Configuracion del Sistema | HU-05, 18 | existe |
+| 10 | Gestion de Flota | `IGetAlertThresholds` | Configuracion del Sistema | HU-02, 18 | existe |
+| 11 | Gestion Monitoreo y Alertas | `IGetAlertThresholds` | Configuracion del Sistema | HU-09, 10, 18 | existe |
+| 12 | Gestion Monitoreo y Alertas | `IFindDrone` | Gestion de Flota | HU-09, 10 ▲ | existe |
+| 13 | Gestion Monitoreo y Alertas | `IFindMission` | Gestion de Misiones | HU-09, 10 ▲ | existe |
+| 14 | Gestion Monitoreo y Alertas | `ICheckPosition` | Validacion de Rutas | HU-10 ▲ | existe |
+| 15 | Gestion Monitoreo y Alertas | `IPublishAlert` | Notificacion en Tiempo Real | HU-11 | existe |
+| 16 | Notificacion en Tiempo Real | `IAuthorize` | Autenticacion | HU-11 | existe |
+| 17 | Panel de Control | `ISubscribeToAlerts` | Notificacion en Tiempo Real | HU-11, 16 | existe |
+| 18 | Panel de Control | `IListDrones` | Gestion de Flota | HU-16 ▲ | existe |
+| 19 | Panel de Control | `IFindMissions` | Gestion de Misiones | HU-17 | existe |
+| 20 | Gestion de Vuelos | `IGetAlertsOfMission` | Gestion Monitoreo y Alertas | HU-13 | crear |
+| 21 | Gestion de Mantenimientos | `IGetMaintenanceThresholds` | Configuracion del Sistema | HU-14, 18 | existe |
+| 22 | Gestion de Mantenimientos | `ISendMaintenance` | Gestion de Flota | HU-14 | existe |
+| 23 | Gestion de Mantenimientos | `IPublishAlert` | Notificacion en Tiempo Real | HU-11, 14 | existe |
+| 24 | Gestion de Mantenimientos | `IReactivate` | Gestion de Flota | HU-15 | existe |
+| 25 | Gestion de Mantenimientos | `IReportFault` | Gestion de Flota | HU-15 | existe |
+| 26 | Gestion de Mantenimientos | `IDecommissionDrone` | Gestion de Flota | HU-15 | existe |
+| 27 | Gestion de Mantenimientos | `IResetHistory` | Gestion de Vuelos | HU-15 | existe |
+| 28 | Validacion de Rutas | `IGetRestrictedZones` | Proveedor de Zonas Restringidas (externo) | HU-06 | crear |
+
+Frases que respaldan las menos obvias:
+
+- **17** — HU-11, supuesto: "La notificación es una alerta en pantalla dentro del panel de control (HU-16)".
+- **10** — HU-18, escenario 3: "usa 25% para decidir si un dron que termina una misión pasa a *disponible* o *cargando*".
+- **6** — HU-02, escenarios 4 y 5: "Cuando la misión finaliza o se aborta… el estado del dron cambia a *disponible* / *cargando*".
+- **5** — HU-06, escenario 4: "Dron liberado tras agotar los intentos → el dron pasa a estado *disponible*".
+- **20** — HU-13, escenario 2: "la alerta queda registrada como incidencia en el historial del dron".
+- **28** — HU-06, supuesto: "Las zonas restringidas son datos de configuración fija/externa; esta historia solo cubre su consulta".
+
+### 8.3 Eventos (3)
+
+Dependency punteada entre los dos puertos → clic derecho → *Stereotypes* → `event`.
+
+| N.º | Publica | Interfaz | Recibe | HU | Bolita |
+|---|---|---|---|---|---|
+| E1 | Gestion de Misiones | `IMissionCompleted` | Gestion de Vuelos | HU-13 | crear |
+| E2 | Gestion de Vuelos | `IHistoryUpdated` | Gestion de Mantenimientos | HU-14 | existe, falta el estereotipo `«event»` |
+| E3 | Gestion de Flota | `IDroneAvailable` | Gestion de Misiones | HU-05 | crear |
+
+### 8.4 Interfaces ofrecidas que no llevan conector
+
+No es un error que se queden sueltas: nadie dentro del alcance las consume.
+
+- **Entrada directa del usuario** (el actor las invoca; sin componente cliente en el diagrama): `ILogin`, `IRegisterOperator`, `IEditUser`, `IDeleteUser`, `IRegisterDrone`, `ICreateMission`, `IPauseMission`, `IResumeMission`, `IRedirectMission`, `IAbortMission`, `IRecordMaintenanceResult`, `IGetFleetSummary`, `IQueryMissions`, `IGetAssignmentRule`, `IGetAlertThresholds`, `IGetMaintenanceThresholds`, `IUpdateAssignmentRule`, `IUpdateAlertThresholds`, `IUpdateMaintenanceThresholds`. `IReportFault`, `IReactivate` y `IDecommissionDrone` son además entrada de usuario (HU-02, HU-03) aparte de los conectores 24 a 26.
+- **Disparadas desde fuera del alcance** (HU-07 deja la telemetría fuera): `IAuthorizeTakeoff`, `ITakeOff`, `IReachCruise`, `IStartReturn`, `IFinishMission`, `IFinishCharging`, `IEvaluateDrone`.
+- **Sin consumidor en las HU**: `IGetFlightHistory`. Mantenimiento recibe los contadores en el evento `IHistoryUpdated` (E2), así que no la necesita; si prefieres que los lea, agrega el conector Gestion de Mantenimientos → `IGetFlightHistory`.
+
+### 8.5 Totales
+
+11 interfaces por crear · 1 componente por separar · 1 Association por rehacer · 28 conectores de ensamble · 3 eventos.

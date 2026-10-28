@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2040 1230" width="2040" height="1230">
+<rect width="2040" height="1230" fill="#ffffff"/>
+<text x="30" y="40" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="bold" fill="#1a1a1a">Diagrama de contexto — Dronflow</text>
+<circle cx="1020" cy="600" r="400" fill="#dbeafe" stroke="#1d4ed8" stroke-width="3"/>
+<rect x="30" y="216.0" width="170" height="768" fill="#fef3c7" stroke="#333" stroke-width="2"/>
+<text x="115.0" y="244.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#444" text-anchor="middle">«actor»</text>
+<text x="115.0" y="266.0" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#1a1a1a" text-anchor="middle">Administrador</text>
+<rect x="1840" y="254.0" width="170" height="692" fill="#fef3c7" stroke="#333" stroke-width="2"/>
+<text x="1925.0" y="282.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#444" text-anchor="middle">«actor»</text>
+<text x="1925.0" y="304.0" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#1a1a1a" text-anchor="middle">Operador</text>
+<line x1="200.0" y1="296.0" x2="760.0" y2="296.0" stroke="#333" stroke-width="1.4"/>
+<line x1="200.0" y1="334.0" x2="721.3" y2="334.0" stroke="#333" stroke-width="1.4"/>
+<line x1="200.0" y1="372.0" x2="691.3" y2="372.0" stroke="#333" stroke-width="1.4"/>
+<line x1="200.0" y1="410.0" x2="668.0" y2="410.0" stroke="#333" stroke-width="1.4"/>
+<line x1="200.0" y1="448.0" x2="650.0" y2="448.0" stroke="#333" stroke-width="1.4"/>
+<line x1="200.0" y1="486.0" x2="636.6" y2="486.0" stroke="#333" stroke-width="1.4"/>
+<line x1="200.0" y1="524.0" x2="627.3" y2="524.0" stroke="#333" stroke-width="1.4"/>
+<line x1="200.0" y1="562.0" x2="621.8" y2="562.0" stroke="#333" stroke-width="1.4"/>
+<line x1="200.0" y1="600.0" x2="620.0" y2="600.0" stroke="#333" stroke-width="1.4"/>
+<line x1="200.0" y1="638.0" x2="621.8" y2="638.0" stroke="#333" stroke-width="1.4"/>
+<line x1="200.0" y1="676.0" x2="627.3" y2="676.0" stroke="#333" stroke-width="1.4"/>
+<line x1="200.0" y1="714.0" x2="636.6" y2="714.0" stroke="#333" stroke-width="1.4"/>
+<line x1="200.0" y1="752.0" x2="650.0" y2="752.0" stroke="#333" stroke-width="1.4"/>
+<line x1="200.0" y1="790.0" x2="668.0" y2="790.0" stroke="#333" stroke-width="1.4"/>
+<line x1="200.0" y1="828.0" x2="691.3" y2="828.0" stroke="#333" stroke-width="1.4"/>
+<line x1="200.0" y1="866.0" x2="721.3" y2="866.0" stroke="#333" stroke-width="1.4"/>
+<line x1="200.0" y1="904.0" x2="760.0" y2="904.0" stroke="#333" stroke-width="1.4"/>
+<line x1="1840.0" y1="334.0" x2="1318.7" y2="334.0" stroke="#333" stroke-width="1.4"/>
+<line x1="1840.0" y1="372.0" x2="1348.7" y2="372.0" stroke="#333" stroke-width="1.4"/>
+<line x1="1840.0" y1="410.0" x2="1372.0" y2="410.0" stroke="#333" stroke-width="1.4"/>
+<line x1="1840.0" y1="448.0" x2="1390.0" y2="448.0" stroke="#333" stroke-width="1.4"/>
+<line x1="1840.0" y1="486.0" x2="1403.4" y2="486.0" stroke="#333" stroke-width="1.4"/>
+<line x1="1840.0" y1="524.0" x2="1412.7" y2="524.0" stroke="#333" stroke-width="1.4"/>
+<line x1="1840.0" y1="562.0" x2="1418.2" y2="562.0" stroke="#333" stroke-width="1.4"/>
+<line x1="1840.0" y1="600.0" x2="1420.0" y2="600.0" stroke="#333" stroke-width="1.4"/>
+<line x1="1840.0" y1="638.0" x2="1418.2" y2="638.0" stroke="#333" stroke-width="1.4"/>
+<line x1="1840.0" y1="676.0" x2="1412.7" y2="676.0" stroke="#333" stroke-width="1.4"/>
+<line x1="1840.0" y1="714.0" x2="1403.4" y2="714.0" stroke="#333" stroke-width="1.4"/>
+<line x1="1840.0" y1="752.0" x2="1390.0" y2="752.0" stroke="#333" stroke-width="1.4"/>
+<line x1="1840.0" y1="790.0" x2="1372.0" y2="790.0" stroke="#333" stroke-width="1.4"/>
+<line x1="1840.0" y1="828.0" x2="1348.7" y2="828.0" stroke="#333" stroke-width="1.4"/>
+<line x1="1840.0" y1="866.0" x2="1318.7" y2="866.0" stroke="#333" stroke-width="1.4"/>
+<rect x="850" y="70" width="340" height="80" fill="#e5e7eb" stroke="#333" stroke-width="2"/>
+<text x="1020.0" y="98" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#444" text-anchor="middle">«sistema externo»</text>
+<text x="1020.0" y="120" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#1a1a1a" text-anchor="middle">Proveedor de zonas restringidas</text>
+<line x1="1020.0" y1="150.0" x2="1020.0" y2="200.0" stroke="#333" stroke-width="1.4"/>
+<rect x="850" y="1120" width="340" height="80" fill="#e5e7eb" stroke="#333" stroke-width="2"/>
+<text x="1020.0" y="1148" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#444" text-anchor="middle">«sistema externo»</text>
+<text x="1020.0" y="1170" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#1a1a1a" text-anchor="middle">Fuente de telemetría ⚠</text>
+<line x1="930.0" y1="1120.0" x2="870.0" y2="970.8" stroke="#333" stroke-width="1.4"/>
+<line x1="1110.0" y1="1120.0" x2="1170.0" y2="970.8" stroke="#333" stroke-width="1.4"/>
+<text x="1020" y="594" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="bold" fill="#1e3a8a" text-anchor="middle">Dronflow</text>
+<text x="1020" y="626" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#1e3a8a" text-anchor="middle">Sistema de gestión de flotas de drones</text>
+<rect x="401.0" y="285.0" width="158.0" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="480.0" y="301.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Autenticarse (HU-19)</text>
+<rect x="360.3" y="323.0" width="200.6" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="460.6" y="339.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Registrar operador (HU-20)</text>
+<rect x="324.1" y="361.0" width="243.2" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="445.7" y="377.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Editar cuenta de usuario (HU-22)</text>
+<rect x="305.3" y="399.0" width="257.4" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="434.0" y="415.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Eliminar cuenta de usuario (HU-21)</text>
+<rect x="338.9" y="437.0" width="172.2" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="425.0" y="453.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Registrar dron (HU-01)</text>
+<rect x="314.4" y="475.0" width="207.7" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="418.3" y="491.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Dar de baja un dron (HU-03)</text>
+<rect x="316.9" y="513.0" width="193.5" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="413.6" y="529.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Reactivar un dron (HU-03)</text>
+<rect x="246.7" y="551.0" width="328.4" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="410.9" y="567.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Configurar ponderación de asignación (HU-18)</text>
+<rect x="270.6" y="589.0" width="278.7" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="410.0" y="605.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Configurar umbrales de alerta (HU-18)</text>
+<rect x="246.7" y="627.0" width="328.4" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="410.9" y="643.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Configurar umbrales de mantenimiento (HU-18)</text>
+<rect x="238.8" y="665.0" width="349.7" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="413.6" y="681.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Consultar vista consolidada de la flota (HU-16)</text>
+<rect x="271.8" y="703.0" width="292.9" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="418.3" y="719.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Consultar historial de misiones (HU-17)</text>
+<rect x="282.1" y="741.0" width="285.8" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="425.0" y="757.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Recibir alerta de batería baja (HU-09)</text>
+<rect x="245.0" y="779.0" width="378.1" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="434.0" y="795.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Recibir alerta de desvío o zona restringida (HU-10)</text>
+<rect x="285.0" y="817.0" width="321.3" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="445.7" y="833.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Recibir notificación en tiempo real (HU-11)</text>
+<rect x="331.9" y="855.0" width="257.4" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="460.6" y="871.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Ver severidad de la alerta (HU-12)</text>
+<rect x="308.7" y="893.0" width="342.6" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="480.0" y="909.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Recibir recomendación de mantenimiento (HU-14)</text>
+<rect x="1500.4" y="323.0" width="158.0" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1579.4" y="339.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Autenticarse (HU-19)</text>
+<rect x="1508.2" y="361.0" width="172.2" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1594.3" y="377.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Registrar dron (HU-01)</text>
+<rect x="1502.1" y="399.0" width="207.7" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1606.0" y="415.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Dar de baja un dron (HU-03)</text>
+<rect x="1518.2" y="437.0" width="193.5" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1615.0" y="453.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Reactivar un dron (HU-03)</text>
+<rect x="1461.1" y="475.0" width="321.3" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1621.7" y="491.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Gestionar estado operativo del dron (HU-02)</text>
+<rect x="1547.4" y="513.0" width="158.0" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1626.4" y="529.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Crear misión (HU-04)</text>
+<rect x="1493.3" y="551.0" width="271.6" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1629.1" y="567.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Asignar dron automáticamente (HU-05)</text>
+<rect x="1483.5" y="589.0" width="292.9" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1630.0" y="605.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Validar ruta antes del despegue (HU-06)</text>
+<rect x="1511.0" y="627.0" width="236.1" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1629.1" y="643.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Ver avance de la misión (HU-07)</text>
+<rect x="1543.8" y="665.0" width="165.1" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1626.4" y="681.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Pausar misión (HU-08)</text>
+<rect x="1532.1" y="703.0" width="179.3" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1621.7" y="719.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Reanudar misión (HU-08)</text>
+<rect x="1521.8" y="741.0" width="186.4" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1615.0" y="757.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Redirigir misión (HU-08)</text>
+<rect x="1519.9" y="779.0" width="172.2" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1606.0" y="795.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Abortar misión (HU-08)</text>
+<rect x="1423.0" y="817.0" width="342.6" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1594.3" y="833.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Consultar historial de vuelos del dron (HU-13)</text>
+<rect x="1415.2" y="855.0" width="328.4" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1579.4" y="871.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Registrar resultado de mantenimiento (HU-15)</text>
+<rect x="852.2" y="164.0" width="335.5" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1020.0" y="180.0" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Suministrar zonas restringidas (HU-06, HU-10)</text>
+<rect x="753.5" y="1034.4" width="292.9" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="900.0" y="1050.4" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Enviar posición del dron (HU-07, HU-10)</text>
+<rect x="1022.0" y="1034.4" width="236.1" height="22" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1140.0" y="1050.4" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#111" text-anchor="middle">Enviar nivel de batería (HU-09)</text>
+<circle cx="55" cy="1160" r="14" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+<text x="80" y="1165" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#222">Sistema</text>
+<rect x="170" y="1147" width="26" height="26" fill="#fef3c7" stroke="#333" stroke-width="2"/>
+<text x="206" y="1165" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#222">Actor (usuario)</text>
+<rect x="340" y="1147" width="26" height="26" fill="#e5e7eb" stroke="#333" stroke-width="2"/>
+<text x="376" y="1165" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#222">Actor de sistema (sistema externo)</text>
+<text x="30" y="1194" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#444">Cada línea es una funcionalidad. ⚠ = definido fuera de alcance en las historias de usuario.</text>
+</svg>
