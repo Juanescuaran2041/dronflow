@@ -45,7 +45,7 @@ El detalle de cada componente, interfaz y conexión está en [`docs/diagrama-com
 
 ## Diagrama de contexto
 
-<img width="2053" height="760" alt="image" src="https://github.com/user-attachments/assets/4309e54b-560f-4380-86c5-ea667c71ec4e" />
+[![Diagrama de contexto de Dronflow](docs/diagrama-contexto.png)](docs/diagrama-contexto.svg)
 
 Dronflow como caja negra, con sus actores y los sistemas externos que le suministran datos. Cada línea es una funcionalidad concreta, trazada a su historia de usuario. Haz clic para abrir la versión vectorial.
 
