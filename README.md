@@ -29,6 +29,40 @@ El proyecto se desarrolla en Java como trabajo final de la asignatura de Diseño
 - **Backend:** obligatoriamente con **Spring Boot** (Java).
 - **Base de datos:** **MongoDB**.
 
+## Arquitectura
+
+El proyecto sigue una **arquitectura en capas** (*layer architecture*). Cada petición atraviesa las capas siempre en el mismo sentido y una capa solo conoce a la que tiene justo debajo:
+
+```
+Controller  →  Service  →  Repository  →  MongoDB
+  (REST)      (lógica de    (acceso a
+              negocio)       datos)
+```
+
+- **Controller** — expone los endpoints REST, valida la entrada y traduce a DTO. No contiene lógica de negocio.
+- **Service** — concentra las reglas de negocio, las transiciones de estado y la coordinación entre entidades. Es la única capa que puede llamar a varios repositorios.
+- **Repository** — acceso a MongoDB. Solo operaciones de persistencia y consulta.
+
+**Regla del proyecto: por cada clase del modelo hay un repositorio, un servicio y un controlador.**
+
+| Clase del modelo | Repository | Service | Controller |
+|---|---|---|---|
+| `User` | `UserRepository` | `UserService` | `UserController` |
+| `Drone` | `DroneRepository` | `DroneService` | `DroneController` |
+| `Mission` | `MissionRepository` | `MissionService` | `MissionController` |
+| `Alert` | `AlertRepository` | `AlertService` | `AlertController` |
+| `FlightHistory` | `FlightHistoryRepository` | `FlightHistoryService` | `FlightHistoryController` |
+| `MaintenanceRecord` | `MaintenanceRecordRepository` | `MaintenanceRecordService` | `MaintenanceRecordController` |
+| `MaintenanceRecommendation` | `MaintenanceRecommendationRepository` | `MaintenanceRecommendationService` | `MaintenanceRecommendationController` |
+| `SystemConfiguration` | `SystemConfigurationRepository` | `SystemConfigurationService` | `SystemConfigurationController` |
+
+Quedan fuera de la regla las clases que no tienen colección propia en MongoDB:
+
+- `DeliveryDrone`, `InspectionDrone` y `MonitoringDrone` son subtipos de `Drone` y comparten su colección, su repositorio, su servicio y su controlador.
+- `Location`, `Route`, `Incident`, `AssignmentRule`, `AlertThresholds` y `MaintenanceThresholds` son objetos de valor: van embebidos en el documento de la entidad que los contiene (`Mission`, `FlightHistory` y `SystemConfiguration`).
+- `RestrictedZone` no se persiste: según RF-07 las zonas restringidas son datos de configuración fija provistos externamente, y se consultan a través de un proveedor externo.
+
+
 ## Diagrama de clases (vista lógica)
 
 ![Diagrama de clases de Dronflow](dronflow-backend.jpg)
