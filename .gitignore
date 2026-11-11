@@ -33,3 +33,11 @@ build/
 .vscode/
 
 
+
+### Visual Paradigm ###
+drownflow.vpp.bak_*
+*.vpp.lck
+.*.vpp.lck
+
+### Python ###
+__pycache__/

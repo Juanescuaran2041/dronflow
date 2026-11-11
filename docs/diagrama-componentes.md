@@ -375,9 +375,18 @@ Marcas: ▲ = el comportamiento está en la HU pero el nombre de la interfaz se 
 
 ### 8.1 Faltan por crear
 
-**Componente:** `Asignacion de Drones` — hoy Asignación de Drones y Panel de Control comparten una sola caja (su elemento de modelo se llama `Panel de Control`). Deja esa caja como Panel de Control y dibuja una nueva.
+Estado leído del `.vpp` el **8 de noviembre de 2026**: 11 componentes, 48 interfaces, 47 Realization, **0 Usage, 0 Assembly Connector, 0 Dependency**. Es decir: el lado ofrecido está casi completo y el lado consumidor sigue sin empezar.
 
-**Interfaces (11):** `IAssignDrone`, `IChooseMission` (Asignacion de Drones) · `IGetFleetSummary`, `IQueryMissions` (Panel de Control) · `IEvaluateDrone`, `IGetAlertsOfMission` (Gestion Monitoreo y Alertas, que ya tiene dos puertos vacíos) · `IReachCruise`, `IRedirectMission`, `IMissionCompleted` (Gestion de Misiones) · `IDroneAvailable` (Gestion de Flota) · `IGetRestrictedZones` (Proveedor de Zonas Restringidas, externo).
+Ya resuelto desde la revisión anterior: `IHashPassword` pasó de Association a Realization · Panel de Control quedó como caja propia con `IGetFleetSummary` y `IQueryMissions` · Gestion Monitoreo y Alertas ya tiene `IEvaluateDrone` e `IGetAlertsOfMission` · Gestion de Misiones ya tiene `IReachCruise` e `IRedirectMission`.
+
+**Componentes (2):** `Asignacion de Drones` y `Proveedor de Zonas Restringidas` (externo). Ninguno existe todavía.
+
+**Interfaces (5):** `IAssignDrone`, `IChooseMission` (Asignacion de Drones) · `IMissionCompleted` (Gestion de Misiones) · `IDroneAvailable` (Gestion de Flota) · `IGetRestrictedZones` (Proveedor de Zonas Restringidas).
+
+**Dos defectos en el `.vpp`:**
+
+1. `ILogin ` tiene un **espacio al final** del nombre. Renómbrala a `ILogin`: un conector que busque `ILogin` no va a casar con ella.
+2. `IRegisterOperator` está dibujada pero **sin Realization**: la bolita flota suelta y Gestion de Usuarios solo implementa 2 de sus 3 interfaces. Conéctala a su puerto en Gestion de Usuarios.
 
 ### 8.2 Conectores de ensamble (28)
 
@@ -385,7 +394,7 @@ Técnica: hover sobre el **consumidor** → Resource Catalog → soltar **sobre 
 
 | N.º | Consumidor | Interfaz (bolita destino) | Proveedor | HU | Bolita |
 |---|---|---|---|---|---|
-| 1 | Gestion de Usuarios | `IHashPassword` | Autenticacion | ✱ RNF-05 | existe, pero hoy está como **Association**: bórrala y rehazla como Realization |
+| 1 | Gestion de Usuarios | `IHashPassword` | Autenticacion | ✱ RNF-05 | existe |
 | 2 | Gestion de Misiones | `IAssignDrone` | Asignacion de Drones | HU-04, 05 | crear |
 | 3 | Gestion de Misiones | `IChooseMission` | Asignacion de Drones | HU-05 | crear |
 | 4 | Gestion de Misiones | `IReserveDrone` | Gestion de Flota | HU-05 | existe |
@@ -404,7 +413,7 @@ Técnica: hover sobre el **consumidor** → Resource Catalog → soltar **sobre 
 | 17 | Panel de Control | `ISubscribeToAlerts` | Notificacion en Tiempo Real | HU-11, 16 | existe |
 | 18 | Panel de Control | `IListDrones` | Gestion de Flota | HU-16 ▲ | existe |
 | 19 | Panel de Control | `IFindMissions` | Gestion de Misiones | HU-17 | existe |
-| 20 | Gestion de Vuelos | `IGetAlertsOfMission` | Gestion Monitoreo y Alertas | HU-13 | crear |
+| 20 | Gestion de Vuelos | `IGetAlertsOfMission` | Gestion Monitoreo y Alertas | HU-13 | existe |
 | 21 | Gestion de Mantenimientos | `IGetMaintenanceThresholds` | Configuracion del Sistema | HU-14, 18 | existe |
 | 22 | Gestion de Mantenimientos | `ISendMaintenance` | Gestion de Flota | HU-14 | existe |
 | 23 | Gestion de Mantenimientos | `IPublishAlert` | Notificacion en Tiempo Real | HU-11, 14 | existe |
@@ -443,4 +452,4 @@ No es un error que se queden sueltas: nadie dentro del alcance las consume.
 
 ### 8.5 Totales
 
-11 interfaces por crear · 1 componente por separar · 1 Association por rehacer · 28 conectores de ensamble · 3 eventos.
+Al 8 de noviembre de 2026: **2 componentes y 5 interfaces por crear · 2 nombres por arreglar · 28 conectores de ensamble · 3 eventos**. Los 28 conectores y los 3 eventos siguen sin empezar: el `.vpp` no tiene ni un Usage ni una Dependency.

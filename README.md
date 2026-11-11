@@ -34,6 +34,22 @@ El proyecto se desarrolla en Java como trabajo final de la asignatura de Diseño
 
 La especificación de cada clase, atributo, operación y relación está en [`docs/diagrama-clases.md`](docs/diagrama-clases.md).
 
+## Diagrama de componentes
+
+[![Diagrama de componentes de Dronflow](docs/diagrama-componentes.png)](docs/diagrama-componentes.svg)
+
+13 componentes, 52 interfaces y 30 conectores de ensamble, con sus puertos e interfaces provistas y requeridas. En el ancho del README los nombres de las interfaces no se alcanzan a leer: **haz clic en la imagen para abrir la versión vectorial a tamaño completo**.
+
+El detalle de cada componente, interfaz y conexión está en [`docs/diagrama-componentes.md`](docs/diagrama-componentes.md).
+
+## Diagrama de contexto
+
+[![Diagrama de contexto de Dronflow](docs/diagrama-contexto.png)](docs/diagrama-contexto.svg)
+
+Dronflow como caja negra, con sus actores y los sistemas externos que le suministran datos. Cada línea es una funcionalidad concreta, trazada a su historia de usuario. Haz clic para abrir la versión vectorial.
+
+El listado completo de actores y funcionalidades está en [`docs/diagrama-contexto.md`](docs/diagrama-contexto.md).
+
 ## Autor
 
 -🧑‍💻 Juan Esteban Cuaran Santander — Estudiante de Ingeniería de Software 
