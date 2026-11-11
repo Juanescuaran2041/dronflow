@@ -39,5 +39,9 @@ La especificación de cada clase, atributo, operación y relación está en [`do
 
 ## Autor
 
+## Diagrama de Componentes
+
+<img width="170" height="137" alt="image" src="https://github.com/user-attachments/assets/2ba128e2-f908-4001-9d87-dafa7555746e" />
+
 -🧑‍💻 Juan Esteban Cuaran Santander — Estudiante de Ingeniería de Software 
 
