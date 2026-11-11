@@ -2,6 +2,9 @@
 
 Sistema de Gestión Inteligente de Flotas de Drones para Misiones de Entrega, Inspección y Monitoreo.
 
+<img width="2756" height="566" alt="image" src="https://github.com/user-attachments/assets/98f6a75b-827c-436f-b89f-5fd200c47489" />
+
+
 ## Descripción
 
 Dronflow es un sistema de software para la gestión centralizada de una flota de drones autónomos que ejecutan distintos tipos de misiones: entregas, inspección de infraestructura y monitoreo o fotografía aérea. El sistema controla el ciclo de vida completo de cada dron segun su disponibilidad y asigna misiones según criterios como batería disponible, cercanía y prioridad.
