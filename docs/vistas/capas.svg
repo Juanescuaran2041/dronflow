@@ -1,0 +1,454 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3757" height="1792" viewBox="0 0 3757 1792" font-family="Arial, Helvetica, sans-serif">
+<defs>
+  <marker id="abierta" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="12" markerHeight="12" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M1 1 L11 6 L1 11" fill="none" stroke="#333" stroke-width="1.2"/></marker>
+  <marker id="triangulo" viewBox="0 0 16 16" refX="15" refY="8" markerWidth="16" markerHeight="16" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M1 1 L15 8 L1 15 z" fill="#fff" stroke="#333" stroke-width="1.2"/></marker>
+  <marker id="llena" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="12" markerHeight="12" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M1 1 L11 6 L1 11 z" fill="#1a2340"/></marker>
+  <style>.dst{font-size:13px;fill:#1a2340} .dnm{font-size:16px;fill:#1a2340} .nm{font-size:13px;font-weight:bold;fill:#111} .st{font-size:12px;fill:#333} .mb{font-size:12px;fill:#111} .tt{font-size:15px;font-weight:bold;fill:#111}</style>
+</defs>
+<rect width="3757" height="1792" fill="#fff"/>
+<text class="tt" x="20" y="28">Dronflow — Development view: UML class diagram organized in three layers</text>
+<rect x="40" y="60" width="3633.6" height="230" fill="#ffffde" stroke="#aaaa33"/>
+<text class="mb" x="1856.8" y="77" text-anchor="middle">Presentation_Controller</text>
+<rect x="40" y="380" width="3633.6" height="278" fill="#ffffde" stroke="#aaaa33"/>
+<text class="mb" x="1856.8" y="397" text-anchor="middle">Business_Service</text>
+<rect x="40" y="748" width="3633.6" height="182" fill="#ffffde" stroke="#aaaa33"/>
+<text class="mb" x="1856.8" y="765" text-anchor="middle">Data_Repository</text>
+<rect x="40" y="1020" width="3633.6" height="722" fill="#ffffde" stroke="#aaaa33"/>
+<text class="mb" x="1856.8" y="1037" text-anchor="middle">Domain_Model</text>
+<path d="M208.3 202.0 L208.3 414.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#abierta)"/>
+<path d="M208.3 522.0 L208.3 782.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#abierta)"/>
+<path d="M208.3 890.0 L208.3 1054.0" fill="none" stroke="#333" stroke-width="1.2" stroke-dasharray="7 4" marker-end="url(#abierta)"/>
+<path d="M333.7 468.0 L380.6 468.0 L380.6 1026.0 L322.6 1026.0 L296.2 1054.0" fill="none" stroke="#333" stroke-width="1.2" stroke-dasharray="7 4" marker-end="url(#abierta)"/>
+<path d="M643.8 250.0 L643.8 414.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#abierta)"/>
+<path d="M643.8 634.0 L643.8 782.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#abierta)"/>
+<path d="M643.8 906.0 L643.8 1054.0" fill="none" stroke="#333" stroke-width="1.2" stroke-dasharray="7 4" marker-end="url(#abierta)"/>
+<path d="M753.4 524.0 L812.9 524.0 L812.9 1026.0 L754.9 1026.0 L740.0 1054.0" fill="none" stroke="#333" stroke-width="1.2" stroke-dasharray="7 4" marker-end="url(#abierta)"/>
+<path d="M1066.6 266.0 L1066.6 414.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#abierta)"/>
+<path d="M1066.6 586.0 L1066.6 782.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#abierta)"/>
+<path d="M1066.6 906.0 L1066.6 1054.0" fill="none" stroke="#333" stroke-width="1.2" stroke-dasharray="7 4" marker-end="url(#abierta)"/>
+<path d="M1198.3 500.0 L1226.3 500.0 L1226.3 1026.0 L1149.4 1026.0 L1140.1 1054.0" fill="none" stroke="#333" stroke-width="1.2" stroke-dasharray="7 4" marker-end="url(#abierta)"/>
+<path d="M1502.0 154.0 L1502.0 414.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#abierta)"/>
+<path d="M1502.0 506.0 L1502.0 782.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#abierta)"/>
+<path d="M1502.0 874.0 L1502.0 1054.0" fill="none" stroke="#333" stroke-width="1.2" stroke-dasharray="7 4" marker-end="url(#abierta)"/>
+<path d="M1649.5 460.0 L1683.8 460.0 L1683.8 1026.0 L1565.9 1026.0 L1550.1 1054.0" fill="none" stroke="#333" stroke-width="1.2" stroke-dasharray="7 4" marker-end="url(#abierta)"/>
+<path d="M1984.8 154.0 L1984.8 414.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#abierta)"/>
+<path d="M1984.8 506.0 L1984.8 782.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#abierta)"/>
+<path d="M1984.8 874.0 L1984.8 1054.0" fill="none" stroke="#333" stroke-width="1.2" stroke-dasharray="7 4" marker-end="url(#abierta)"/>
+<path d="M2116.4 460.0 L2191.7 460.0 L2191.7 1026.0 L2099.1 1026.0 L2068.6 1054.0" fill="none" stroke="#333" stroke-width="1.2" stroke-dasharray="7 4" marker-end="url(#abierta)"/>
+<path d="M2492.7 154.0 L2492.7 414.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#abierta)"/>
+<path d="M2492.7 474.0 L2492.6 782.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#abierta)"/>
+<path d="M2492.6 874.0 L2492.6 1054.0" fill="none" stroke="#333" stroke-width="1.2" stroke-dasharray="7 4" marker-end="url(#abierta)"/>
+<path d="M2668.5 444.0 L2699.6 444.0 L2699.6 1026.0 L2553.4 1026.0 L2532.7 1054.0" fill="none" stroke="#333" stroke-width="1.2" stroke-dasharray="7 4" marker-end="url(#abierta)"/>
+<path d="M2987.9 154.0 L2987.9 414.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#abierta)"/>
+<path d="M2987.9 490.0 L2987.9 782.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#abierta)"/>
+<path d="M2987.9 874.0 L2987.9 1054.0" fill="none" stroke="#333" stroke-width="1.2" stroke-dasharray="7 4" marker-end="url(#abierta)"/>
+<path d="M3129.1 452.0 L3182.3 452.0 L3182.3 1026.0 L3061.2 1026.0 L3036.2 1054.0" fill="none" stroke="#333" stroke-width="1.2" stroke-dasharray="7 4" marker-end="url(#abierta)"/>
+<path d="M3476.9 234.0 L3476.9 414.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#abierta)"/>
+<path d="M3476.9 554.0 L3476.9 782.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#abierta)"/>
+<path d="M3476.9 874.0 L3476.9 1054.0" fill="none" stroke="#333" stroke-width="1.2" stroke-dasharray="7 4" marker-end="url(#abierta)"/>
+<path d="M3649.6 484.0 L3677.6 484.0 L3677.6 1026.0 L3619.6 1026.0 L3588.6 1054.0" fill="none" stroke="#333" stroke-width="1.2" stroke-dasharray="7 4" marker-end="url(#abierta)"/>
+<path d="M254.1 1626.0 L502.6 1376.7" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#triangulo)"/>
+<path d="M643.7 1626.0 L643.8 1416.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#triangulo)"/>
+<path d="M1022.1 1626.0 L784.9 1380.9" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#triangulo)"/>
+<path d="M953.8 1264.3 L784.9 1248.4" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#abierta)"/>
+<path d="M1408.1 1168.3 L1179.4 1239.8" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#abierta)"/>
+<rect x="101.79999999999998" y="94" width="213.0" height="108" fill="#ececff" stroke="#9370db"/>
+<text class="nm" x="208.29999999999998" y="112" text-anchor="middle">UserController</text>
+<line x1="101.79999999999998" y1="120" x2="314.79999999999995" y2="120" stroke="#9370db"/>
+<line x1="101.79999999999998" y1="130" x2="314.79999999999995" y2="130" stroke="#9370db"/>
+<text class="mb" x="109.79999999999998" y="147">+login(credentials) : Session</text>
+<text class="mb" x="109.79999999999998" y="163">+registerOperator(data) : User</text>
+<text class="mb" x="109.79999999999998" y="179">+edit(id, data) : User</text>
+<text class="mb" x="109.79999999999998" y="195">+delete(id) : void</text>
+<rect x="82.89999999999999" y="414" width="250.79999999999998" height="108" fill="#ececff" stroke="#9370db"/>
+<text class="nm" x="208.29999999999998" y="432" text-anchor="middle">UserService</text>
+<line x1="82.89999999999999" y1="440" x2="333.7" y2="440" stroke="#9370db"/>
+<line x1="82.89999999999999" y1="450" x2="333.7" y2="450" stroke="#9370db"/>
+<text class="mb" x="90.89999999999999" y="467">+login(userName, password) : Session</text>
+<text class="mb" x="90.89999999999999" y="483">+registerOperator(data) : User</text>
+<text class="mb" x="90.89999999999999" y="499">+edit(id, data) : User</text>
+<text class="mb" x="90.89999999999999" y="515">+delete(id) : void</text>
+<rect x="64.0" y="782" width="288.59999999999997" height="108" fill="#ececff" stroke="#9370db"/>
+<text class="st" x="208.29999999999998" y="800" text-anchor="middle">«interface»</text>
+<text class="nm" x="208.29999999999998" y="816" text-anchor="middle">UserRepository</text>
+<line x1="64.0" y1="824" x2="352.59999999999997" y2="824" stroke="#9370db"/>
+<line x1="64.0" y1="834" x2="352.59999999999997" y2="834" stroke="#9370db"/>
+<text class="mb" x="72.0" y="851">+save(user) : User</text>
+<text class="mb" x="72.0" y="867">+findById(id) : Optional&lt;User&gt;</text>
+<text class="mb" x="72.0" y="883">+findByUserName(userName) : Optional&lt;User&gt;</text>
+<rect x="64.0" y="1054" width="288.59999999999997" height="186" fill="#ececff" stroke="#9370db"/>
+<text class="nm" x="208.29999999999998" y="1072" text-anchor="middle">User</text>
+<line x1="64.0" y1="1080" x2="352.59999999999997" y2="1080" stroke="#9370db"/>
+<text class="mb" x="72.0" y="1097">-UUID id</text>
+<text class="mb" x="72.0" y="1113">-String userName</text>
+<text class="mb" x="72.0" y="1129">-String passwordHash</text>
+<text class="mb" x="72.0" y="1145">-Role role</text>
+<text class="mb" x="72.0" y="1161">-boolean active</text>
+<line x1="64.0" y1="1168" x2="352.59999999999997" y2="1168" stroke="#9370db"/>
+<text class="mb" x="72.0" y="1185">+authenticate(password) : boolean</text>
+<text class="mb" x="72.0" y="1201">+editData(userName, password, role) : void</text>
+<text class="mb" x="72.0" y="1217">+deactivate() : void</text>
+<text class="mb" x="72.0" y="1233">+hasPermission(permission) : boolean</text>
+<rect x="537.25" y="94" width="213.0" height="156" fill="#ececff" stroke="#9370db"/>
+<text class="nm" x="643.75" y="112" text-anchor="middle">DroneController</text>
+<line x1="537.25" y1="120" x2="750.25" y2="120" stroke="#9370db"/>
+<line x1="537.25" y1="130" x2="750.25" y2="130" stroke="#9370db"/>
+<text class="mb" x="545.25" y="147">+register(data) : Drone</text>
+<text class="mb" x="545.25" y="163">+listAll() : List&lt;Drone&gt;</text>
+<text class="mb" x="545.25" y="179">+findByCode(code) : Drone</text>
+<text class="mb" x="545.25" y="195">+fleetSummary() : FleetSummary</text>
+<text class="mb" x="545.25" y="211">+reportFault(code) : Drone</text>
+<text class="mb" x="545.25" y="227">+decommission(code) : Drone</text>
+<text class="mb" x="545.25" y="243">+reactivate(code) : Drone</text>
+<rect x="534.1" y="414" width="219.29999999999998" height="220" fill="#ececff" stroke="#9370db"/>
+<text class="nm" x="643.75" y="432" text-anchor="middle">DroneService</text>
+<line x1="534.1" y1="440" x2="753.4" y2="440" stroke="#9370db"/>
+<line x1="534.1" y1="450" x2="753.4" y2="450" stroke="#9370db"/>
+<text class="mb" x="542.1" y="467">+register(data) : Drone</text>
+<text class="mb" x="542.1" y="483">+listAll() : List&lt;Drone&gt;</text>
+<text class="mb" x="542.1" y="499">+findByCode(code) : Drone</text>
+<text class="mb" x="542.1" y="515">+fleetSummary() : FleetSummary</text>
+<text class="mb" x="542.1" y="531">+reportFault(code) : Drone</text>
+<text class="mb" x="542.1" y="547">+decommission(code) : Drone</text>
+<text class="mb" x="542.1" y="563">+reactivate(code) : Drone</text>
+<text class="mb" x="542.1" y="579">+reserve(code) : void</text>
+<text class="mb" x="542.1" y="595">+release(code) : void</text>
+<text class="mb" x="542.1" y="611">+completeMission(code) : void</text>
+<text class="mb" x="542.1" y="627">+sendToMaintenance(code) : void</text>
+<rect x="521.5" y="782" width="244.5" height="124" fill="#ececff" stroke="#9370db"/>
+<text class="st" x="643.75" y="800" text-anchor="middle">«interface»</text>
+<text class="nm" x="643.75" y="816" text-anchor="middle">DroneRepository</text>
+<line x1="521.5" y1="824" x2="766.0" y2="824" stroke="#9370db"/>
+<line x1="521.5" y1="834" x2="766.0" y2="834" stroke="#9370db"/>
+<text class="mb" x="529.5" y="851">+save(drone) : Drone</text>
+<text class="mb" x="529.5" y="867">+findByCode(code) : Optional&lt;Drone&gt;</text>
+<text class="mb" x="529.5" y="883">+findByState(state) : List&lt;Drone&gt;</text>
+<text class="mb" x="529.5" y="899">+findAll() : List&lt;Drone&gt;</text>
+<rect x="502.59999999999997" y="1054" width="282.3" height="362" fill="#ececff" stroke="#9370db"/>
+<text class="st" x="643.75" y="1072" text-anchor="middle">«abstract»</text>
+<text class="nm" x="643.75" y="1088" text-anchor="middle">Drone</text>
+<line x1="502.59999999999997" y1="1096" x2="784.9" y2="1096" stroke="#9370db"/>
+<text class="mb" x="510.59999999999997" y="1113">-String code</text>
+<text class="mb" x="510.59999999999997" y="1129">-String type</text>
+<text class="mb" x="510.59999999999997" y="1145">-int batteryCapacity</text>
+<text class="mb" x="510.59999999999997" y="1161">-double batteryLevelPercent</text>
+<text class="mb" x="510.59999999999997" y="1177">-int enduranceMin</text>
+<text class="mb" x="510.59999999999997" y="1193">-double maxPayload</text>
+<text class="mb" x="510.59999999999997" y="1209">-List&lt;String&gt; equipment</text>
+<text class="mb" x="510.59999999999997" y="1225">-Location location</text>
+<text class="mb" x="510.59999999999997" y="1241">-DroneState state</text>
+<line x1="502.59999999999997" y1="1248" x2="784.9" y2="1248" stroke="#9370db"/>
+<text class="mb" x="510.59999999999997" y="1265">+canExecute(mission) : boolean</text>
+<text class="mb" x="510.59999999999997" y="1281">+assignToMission() : void</text>
+<text class="mb" x="510.59999999999997" y="1297">+completeMission(batteryThreshold) : void</text>
+<text class="mb" x="510.59999999999997" y="1313">+finishCharging() : void</text>
+<text class="mb" x="510.59999999999997" y="1329">+releaseReservation() : void</text>
+<text class="mb" x="510.59999999999997" y="1345">+markOutOfService() : void</text>
+<text class="mb" x="510.59999999999997" y="1361">+sendToMaintenance() : void</text>
+<text class="mb" x="510.59999999999997" y="1377">+reactivate() : void</text>
+<text class="mb" x="510.59999999999997" y="1393">+decommission() : void</text>
+<text class="mb" x="510.59999999999997" y="1409">+executeTask(mission) : void</text>
+<rect x="934.9" y="94" width="263.4" height="172" fill="#ececff" stroke="#9370db"/>
+<text class="nm" x="1066.6" y="112" text-anchor="middle">MissionController</text>
+<line x1="934.9" y1="120" x2="1198.3" y2="120" stroke="#9370db"/>
+<line x1="934.9" y1="130" x2="1198.3" y2="130" stroke="#9370db"/>
+<text class="mb" x="942.9" y="147">+create(data) : Mission</text>
+<text class="mb" x="942.9" y="163">+find(filter) : List&lt;Mission&gt;</text>
+<text class="mb" x="942.9" y="179">+findByCode(code) : Mission</text>
+<text class="mb" x="942.9" y="195">+authorizeTakeoff(code) : Mission</text>
+<text class="mb" x="942.9" y="211">+pause(code) : Mission</text>
+<text class="mb" x="942.9" y="227">+resume(code) : Mission</text>
+<text class="mb" x="942.9" y="243">+redirect(code, destination) : Mission</text>
+<text class="mb" x="942.9" y="259">+abort(code) : Mission</text>
+<rect x="934.9" y="414" width="263.4" height="172" fill="#ececff" stroke="#9370db"/>
+<text class="nm" x="1066.6" y="432" text-anchor="middle">MissionService</text>
+<line x1="934.9" y1="440" x2="1198.3" y2="440" stroke="#9370db"/>
+<line x1="934.9" y1="450" x2="1198.3" y2="450" stroke="#9370db"/>
+<text class="mb" x="942.9" y="467">+create(data) : Mission</text>
+<text class="mb" x="942.9" y="483">+find(filter) : List&lt;Mission&gt;</text>
+<text class="mb" x="942.9" y="499">+findByCode(code) : Mission</text>
+<text class="mb" x="942.9" y="515">+authorizeTakeoff(code) : Mission</text>
+<text class="mb" x="942.9" y="531">+pause(code) : Mission</text>
+<text class="mb" x="942.9" y="547">+resume(code) : Mission</text>
+<text class="mb" x="942.9" y="563">+redirect(code, destination) : Mission</text>
+<text class="mb" x="942.9" y="579">+abort(code) : Mission</text>
+<rect x="938.05" y="782" width="257.1" height="124" fill="#ececff" stroke="#9370db"/>
+<text class="st" x="1066.6" y="800" text-anchor="middle">«interface»</text>
+<text class="nm" x="1066.6" y="816" text-anchor="middle">MissionRepository</text>
+<line x1="938.05" y1="824" x2="1195.15" y2="824" stroke="#9370db"/>
+<line x1="938.05" y1="834" x2="1195.15" y2="834" stroke="#9370db"/>
+<text class="mb" x="946.05" y="851">+save(mission) : Mission</text>
+<text class="mb" x="946.05" y="867">+findByCode(code) : Optional&lt;Mission&gt;</text>
+<text class="mb" x="946.05" y="883">+findByState(state) : List&lt;Mission&gt;</text>
+<text class="mb" x="946.05" y="899">+findAll() : List&lt;Mission&gt;</text>
+<rect x="953.8" y="1054" width="225.6" height="442" fill="#ececff" stroke="#9370db"/>
+<text class="nm" x="1066.6" y="1072" text-anchor="middle">Mission</text>
+<line x1="953.8" y1="1080" x2="1179.3999999999999" y2="1080" stroke="#9370db"/>
+<text class="mb" x="961.8" y="1097">-String code</text>
+<text class="mb" x="961.8" y="1113">-String type</text>
+<text class="mb" x="961.8" y="1129">-Priority priority</text>
+<text class="mb" x="961.8" y="1145">-Location origin</text>
+<text class="mb" x="961.8" y="1161">-Location destination</text>
+<text class="mb" x="961.8" y="1177">-double requiredPayload</text>
+<text class="mb" x="961.8" y="1193">-int minEndurance</text>
+<text class="mb" x="961.8" y="1209">-Route route</text>
+<text class="mb" x="961.8" y="1225">-MissionState state</text>
+<text class="mb" x="961.8" y="1241">-int routeAttempts</text>
+<text class="mb" x="961.8" y="1257">-LocalDateTime createdAt</text>
+<text class="mb" x="961.8" y="1273">-LocalDateTime start</text>
+<text class="mb" x="961.8" y="1289">-LocalDateTime end</text>
+<line x1="953.8" y1="1296" x2="1179.3999999999999" y2="1296" stroke="#9370db"/>
+<text class="mb" x="961.8" y="1313">+assignDrone(drone) : void</text>
+<text class="mb" x="961.8" y="1329">+releaseDrone() : void</text>
+<text class="mb" x="961.8" y="1345">+registerRouteAttempt() : int</text>
+<text class="mb" x="961.8" y="1361">+takeOff() : void</text>
+<text class="mb" x="961.8" y="1377">+reachCruise() : void</text>
+<text class="mb" x="961.8" y="1393">+pause() : void</text>
+<text class="mb" x="961.8" y="1409">+resume() : void</text>
+<text class="mb" x="961.8" y="1425">+redirect(newDestination) : void</text>
+<text class="mb" x="961.8" y="1441">+startReturn() : void</text>
+<text class="mb" x="961.8" y="1457">+finish() : void</text>
+<text class="mb" x="961.8" y="1473">+abort() : void</text>
+<text class="mb" x="961.8" y="1489">+flightDuration() : Duration</text>
+<rect x="1420.75" y="94" width="162.6" height="60" fill="#ececff" stroke="#9370db"/>
+<text class="nm" x="1502.05" y="112" text-anchor="middle">AlertController</text>
+<line x1="1420.75" y1="120" x2="1583.35" y2="120" stroke="#9370db"/>
+<line x1="1420.75" y1="130" x2="1583.35" y2="130" stroke="#9370db"/>
+<text class="mb" x="1428.75" y="147">+stream() : SseEmitter</text>
+<rect x="1354.6" y="414" width="294.9" height="92" fill="#ececff" stroke="#9370db"/>
+<text class="nm" x="1502.05" y="432" text-anchor="middle">AlertService</text>
+<line x1="1354.6" y1="440" x2="1649.5" y2="440" stroke="#9370db"/>
+<line x1="1354.6" y1="450" x2="1649.5" y2="450" stroke="#9370db"/>
+<text class="mb" x="1362.6" y="467">+evaluate(droneCode, missionCode) : void</text>
+<text class="mb" x="1362.6" y="483">+alertsOfMission(missionCode) : List&lt;Alert&gt;</text>
+<text class="mb" x="1362.6" y="499">+subscribe() : SseEmitter</text>
+<rect x="1348.3" y="782" width="307.5" height="92" fill="#ececff" stroke="#9370db"/>
+<text class="st" x="1502.05" y="800" text-anchor="middle">«interface»</text>
+<text class="nm" x="1502.05" y="816" text-anchor="middle">AlertRepository</text>
+<line x1="1348.3" y1="824" x2="1655.8" y2="824" stroke="#9370db"/>
+<line x1="1348.3" y1="834" x2="1655.8" y2="834" stroke="#9370db"/>
+<text class="mb" x="1356.3" y="851">+save(alert) : Alert</text>
+<text class="mb" x="1356.3" y="867">+findByMissionCode(missionCode) : List&lt;Alert&gt;</text>
+<rect x="1408.1499999999999" y="1054" width="187.79999999999998" height="170" fill="#ececff" stroke="#9370db"/>
+<text class="nm" x="1502.05" y="1072" text-anchor="middle">Alert</text>
+<line x1="1408.1499999999999" y1="1080" x2="1595.9499999999998" y2="1080" stroke="#9370db"/>
+<text class="mb" x="1416.1499999999999" y="1097">-UUID id</text>
+<text class="mb" x="1416.1499999999999" y="1113">-LocalDateTime generatedAt</text>
+<text class="mb" x="1416.1499999999999" y="1129">-Severity severity</text>
+<text class="mb" x="1416.1499999999999" y="1145">-Drone drone</text>
+<text class="mb" x="1416.1499999999999" y="1161">-AlertType type</text>
+<text class="mb" x="1416.1499999999999" y="1177">-String detail</text>
+<line x1="1408.1499999999999" y1="1184" x2="1595.9499999999998" y2="1184" stroke="#9370db"/>
+<text class="mb" x="1416.1499999999999" y="1201">+message() : String</text>
+<text class="mb" x="1416.1499999999999" y="1217">+isIncident() : boolean</text>
+<rect x="1853.05" y="94" width="263.4" height="60" fill="#ececff" stroke="#9370db"/>
+<text class="nm" x="1984.75" y="112" text-anchor="middle">FlightHistoryController</text>
+<line x1="1853.05" y1="120" x2="2116.45" y2="120" stroke="#9370db"/>
+<line x1="1853.05" y1="130" x2="2116.45" y2="130" stroke="#9370db"/>
+<text class="mb" x="1861.05" y="147">+getHistory(droneCode) : FlightHistory</text>
+<rect x="1853.05" y="414" width="263.4" height="92" fill="#ececff" stroke="#9370db"/>
+<text class="nm" x="1984.75" y="432" text-anchor="middle">FlightHistoryService</text>
+<line x1="1853.05" y1="440" x2="2116.45" y2="440" stroke="#9370db"/>
+<line x1="1853.05" y1="450" x2="2116.45" y2="450" stroke="#9370db"/>
+<text class="mb" x="1861.05" y="467">+getHistory(droneCode) : FlightHistory</text>
+<text class="mb" x="1861.05" y="483">+onMissionCompleted(event) : void</text>
+<text class="mb" x="1861.05" y="499">+resetCounters(droneCode) : void</text>
+<rect x="1805.8" y="782" width="357.9" height="92" fill="#ececff" stroke="#9370db"/>
+<text class="st" x="1984.75" y="800" text-anchor="middle">«interface»</text>
+<text class="nm" x="1984.75" y="816" text-anchor="middle">FlightHistoryRepository</text>
+<line x1="1805.8" y1="824" x2="2163.7" y2="824" stroke="#9370db"/>
+<line x1="1805.8" y1="834" x2="2163.7" y2="834" stroke="#9370db"/>
+<text class="mb" x="1813.8" y="851">+save(history) : FlightHistory</text>
+<text class="mb" x="1813.8" y="867">+findByDroneCode(droneCode) : Optional&lt;FlightHistory&gt;</text>
+<rect x="1840.45" y="1054" width="288.59999999999997" height="154" fill="#ececff" stroke="#9370db"/>
+<text class="nm" x="1984.75" y="1072" text-anchor="middle">FlightHistory</text>
+<line x1="1840.45" y1="1080" x2="2129.05" y2="1080" stroke="#9370db"/>
+<text class="mb" x="1848.45" y="1097">-Drone drone</text>
+<text class="mb" x="1848.45" y="1113">-Duration flightHours</text>
+<text class="mb" x="1848.45" y="1129">-int completedMissions</text>
+<text class="mb" x="1848.45" y="1145">-List&lt;Incident&gt; incidents</text>
+<line x1="1840.45" y1="1152" x2="2129.05" y2="1152" stroke="#9370db"/>
+<text class="mb" x="1848.45" y="1169">+registerCompletedMission(duration) : void</text>
+<text class="mb" x="1848.45" y="1185">+registerIncident(alert) : void</text>
+<text class="mb" x="1848.45" y="1201">+resetCounters() : void</text>
+<rect x="2316.85" y="94" width="351.59999999999997" height="60" fill="#ececff" stroke="#9370db"/>
+<text class="nm" x="2492.65" y="112" text-anchor="middle">MaintenanceRecordController</text>
+<line x1="2316.85" y1="120" x2="2668.45" y2="120" stroke="#9370db"/>
+<line x1="2316.85" y1="130" x2="2668.45" y2="130" stroke="#9370db"/>
+<text class="mb" x="2324.85" y="147">+recordResult(droneCode, result) : MaintenanceRecord</text>
+<rect x="2316.85" y="414" width="351.59999999999997" height="60" fill="#ececff" stroke="#9370db"/>
+<text class="nm" x="2492.65" y="432" text-anchor="middle">MaintenanceRecordService</text>
+<line x1="2316.85" y1="440" x2="2668.45" y2="440" stroke="#9370db"/>
+<line x1="2316.85" y1="450" x2="2668.45" y2="450" stroke="#9370db"/>
+<text class="mb" x="2324.85" y="467">+recordResult(droneCode, result) : MaintenanceRecord</text>
+<rect x="2313.7" y="782" width="357.9" height="92" fill="#ececff" stroke="#9370db"/>
+<text class="st" x="2492.6499999999996" y="800" text-anchor="middle">«interface»</text>
+<text class="nm" x="2492.6499999999996" y="816" text-anchor="middle">MaintenanceRecordRepository</text>
+<line x1="2313.7" y1="824" x2="2671.6" y2="824" stroke="#9370db"/>
+<line x1="2313.7" y1="834" x2="2671.6" y2="834" stroke="#9370db"/>
+<text class="mb" x="2321.7" y="851">+save(record) : MaintenanceRecord</text>
+<text class="mb" x="2321.7" y="867">+findByDroneCode(droneCode) : List&lt;MaintenanceRecord&gt;</text>
+<rect x="2401.8999999999996" y="1054" width="181.5" height="108" fill="#ececff" stroke="#9370db"/>
+<text class="nm" x="2492.6499999999996" y="1072" text-anchor="middle">MaintenanceRecord</text>
+<line x1="2401.8999999999996" y1="1080" x2="2583.3999999999996" y2="1080" stroke="#9370db"/>
+<text class="mb" x="2409.8999999999996" y="1097">-UUID id</text>
+<text class="mb" x="2409.8999999999996" y="1113">-Drone drone</text>
+<text class="mb" x="2409.8999999999996" y="1129">-MaintenanceResult result</text>
+<text class="mb" x="2409.8999999999996" y="1145">-LocalDateTime date</text>
+<line x1="2401.8999999999996" y1="1152" x2="2583.3999999999996" y2="1152" stroke="#9370db"/>
+<rect x="2846.7999999999997" y="94" width="282.3" height="60" fill="#ececff" stroke="#9370db"/>
+<text class="nm" x="2987.95" y="112" text-anchor="middle">MaintenanceRecommendationController</text>
+<line x1="2846.7999999999997" y1="120" x2="3129.1" y2="120" stroke="#9370db"/>
+<line x1="2846.7999999999997" y1="130" x2="3129.1" y2="130" stroke="#9370db"/>
+<text class="mb" x="2854.7999999999997" y="147">+list() : List&lt;MaintenanceRecommendation&gt;</text>
+<rect x="2846.7999999999997" y="414" width="282.3" height="76" fill="#ececff" stroke="#9370db"/>
+<text class="nm" x="2987.95" y="432" text-anchor="middle">MaintenanceRecommendationService</text>
+<line x1="2846.7999999999997" y1="440" x2="3129.1" y2="440" stroke="#9370db"/>
+<line x1="2846.7999999999997" y1="450" x2="3129.1" y2="450" stroke="#9370db"/>
+<text class="mb" x="2854.7999999999997" y="467">+onHistoryUpdated(event) : void</text>
+<text class="mb" x="2854.7999999999997" y="483">+list() : List&lt;MaintenanceRecommendation&gt;</text>
+<rect x="2821.6" y="782" width="332.7" height="92" fill="#ececff" stroke="#9370db"/>
+<text class="st" x="2987.95" y="800" text-anchor="middle">«interface»</text>
+<text class="nm" x="2987.95" y="816" text-anchor="middle">MaintenanceRecommendationRepository</text>
+<line x1="2821.6" y1="824" x2="3154.2999999999997" y2="824" stroke="#9370db"/>
+<line x1="2821.6" y1="834" x2="3154.2999999999997" y2="834" stroke="#9370db"/>
+<text class="mb" x="2829.6" y="851">+save(recommendation) : MaintenanceRecommendation</text>
+<text class="mb" x="2829.6" y="867">+findAll() : List&lt;MaintenanceRecommendation&gt;</text>
+<rect x="2884.7" y="1054" width="206.5" height="108" fill="#ececff" stroke="#9370db"/>
+<text class="nm" x="2987.95" y="1072" text-anchor="middle">MaintenanceRecommendation</text>
+<line x1="2884.7" y1="1080" x2="3091.2" y2="1080" stroke="#9370db"/>
+<text class="mb" x="2892.7" y="1097">-UUID id</text>
+<text class="mb" x="2892.7" y="1113">-Drone drone</text>
+<text class="mb" x="2892.7" y="1129">-String reason</text>
+<text class="mb" x="2892.7" y="1145">-LocalDateTime generatedAt</text>
+<line x1="2884.7" y1="1152" x2="3091.2" y2="1152" stroke="#9370db"/>
+<rect x="3304.2999999999997" y="94" width="345.3" height="140" fill="#ececff" stroke="#9370db"/>
+<text class="nm" x="3476.95" y="112" text-anchor="middle">SystemConfigurationController</text>
+<line x1="3304.2999999999997" y1="120" x2="3649.6" y2="120" stroke="#9370db"/>
+<line x1="3304.2999999999997" y1="130" x2="3649.6" y2="130" stroke="#9370db"/>
+<text class="mb" x="3312.2999999999997" y="147">+getAssignmentRule() : AssignmentRule</text>
+<text class="mb" x="3312.2999999999997" y="163">+updateAssignmentRule(rule) : void</text>
+<text class="mb" x="3312.2999999999997" y="179">+getAlertThresholds() : AlertThresholds</text>
+<text class="mb" x="3312.2999999999997" y="195">+updateAlertThresholds(thresholds) : void</text>
+<text class="mb" x="3312.2999999999997" y="211">+getMaintenanceThresholds() : MaintenanceThresholds</text>
+<text class="mb" x="3312.2999999999997" y="227">+updateMaintenanceThresholds(thresholds) : void</text>
+<rect x="3304.2999999999997" y="414" width="345.3" height="140" fill="#ececff" stroke="#9370db"/>
+<text class="nm" x="3476.95" y="432" text-anchor="middle">SystemConfigurationService</text>
+<line x1="3304.2999999999997" y1="440" x2="3649.6" y2="440" stroke="#9370db"/>
+<line x1="3304.2999999999997" y1="450" x2="3649.6" y2="450" stroke="#9370db"/>
+<text class="mb" x="3312.2999999999997" y="467">+getAssignmentRule() : AssignmentRule</text>
+<text class="mb" x="3312.2999999999997" y="483">+updateAssignmentRule(rule) : void</text>
+<text class="mb" x="3312.2999999999997" y="499">+getAlertThresholds() : AlertThresholds</text>
+<text class="mb" x="3312.2999999999997" y="515">+updateAlertThresholds(thresholds) : void</text>
+<text class="mb" x="3312.2999999999997" y="531">+getMaintenanceThresholds() : MaintenanceThresholds</text>
+<text class="mb" x="3312.2999999999997" y="547">+updateMaintenanceThresholds(thresholds) : void</text>
+<rect x="3323.2" y="782" width="307.5" height="92" fill="#ececff" stroke="#9370db"/>
+<text class="st" x="3476.95" y="800" text-anchor="middle">«interface»</text>
+<text class="nm" x="3476.95" y="816" text-anchor="middle">SystemConfigurationRepository</text>
+<line x1="3323.2" y1="824" x2="3630.7" y2="824" stroke="#9370db"/>
+<line x1="3323.2" y1="834" x2="3630.7" y2="834" stroke="#9370db"/>
+<text class="mb" x="3331.2" y="851">+save(configuration) : SystemConfiguration</text>
+<text class="mb" x="3331.2" y="867">+findById(id) : Optional&lt;SystemConfiguration&gt;</text>
+<rect x="3304.2999999999997" y="1054" width="345.3" height="202" fill="#ececff" stroke="#9370db"/>
+<text class="st" x="3476.95" y="1072" text-anchor="middle">«singleton»</text>
+<text class="nm" x="3476.95" y="1088" text-anchor="middle">SystemConfiguration</text>
+<line x1="3304.2999999999997" y1="1096" x2="3649.6" y2="1096" stroke="#9370db"/>
+<text class="mb" x="3312.2999999999997" y="1113">-AssignmentRule assignmentRule</text>
+<text class="mb" x="3312.2999999999997" y="1129">-AlertThresholds alertThresholds</text>
+<text class="mb" x="3312.2999999999997" y="1145">-MaintenanceThresholds maintenanceThresholds</text>
+<line x1="3304.2999999999997" y1="1152" x2="3649.6" y2="1152" stroke="#9370db"/>
+<text class="mb" x="3312.2999999999997" y="1169">+getAssignmentRule() : AssignmentRule</text>
+<text class="mb" x="3312.2999999999997" y="1185">+getAlertThresholds() : AlertThresholds</text>
+<text class="mb" x="3312.2999999999997" y="1201">+getMaintenanceThresholds() : MaintenanceThresholds</text>
+<text class="mb" x="3312.2999999999997" y="1217">+updateAssignmentRule(rule) : void</text>
+<text class="mb" x="3312.2999999999997" y="1233">+updateAlertThresholds(thresholds) : void</text>
+<text class="mb" x="3312.2999999999997" y="1249">+updateMaintenanceThresholds(thresholds) : void</text>
+<rect x="108.09999999999998" y="1626" width="200.4" height="92" fill="#ececff" stroke="#9370db"/>
+<text class="nm" x="208.29999999999998" y="1644" text-anchor="middle">DeliveryDrone</text>
+<line x1="108.09999999999998" y1="1652" x2="308.5" y2="1652" stroke="#9370db"/>
+<line x1="108.09999999999998" y1="1662" x2="308.5" y2="1662" stroke="#9370db"/>
+<text class="mb" x="116.09999999999998" y="1679">+executeTask(mission) : void</text>
+<text class="mb" x="116.09999999999998" y="1695">-pickUpCargo() : void</text>
+<text class="mb" x="116.09999999999998" y="1711">-dropOffCargo() : void</text>
+<rect x="530.9499999999999" y="1626" width="225.6" height="76" fill="#ececff" stroke="#9370db"/>
+<text class="nm" x="643.7499999999999" y="1644" text-anchor="middle">InspectionDrone</text>
+<line x1="530.9499999999999" y1="1652" x2="756.55" y2="1652" stroke="#9370db"/>
+<line x1="530.9499999999999" y1="1662" x2="756.55" y2="1662" stroke="#9370db"/>
+<text class="mb" x="538.9499999999999" y="1679">+executeTask(mission) : void</text>
+<text class="mb" x="538.9499999999999" y="1695">-captureInspectionPoint() : void</text>
+<rect x="966.4" y="1626" width="200.4" height="92" fill="#ececff" stroke="#9370db"/>
+<text class="nm" x="1066.6" y="1644" text-anchor="middle">MonitoringDrone</text>
+<line x1="966.4" y1="1652" x2="1166.8" y2="1652" stroke="#9370db"/>
+<line x1="966.4" y1="1662" x2="1166.8" y2="1662" stroke="#9370db"/>
+<text class="mb" x="974.4" y="1679">+executeTask(mission) : void</text>
+<text class="mb" x="974.4" y="1695">-streamVideo() : void</text>
+<text class="mb" x="974.4" y="1711">-takePhoto() : void</text>
+<rect x="175.95" y="299.0" width="64.69999999999999" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="208.29999999999998" y="312.0" text-anchor="middle">delegates</text>
+<rect x="150.75" y="643.0" width="115.1" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="208.29999999999998" y="656.0" text-anchor="middle">saves and queries</text>
+<rect x="179.1" y="963.0" width="58.4" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="208.29999999999998" y="976.0" text-anchor="middle">persists</text>
+<rect x="316.74999999999994" y="948.0" width="127.7" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="380.59999999999997" y="961.0" text-anchor="middle">creates and returns</text>
+<rect x="611.4" y="323.0" width="64.69999999999999" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="643.75" y="336.0" text-anchor="middle">delegates</text>
+<rect x="586.2" y="699.0" width="115.1" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="643.75" y="712.0" text-anchor="middle">saves and queries</text>
+<rect x="614.55" y="971.0" width="58.4" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="643.75" y="984.0" text-anchor="middle">persists</text>
+<rect x="749.05" y="948.0" width="127.7" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="812.9" y="961.0" text-anchor="middle">creates and returns</text>
+<rect x="1034.25" y="331.0" width="64.69999999999999" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="1066.6" y="344.0" text-anchor="middle">delegates</text>
+<rect x="1009.05" y="675.0" width="115.1" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="1066.6" y="688.0" text-anchor="middle">saves and queries</text>
+<rect x="1037.3999999999999" y="971.0" width="58.4" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="1066.6" y="984.0" text-anchor="middle">persists</text>
+<rect x="1162.45" y="948.0" width="127.7" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="1226.3" y="961.0" text-anchor="middle">creates and returns</text>
+<rect x="1469.7" y="275.0" width="64.69999999999999" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="1502.05" y="288.0" text-anchor="middle">delegates</text>
+<rect x="1444.5" y="635.0" width="115.1" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="1502.05" y="648.0" text-anchor="middle">saves and queries</text>
+<rect x="1472.85" y="955.0" width="58.4" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="1502.05" y="968.0" text-anchor="middle">persists</text>
+<rect x="1619.95" y="948.0" width="127.7" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="1683.8" y="961.0" text-anchor="middle">creates and returns</text>
+<rect x="1952.4" y="275.0" width="64.69999999999999" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="1984.75" y="288.0" text-anchor="middle">delegates</text>
+<rect x="1927.2" y="635.0" width="115.1" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="1984.75" y="648.0" text-anchor="middle">saves and queries</text>
+<rect x="1955.55" y="955.0" width="58.4" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="1984.75" y="968.0" text-anchor="middle">persists</text>
+<rect x="2127.85" y="948.0" width="127.7" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="2191.7" y="961.0" text-anchor="middle">updates and returns</text>
+<rect x="2460.3" y="275.0" width="64.69999999999999" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="2492.65" y="288.0" text-anchor="middle">delegates</text>
+<rect x="2435.0999999999995" y="619.0" width="115.1" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="2492.6499999999996" y="632.0" text-anchor="middle">saves and queries</text>
+<rect x="2463.45" y="955.0" width="58.4" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="2492.6499999999996" y="968.0" text-anchor="middle">persists</text>
+<rect x="2635.75" y="948.0" width="127.7" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="2699.6" y="961.0" text-anchor="middle">creates and returns</text>
+<rect x="2955.6" y="275.0" width="64.69999999999999" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="2987.95" y="288.0" text-anchor="middle">delegates</text>
+<rect x="2930.3999999999996" y="627.0" width="115.1" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="2987.95" y="640.0" text-anchor="middle">saves and queries</text>
+<rect x="2958.75" y="955.0" width="58.4" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="2987.95" y="968.0" text-anchor="middle">persists</text>
+<rect x="3118.45" y="948.0" width="127.7" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="3182.2999999999997" y="961.0" text-anchor="middle">creates and returns</text>
+<rect x="3444.6" y="315.0" width="64.69999999999999" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="3476.95" y="328.0" text-anchor="middle">delegates</text>
+<rect x="3419.3999999999996" y="659.0" width="115.1" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="3476.95" y="672.0" text-anchor="middle">saves and queries</text>
+<rect x="3447.75" y="955.0" width="58.4" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="3476.95" y="968.0" text-anchor="middle">persists</text>
+<rect x="3620.0499999999997" y="948.0" width="115.1" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="3677.6" y="961.0" text-anchor="middle">reads and updates</text>
+<text class="mb" x="794.8555558596615" y="1243.2940102504115" text-anchor="start">assignedDrone</text>
+<text class="mb" x="794.8555558596615" y="1265.2940102504115" text-anchor="start">0..1</text>
+<text class="mb" x="1188.945287208723" y="1230.7890479724736" text-anchor="start">mission</text>
+<text class="mb" x="1188.945287208723" y="1252.7890479724736" text-anchor="start">0..1</text>
+</svg>

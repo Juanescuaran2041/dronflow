@@ -85,6 +85,23 @@ Dronflow como caja negra, con sus actores y los sistemas externos que le suminis
 
 El listado completo de actores y funcionalidades está en [`docs/diagrama-contexto.md`](docs/diagrama-contexto.md).
 
+## Diagrama de despliegue
+
+[![Diagrama de despliegue de Dronflow](docs/vistas/despliegue.jpg)](docs/vistas/despliegue.svg)
+
+Muestra **dónde se ejecuta** cada parte del sistema y cómo se comunican:
+
+- **Equipo del usuario** (`«device»`): el administrador u operador abre la aplicación web (`dronflow-web`, React + TS) en su navegador.
+- **Servidor** (`«device»`): Docker Engine ejecuta tres contenedores en la red interna `dronflow-net`:
+  - **nginx** sirve el build de React y reenvía las peticiones `/api/**` al backend. Es lo único expuesto hacia afuera (puerto 80).
+  - **JVM 21** ejecuta `dronflow-backend.jar` (Spring Boot): la API REST y el flujo SSE de alertas en tiempo real.
+  - **MongoDB** guarda la base `dronflow` en el volumen `mongo-data`, para que los datos no se pierdan al reiniciar (RNF-10).
+- **Sistemas externos** (`«node»`): el proveedor de zonas restringidas y la fuente de telemetría. Su protocolo aún no está definido.
+
+Rutas de comunicación: navegador → nginx por HTTP (puerto 80), nginx → backend por HTTP (puerto 8080) y backend → MongoDB con el protocolo de MongoDB (puerto 27017).
+
+También hay una versión sin Docker (JVM + MongoDB en un solo servidor): [`docs/vistas/despliegue-simple.jpg`](docs/vistas/despliegue-simple.jpg). El detalle de ambas opciones y la vista de desarrollo en tres capas están en [`docs/diagrama-despliegue-y-desarrollo.md`](docs/diagrama-despliegue-y-desarrollo.md).
+
 ## Autor
 
 -🧑‍💻 Juan Esteban Cuaran Santander — Estudiante de Ingeniería de Software 
