@@ -32,4 +32,5 @@ Característica: Seguimiento del avance de una misión
 ```
 
 **Supuestos / preguntas abiertas**
-- Los eventos de la tabla son ilustrativos; el detalle técnico de sensores/telemetría queda fuera del alcance de esta historia.
+- Los eventos de la tabla son ilustrativos; el detalle técnico de sensores queda fuera del alcance de esta historia.
+- Decisión del autor: la telemetría (batería y posición del dron) es interna del sistema, no un servicio externo. El propio dron actualiza su batería y posición dentro de Gestión de Flota (`Drone.updateTelemetry`) y cada lectura dispara la evaluación de alertas (HU-09, HU-10). Quién la invoca y cada cuánto se define en la implementación.

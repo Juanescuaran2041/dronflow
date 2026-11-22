@@ -65,42 +65,40 @@ Quedan fuera de la regla las clases que no tienen colección propia en MongoDB:
 
 ## Diagrama de clases (vista lógica)
 
-![Diagrama de clases de Dronflow](docs/vistas/dronflow-backend.jpg)
+![Diagrama de clases de Dronflow](<docs/Diagrama de clases.jpg>)
 
-La especificación de cada clase, atributo, operación y relación está en [`docs/diagrama-clases.md`](docs/diagrama-clases.md).
+## Vista de desarrollo (tres capas)
+
+![Vista de desarrollo de Dronflow](<docs/Development View.jpg>)
+
+Cada entidad tiene su Controller (Presentation Layer), Service (Service Layer) y Repository (Repository Layer). El Domain Layer incluye las entidades y sus clases auxiliares (enumeraciones y objetos de valor).
 
 ## Diagrama de componentes
 
-[![Diagrama de componentes de Dronflow](docs/vistas/diagrama-componentes.png)](docs/vistas/diagrama-componentes.svg)
+![Diagrama de componentes de Dronflow](<docs/Component Diagram.jpg>)
 
-13 componentes, 52 interfaces y 30 conectores de ensamble, con sus puertos e interfaces provistas y requeridas. En el ancho del README los nombres de las interfaces no se alcanzan a leer: **haz clic en la imagen para abrir la versión vectorial a tamaño completo**.
-
-El detalle de cada componente, interfaz y conexión está en [`docs/diagrama-componentes.md`](docs/diagrama-componentes.md).
+13 componentes del backend y el proveedor externo de zonas restringidas, con sus interfaces provistas y requeridas y los eventos internos (`«event»`) entre módulos.
 
 ## Diagrama de contexto
 
 <img width="1089" height="642" alt="image" src="https://github.com/user-attachments/assets/ea7a3d04-8701-4c09-b868-2b435894bf11" />
 
-Dronflow como caja negra, con sus actores y los sistemas externos que le suministran datos. Cada línea es una funcionalidad concreta, trazada a su historia de usuario. Haz clic para abrir la versión vectorial.
-
-El listado completo de actores y funcionalidades está en [`docs/diagrama-contexto.md`](docs/diagrama-contexto.md).
+Dronflow como caja negra, con sus actores y los sistemas externos que le suministran datos. Cada línea es una funcionalidad concreta, trazada a su historia de usuario.
 
 ## Diagrama de despliegue
 
-[![Diagrama de despliegue de Dronflow](docs/vistas/despliegue.jpg)](docs/vistas/despliegue.svg)
+![Diagrama de despliegue de Dronflow](docs/vistas/deploymentView.jpg)
 
 Muestra **dónde se ejecuta** cada parte del sistema y cómo se comunican:
 
-- **Equipo del usuario** (`«device»`): el administrador u operador abre la aplicación web (`dronflow-web`, React + TS) en su navegador.
+- **Equipo del usuario** (`«device»`): el administrador u operador abre la aplicación web (`dronflow-frontend`, React + TS) en su navegador. El frontend vive en otro repositorio.
 - **Servidor** (`«device»`): Docker Engine ejecuta tres contenedores en la red interna `dronflow-net`:
-  - **nginx** sirve el build de React y reenvía las peticiones `/api/**` al backend. Es lo único expuesto hacia afuera (puerto 80).
-  - **JVM 21** ejecuta `dronflow-backend.jar` (Spring Boot): la API REST y el flujo SSE de alertas en tiempo real.
+  - **Node 20** ejecuta la aplicación React + TS (imagen construida en el repositorio del frontend) en el puerto 5173.
+  - **JVM 21** ejecuta `dronflow-backend.jar` (Spring Boot) en el puerto 8080: la API REST y el flujo SSE de alertas en tiempo real. Permite CORS desde el origen del frontend.
   - **MongoDB** guarda la base `dronflow` en el volumen `mongo-data`, para que los datos no se pierdan al reiniciar (RNF-10).
-- **Sistemas externos** (`«node»`): el proveedor de zonas restringidas y la fuente de telemetría. Su protocolo aún no está definido.
+- **Sistemas externos** (`«node»`): el proveedor de zonas restringidas (protocolo por definir). La telemetría (batería y posición) no es un sistema externo: es interna de Gestión de Flota.
 
-Rutas de comunicación: navegador → nginx por HTTP (puerto 80), nginx → backend por HTTP (puerto 8080) y backend → MongoDB con el protocolo de MongoDB (puerto 27017).
-
-También hay una versión sin Docker (JVM + MongoDB en un solo servidor): [`docs/vistas/despliegue-simple.jpg`](docs/vistas/despliegue-simple.jpg). El detalle de ambas opciones y la vista de desarrollo en tres capas están en [`docs/diagrama-despliegue-y-desarrollo.md`](docs/diagrama-despliegue-y-desarrollo.md).
+Rutas de comunicación: navegador → frontend por HTTP (puerto 5173), navegador → backend por HTTP (puerto 8080) y backend → MongoDB con el protocolo de MongoDB (puerto 27017). No se usa nginx.
 
 ## Principios GRASP aplicados
 
@@ -108,7 +106,7 @@ El diseño asigna cada responsabilidad siguiendo los nueve principios GRASP. Cad
 
 | Principio | Cómo se aplica en Dronflow |
 |---|---|
-| **Information Expert** | Cada responsabilidad la tiene la clase que posee los datos: `Drone.canExecute(mission)` decide si el dron sirve para una misión, `Route.crosses(zone)` y `Route.deviationFrom(position)` validan la ruta, `Location.distanceTo(other)` calcula la cercanía, `MaintenanceThresholds.exceededBy(history)` decide el mantenimiento y `Severity.isIncident()` decide qué alerta es incidencia. |
+| **Information Expert** | Cada responsabilidad la tiene la clase que posee los datos: `Drone.canExecute(mission)` decide si el dron sirve para una misión, `Route.crosses(zone)` y `Route.deviationFrom(position)` validan la ruta, `Location.distanceTo(other)` calcula la cercanía, `MaintenanceThresholds.exceededBy(history)` decide el mantenimiento y `Alert.isIncident()` decide qué alerta es incidencia. |
 | **Creator** | Crea quien contiene: `FlightHistory` crea sus `Incident` (`registerIncident(alert)`), `Mission` contiene su `Route` y `SystemConfiguration` contiene sus tres reglas. Las entidades nuevas las crean los Service del caso de uso (*creates and returns*). |
 | **Controller** | Un `@RestController` por entidad recibe la petición HTTP y delega en su Service, sin lógica de negocio. Solo expone lo que un usuario pide: por ejemplo, `FlightHistoryController` solo consulta el historial. |
 | **Low Coupling** | Controller → Service → Repository, y ningún componente usa el repositorio de otro: se comunican por interfaces. Los ciclos se rompen con eventos (`MissionCompleted`, `HistoryUpdated`, `DroneAvailable`, `TelemetryReceived`). Meta de CBO ≤ 8 (RNF-01). |

@@ -31,3 +31,4 @@ Característica: Alerta de desvío de ruta o zona restringida
 
 **Supuestos / preguntas abiertas**
 - 50 metros es un valor de ejemplo; el valor real lo define un administrador (ligado a HU-18).
+- Decisión del autor: la telemetría (batería y posición del dron) es interna del sistema, no un servicio externo. El propio dron actualiza su batería y posición dentro de Gestión de Flota (`Drone.updateTelemetry`) y cada lectura dispara la evaluación de alertas (HU-09, HU-10). Quién la invoca y cada cuánto se define en la implementación.
