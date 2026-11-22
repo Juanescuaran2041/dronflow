@@ -28,9 +28,9 @@
 <path d="M1148.5 938.0 L1148.5 1086.0" fill="none" stroke="#333" stroke-width="1.2" stroke-dasharray="7 4" marker-end="url(#abierta)"/>
 <path d="M1280.2 524.0 L1308.2 524.0 L1308.2 1058.0 L1231.3 1058.0 L1222.0 1086.0" fill="none" stroke="#333" stroke-width="1.2" stroke-dasharray="7 4" marker-end="url(#abierta)"/>
 <path d="M1606.0 170.0 L1606.0 430.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#abierta)"/>
-<path d="M1606.0 538.0 L1606.0 814.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#abierta)"/>
+<path d="M1606.0 554.0 L1606.0 814.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#abierta)"/>
 <path d="M1606.0 922.0 L1606.0 1086.0" fill="none" stroke="#333" stroke-width="1.2" stroke-dasharray="7 4" marker-end="url(#abierta)"/>
-<path d="M1753.4 484.0 L1809.8 484.0 L1809.8 1058.0 L1669.9 1058.0 L1654.1 1086.0" fill="none" stroke="#333" stroke-width="1.2" stroke-dasharray="7 4" marker-end="url(#abierta)"/>
+<path d="M1753.4 492.0 L1809.8 492.0 L1809.8 1058.0 L1669.9 1058.0 L1654.1 1086.0" fill="none" stroke="#333" stroke-width="1.2" stroke-dasharray="7 4" marker-end="url(#abierta)"/>
 <path d="M2110.7 154.0 L2110.7 430.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#abierta)"/>
 <path d="M2110.7 522.0 L2110.7 814.0" fill="none" stroke="#333" stroke-width="1.2" marker-end="url(#abierta)"/>
 <path d="M2110.7 906.0 L2110.8 1086.0" fill="none" stroke="#333" stroke-width="1.2" stroke-dasharray="7 4" marker-end="url(#abierta)"/>
@@ -223,14 +223,15 @@
 <line x1="1483.7499999999998" y1="130" x2="1728.2499999999998" y2="130" stroke="#9370db"/>
 <text class="mb" x="1491.7499999999998" y="147">+stream() : SseEmitter</text>
 <text class="mb" x="1491.7499999999998" y="163">+find(type, severity) : List&lt;Alert&gt;</text>
-<rect x="1458.5499999999997" y="430" width="294.9" height="108" fill="#ececff" stroke="#9370db"/>
+<rect x="1458.5499999999997" y="430" width="294.9" height="124" fill="#ececff" stroke="#9370db"/>
 <text class="nm" x="1605.9999999999998" y="448" text-anchor="middle">AlertService</text>
 <line x1="1458.5499999999997" y1="456" x2="1753.4499999999998" y2="456" stroke="#9370db"/>
 <line x1="1458.5499999999997" y1="466" x2="1753.4499999999998" y2="466" stroke="#9370db"/>
-<text class="mb" x="1466.5499999999997" y="483">+evaluate(droneCode, missionCode) : void</text>
-<text class="mb" x="1466.5499999999997" y="499">+alertsOfMission(missionCode) : List&lt;Alert&gt;</text>
-<text class="mb" x="1466.5499999999997" y="515">+subscribe() : SseEmitter</text>
-<text class="mb" x="1466.5499999999997" y="531">+find(type, severity) : List&lt;Alert&gt;</text>
+<text class="mb" x="1466.5499999999997" y="483">+onTelemetryReceived(event) : void</text>
+<text class="mb" x="1466.5499999999997" y="499">+evaluate(droneCode, missionCode) : void</text>
+<text class="mb" x="1466.5499999999997" y="515">+alertsOfMission(missionCode) : List&lt;Alert&gt;</text>
+<text class="mb" x="1466.5499999999997" y="531">+subscribe() : SseEmitter</text>
+<text class="mb" x="1466.5499999999997" y="547">+find(type, severity) : List&lt;Alert&gt;</text>
 <rect x="1430.1999999999998" y="814" width="351.59999999999997" height="108" fill="#ececff" stroke="#9370db"/>
 <text class="st" x="1605.9999999999998" y="832" text-anchor="middle">«interface»</text>
 <text class="nm" x="1605.9999999999998" y="848" text-anchor="middle">AlertRepository</text>
@@ -419,8 +420,8 @@
 <text class="mb" x="1308.1999999999998" y="993.0" text-anchor="middle">creates and returns</text>
 <rect x="1573.6499999999999" y="291.0" width="64.69999999999999" height="18" fill="#fff" opacity="0.92"/>
 <text class="mb" x="1605.9999999999998" y="304.0" text-anchor="middle">delegates</text>
-<rect x="1548.4499999999998" y="667.0" width="115.1" height="18" fill="#fff" opacity="0.92"/>
-<text class="mb" x="1605.9999999999998" y="680.0" text-anchor="middle">saves and queries</text>
+<rect x="1548.4499999999998" y="675.0" width="115.1" height="18" fill="#fff" opacity="0.92"/>
+<text class="mb" x="1605.9999999999998" y="688.0" text-anchor="middle">saves and queries</text>
 <rect x="1576.8" y="995.0" width="58.4" height="18" fill="#fff" opacity="0.92"/>
 <text class="mb" x="1606.0" y="1008.0" text-anchor="middle">persists</text>
 <rect x="1745.9499999999998" y="980.0" width="127.7" height="18" fill="#fff" opacity="0.92"/>

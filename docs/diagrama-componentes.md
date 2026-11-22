@@ -39,7 +39,7 @@ flowchart LR
 
     DB[("MongoDB")]
     ZON["Proveedor de Zonas Restringidas<br/>(externo)"]
-    TEL["Fuente de Telemetría ⚠<br/>(fuera de alcance)"]
+    TEL["Fuente de Telemetría ⚠<br/>(sistema por definir)"]
 
     WEB --> AUT & USR & FLT & MIS & MNT & DSH & CFG
     WEB -. "alertas ⚠" .-> NOT
@@ -49,7 +49,8 @@ flowchart LR
     ASG --> FLT & CFG
     RTE --> ZON
     FLT --> CFG
-    TEL -.-> MON
+    TEL --> FLT
+    FLT -. "TelemetryReceived" .-> MON
     MON --> MIS & FLT & RTE & CFG & NOT
     MIS -. "MissionCompleted" .-> HIS
     HIS --> MON
@@ -82,8 +83,9 @@ Requiere: `IRepository` (usuarios).
 | Puerto | Interfaz ofrecida | Operación | Diagrama de clases |
 |---|---|---|---|
 | RegisterOperator | `IRegisterOperator` | `registerOperator(userName, password)` | `User` |
-| EditUser | `IEditUser` | `edit(id, userName, password, role)` | `User.editData` |
+| EditUser | `IEditUser` | `edit(id, userName, password)` (el rol no se edita) | `User.editData` |
 | DeleteUser | `IDeleteUser` | `delete(id)` (lógica) | `User.deactivate` |
+| ListUsers | `IListUsers` | `listUsers(): List<User>` (solo activos) | `User.active` |
 
 Requiere: `IHashPassword`, `IRepository`.
 
@@ -104,8 +106,10 @@ Requiere: `IHashPassword`, `IRepository`.
 | FindDrone | `IFindDrone` | `findByCode(code): Drone` | `Drone.code` |
 | ListDrones | `IListDrones` | `listAll(): List<Drone>` | `DroneState` |
 | DroneAvailable | `«event» IDroneAvailable` | se publica cuando un dron queda disponible | HU-05, escenario 3 |
+| ReceiveTelemetry | `IReceiveTelemetry` | `receiveTelemetry(code, batteryLevel, position)` | `Drone.batteryLevelPercent`, `Drone.location` |
+| TelemetryReceived | `«event» ITelemetryReceived` | se publica al recibir una lectura de telemetría | HU-09, 10 |
 
-Requiere: `IGetAlertThresholds` (fin de misión: DISPONIBLE o CARGANDO según la batería), `IRepository`. La creación de cada tipo de dron pasa por un registro de fábricas dentro del componente (RNF-02); no es un puerto.
+Requiere: `IGetAlertThresholds` (fin de misión: DISPONIBLE o CARGANDO según la batería; si supera el umbral de mantenimiento, Mantenimiento lo pasa a EN MANTENIMIENTO, HU-14), `IRepository`. La creación de cada tipo de dron pasa por un registro de fábricas dentro del componente (RNF-02); no es un puerto.
 
 ### 3.4 Gestión de Misiones — HU-04, 06, 07, 08
 
@@ -116,7 +120,7 @@ Requiere: `IGetAlertThresholds` (fin de misión: DISPONIBLE o CARGANDO según la
 | TakeOff | `ITakeOff` | `takeOff(code)` | `Mission.takeOff` |
 | ReachCruise | `IReachCruise` | `reachCruise(code)` | `Mission.reachCruise` |
 | StartReturn | `IStartReturn` | `startReturn(code)` | `Mission.startReturn` |
-| FinishMission | `IFinishMission` | `finish(code)` | `Mission.finish` |
+| FinishMission | `IFinishMission` | `finish(code)` (`POST /api/missions/{code}/finish`; quién lo llama está por definir ⚠) | `Mission.finish` |
 | PauseMission | `IPauseMission` | `pause(code)` | `Mission.pause` |
 | ResumeMission | `IResumeMission` | `resume(code)` | `Mission.resume` |
 | RedirectMission | `IRedirectMission` | `redirect(code, newDestination)` | `Mission.redirect` |
@@ -151,8 +155,9 @@ Requiere: `IGetRestrictedZones` (proveedor externo).
 |---|---|---|---|
 | EvaluateDrone | `IEvaluateDrone` | `evaluate(droneCode, missionCode)` | `Alert`, `AlertType`, `Severity` |
 | GetAlertsOfMission | `IGetAlertsOfMission` | `alertsOfMission(missionCode): List<Alert>` | `Alert.mission` |
+| FindAlerts | `IFindAlerts` | `find(type, severity): List<Alert>` | `AlertType`, `Severity` |
 
-Requiere: `IReadTelemetry` ⚠, `IFindMission`, `IFindDrone`, `IGetAlertThresholds`, `ICheckPosition`, `IPublishAlert`, `IRepository`.
+Requiere: `«event» ITelemetryReceived` (dispara `evaluate`), `IFindMission`, `IFindDrone`, `IGetAlertThresholds`, `ICheckPosition`, `IPublishAlert`, `IRepository`.
 
 ### 3.8 Notificación en Tiempo Real — HU-11 · RNF-08, 09
 
@@ -216,7 +221,7 @@ Requiere: MongoDB (escrituras con `majority` + journal).
 | Elemento | Ofrece | Requiere |
 |---|---|---|
 | Proveedor de Zonas Restringidas (externo, RF-07) | `IGetRestrictedZones`: `getZones()` | — |
-| Fuente de Telemetría ⚠ (fuera de alcance, HU-07) | `IReadTelemetry`: `readTelemetry(droneCode)` | — |
+| Fuente de Telemetría ⚠ (sistema por definir, HU-07) | — | `IReceiveTelemetry` (envía batería y posición por POST) |
 | Aplicación Web (React + TS) | — | un puerto por pantalla, abajo |
 
 Puertos de la Aplicación Web (cada uno es un puerto requerido con un socket por cada interfaz listada):
@@ -224,13 +229,13 @@ Puertos de la Aplicación Web (cada uno es un puerto requerido con un socket por
 | Puerto (pantalla) | Interfaces requeridas |
 |---|---|
 | LoginScreen | `ILogin` |
-| UsersScreen | `IRegisterOperator`, `IEditUser`, `IDeleteUser` |
+| UsersScreen | `IRegisterOperator`, `IEditUser`, `IDeleteUser`, `IListUsers` |
 | FleetScreen | `IRegisterDrone`, `IReportFault`, `IDecommissionDrone`, `IReactivateDrone` |
 | MissionsScreen | `ICreateMission`, `IPauseMission`, `IResumeMission`, `IRedirectMission`, `IAbortMission` |
 | MaintenanceScreen | `IRecordMaintenanceResult` |
 | ConfigurationScreen | `IGetAssignmentRule`, `IGetAlertThresholds`, `IGetMaintenanceThresholds`, `IUpdateAssignmentRule`, `IUpdateAlertThresholds`, `IUpdateMaintenanceThresholds` |
 | PanelScreen | `IGetFleetSummary`, `IQueryMissions` |
-| AlertsScreen | `ISubscribeToAlerts` ⚠ |
+| AlertsScreen | `ISubscribeToAlerts` ⚠, `IFindAlerts` |
 
 ## 4. Relaciones entre componentes
 
@@ -285,6 +290,7 @@ Regla de nombres: el puerto requerido lleva **el mismo nombre** que el puerto of
 | E1 | Gestión de Misiones.`MissionCompleted` | `IMissionCompleted` | Historial de Vuelos.`MissionCompleted` | HU-13 |
 | E2 | Historial de Vuelos.`HistoryUpdated` | `IHistoryUpdated` | Mantenimiento.`HistoryUpdated` | HU-14 |
 | E3 | Gestión de Flota.`DroneAvailable` | `IDroneAvailable` | Gestión de Misiones.`DroneAvailable` | HU-05 |
+| E4 | Gestión de Flota.`TelemetryReceived` | `ITelemetryReceived` | Monitoreo y Alertas.`TelemetryReceived` | HU-09, 10 |
 
 ### 4.4 Persistencia
 
@@ -300,7 +306,7 @@ Todos usan el mismo puerto ofrecido de Persistencia, `Storage` (`IRepository`). 
 | N.º | Consumidor (puerto requerido) | Interfaz | Proveedor (puerto ofrecido) | HU |
 |---|---|---|---|---|
 | X1 | Validación de Rutas.`GetRestrictedZones` | `IGetRestrictedZones` | Proveedor de Zonas Restringidas.`GetRestrictedZones` | HU-06 |
-| X2 | Monitoreo y Alertas.`ReadTelemetry` ⚠ | `IReadTelemetry` | Fuente de Telemetría.`ReadTelemetry` | HU-07, 09, 10 |
+| X2 | Fuente de Telemetría.`ReceiveTelemetry` ⚠ | `IReceiveTelemetry` | Gestión de Flota.`ReceiveTelemetry` | HU-07, 09, 10 |
 
 ### 4.6 Aplicación Web (cliente)
 
@@ -312,6 +318,7 @@ Cada pantalla es un puerto requerido de la Aplicación Web y se conecta, por lí
 | UsersScreen → `RegisterOperator` | `IRegisterOperator` | Administración de Usuarios | HU-20 |
 | UsersScreen → `EditUser` | `IEditUser` | Administración de Usuarios | HU-22 |
 | UsersScreen → `DeleteUser` | `IDeleteUser` | Administración de Usuarios | HU-21 |
+| UsersScreen → `ListUsers` | `IListUsers` | Administración de Usuarios | HU-21, 22 |
 | FleetScreen → `RegisterDrone` | `IRegisterDrone` | Gestión de Flota | HU-01 |
 | FleetScreen → `ReportFault` | `IReportFault` | Gestión de Flota | HU-02 |
 | FleetScreen → `DecommissionDrone` | `IDecommissionDrone` | Gestión de Flota | HU-03 |
@@ -328,11 +335,12 @@ Cada pantalla es un puerto requerido de la Aplicación Web y se conecta, por lí
 | PanelScreen → `GetFleetSummary` | `IGetFleetSummary` | Panel de Control | HU-16 |
 | PanelScreen → `QueryMissions` | `IQueryMissions` | Panel de Control | HU-17 |
 | AlertsScreen → `SubscribeToAlerts` ⚠ | `ISubscribeToAlerts` | Notificación en Tiempo Real | HU-11 |
+| AlertsScreen → `FindAlerts` | `IFindAlerts` | Monitoreo y Alertas | HU-12 |
 
 ### 4.7 Lo que no se conecta
 
 - **No hay conector** de las clases de dominio con `Configuración del Sistema`: la leen los servicios y pasan los valores por parámetro.
-- **No hay conector** entre `Gestión de Flota` y `Gestión de Misiones` por llamada directa en sentido contrario: el único camino de regreso es el evento E3.
+- **No hay conector** entre `Gestión de Flota` y `Gestión de Misiones` por llamada directa en sentido contrario: el único camino de regreso es el evento E3. Del mismo modo, Flota avisa a Monitoreo solo con el evento E4, porque Monitoreo ya requiere `IFindDrone`.
 - **No hay conector** `Gestión de Misiones` → `Monitoreo y Alertas`; es al revés (11).
 
 ## 5. Paso a paso en Visual Paradigm
@@ -351,9 +359,9 @@ Cada pantalla es un puerto requerido de la Aplicación Web y se conecta, por lí
 
 - **Monolito modular**: un solo artefacto Spring Boot. Nada en las historias de usuario pide servicios independientes.
 - **Dependencias por interfaces**: ningún módulo lee la colección de otro (mantiene CBO ≤ 8, RNF-01).
-- **Eventos internos solo donde las historias de usuario los requieren**: `MissionCompleted` (HU-13), `HistoryUpdated` (HU-14), `DroneAvailable` (HU-05, escenario 3).
+- **Eventos internos solo donde las historias de usuario los requieren**: `MissionCompleted` (HU-13), `HistoryUpdated` (HU-14), `DroneAvailable` (HU-05, escenario 3), `TelemetryReceived` (HU-09, 10; evita el ciclo Flota ↔ Monitoreo).
 - **Las clases de dominio no leen la configuración**: los servicios (componentes) la leen mediante `IGet…` y pasan los valores como parámetros.
-- **Capacidades por rol**: administrador = usuarios (HU-20 a 22), configuración (HU-18), panel de control y consultas (HU-16 y 17), alertas y recomendaciones (HU-11 y 14); operador = misiones e intervención (HU-04 a 08), resultado de mantenimiento (HU-15); ambos = registrar, dar de baja y reactivar drones (HU-01 y 03).
+- **Capacidades por rol**: administrador = usuarios y su listado (HU-20 a 22), configuración (HU-18), panel de control y consultas (HU-16 y 17), alertas, su consulta por tipo y severidad y recomendaciones (HU-11, 12 y 14); operador = misiones e intervención (HU-04 a 08), resultado de mantenimiento (HU-15); ambos = registrar, dar de baja y reactivar drones (HU-01 y 03).
 
 ## 7. Lo que no se incluye y pendientes
 
@@ -361,9 +369,8 @@ No incluido (no está en las historias de usuario): servicio de correo o SMS (HU
 
 Pendientes:
 1. Canal de notificación hacia la web (HU-11 no lo especifica; decisión técnica por aprobar por el autor).
-2. Origen de la telemetría que alimenta a `Monitoreo` (HU-07 lo deja fuera de alcance).
-3. Severidad de la alerta de mantenimiento: se propuso BAJA (HU-12), pendiente de validar.
-4. Los puertos `CheckPosition`, `ListDrones`, `FindDrone` y `FindAvailableDrones` se derivan del diagrama de clases (`RestrictedZone.contains`, `DroneState`, `Drone.code`) y las historias de usuario no los nombran; confirmarlos con el autor.
+2. Qué sistema concreto envía la telemetría y quién llama a `IFinishMission`. El puerto `ReceiveTelemetry` ya está definido (decisión del autor).
+3. Los puertos `CheckPosition`, `ListDrones`, `FindDrone` y `FindAvailableDrones` se derivan del diagrama de clases (`RestrictedZone.contains`, `DroneState`, `Drone.code`) y las historias de usuario no los nombran; confirmarlos con el autor.
 
 ## 8. Hoja de dibujo: conexiones con los nombres que están en el `.vpp`
 
@@ -371,7 +378,7 @@ Esta sección es la lista de trabajo para terminar el diagrama. Usa **los nombre
 
 Filtro aplicado: **solo lo explícito en las historias de usuario**. Quedan fuera `Persistencia`/`IRepository` y el nodo MongoDB (RNF-10), la `Aplicación Web` y sus pantallas (ninguna HU define pantallas) y la `Fuente de Telemetría` (HU-07 la deja fuera de alcance).
 
-Marcas: ▲ = el comportamiento está en la HU pero el nombre de la interfaz se derivó del diagrama de clases (pendiente 4 de la sección 7). ✱ = viene de un RNF, no de una HU.
+Marcas: ▲ = el comportamiento está en la HU pero el nombre de la interfaz se derivó del diagrama de clases (pendiente 3 de la sección 7). ✱ = viene de un RNF, no de una HU.
 
 ### 8.1 Faltan por crear
 
@@ -447,9 +454,22 @@ Dependency punteada entre los dos puertos → clic derecho → *Stereotypes* →
 No es un error que se queden sueltas: nadie dentro del alcance las consume.
 
 - **Entrada directa del usuario** (el actor las invoca; sin componente cliente en el diagrama): `ILogin`, `IRegisterOperator`, `IEditUser`, `IDeleteUser`, `IRegisterDrone`, `ICreateMission`, `IPauseMission`, `IResumeMission`, `IRedirectMission`, `IAbortMission`, `IRecordMaintenanceResult`, `IGetFleetSummary`, `IQueryMissions`, `IGetAssignmentRule`, `IGetAlertThresholds`, `IGetMaintenanceThresholds`, `IUpdateAssignmentRule`, `IUpdateAlertThresholds`, `IUpdateMaintenanceThresholds`. `IReportFault`, `IReactivate` y `IDecommissionDrone` son además entrada de usuario (HU-02, HU-03) aparte de los conectores 24 a 26.
-- **Disparadas desde fuera del alcance** (HU-07 deja la telemetría fuera): `IAuthorizeTakeoff`, `ITakeOff`, `IReachCruise`, `IStartReturn`, `IFinishMission`, `IFinishCharging`, `IEvaluateDrone`.
+- **Disparadas desde fuera del alcance** (HU-07 deja la telemetría fuera): `IAuthorizeTakeoff`, `ITakeOff`, `IReachCruise`, `IStartReturn`, `IFinishMission`, `IFinishCharging`. `IEvaluateDrone` ya no va aquí: la dispara el evento E4.
 - **Sin consumidor en las HU**: `IGetFlightHistory`. Mantenimiento recibe los contadores en el evento `IHistoryUpdated` (E2), así que no la necesita; si prefieres que los lea, agrega el conector Gestion de Mantenimientos → `IGetFlightHistory`.
 
 ### 8.5 Totales
 
 Al 8 de noviembre de 2026: **2 componentes y 5 interfaces por crear · 2 nombres por arreglar · 28 conectores de ensamble · 3 eventos**. Los 28 conectores y los 3 eventos siguen sin empezar: el `.vpp` no tiene ni un Usage ni una Dependency.
+
+### 8.6 Cambios por las decisiones del autor (21 de noviembre de 2026)
+
+Hay que hacerlos en el `.vpp`, además de lo de 8.1 a 8.5:
+
+| N.º | Dónde | Cambio |
+|---|---|---|
+| C1 | Gestion de Usuarios | Cambiar la operación de `IEditUser` a `edit(id, userName, password)` (el rol no se edita, HU-22) |
+| C2 | Gestion de Usuarios | Crear el puerto `ListUsers` con la interfaz ofrecida `IListUsers`: `listUsers(): List<User>` (HU-21, 22) |
+| C3 | Gestion Monitoreo y Alertas | Crear el puerto `FindAlerts` con la interfaz ofrecida `IFindAlerts`: `find(type, severity): List<Alert>` (HU-12) |
+| C4 | Gestion de Flota | Crear el puerto `ReceiveTelemetry` con la interfaz ofrecida `IReceiveTelemetry`: `receiveTelemetry(code, batteryLevel, position)` |
+| C5 | Fuente de Telemetría | Agregarla como componente externo y conectar su interfaz requerida a `IReceiveTelemetry` (Usage) |
+| C6 | Gestion de Flota → Gestion Monitoreo y Alertas | Crear la interfaz `ITelemetryReceived` y la dependencia punteada `«event»` (E4) |

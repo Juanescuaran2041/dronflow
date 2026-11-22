@@ -203,6 +203,7 @@ COLUMNAS = [
         "+stream() : SseEmitter",
         "+find(type, severity) : List<Alert>"],
      "AlertService", [
+        "+onTelemetryReceived(event) : void",
         "+evaluate(droneCode, missionCode) : void",
         "+alertsOfMission(missionCode) : List<Alert>",
         "+subscribe() : SseEmitter",

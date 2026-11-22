@@ -175,12 +175,12 @@ Dentro de `Business_Service` unos servicios usan a otros. Para que el diagrama d
 | `RouteValidator` | `RestrictedZoneProvider` «interface» | zonas restringidas (proveedor externo) | HU-06, 10 |
 | `AlertService` | `MissionService`, `DroneService`, `RouteValidator`, `SystemConfigurationService` | evaluar batería, desvío y zona restringida | HU-09, 10 |
 | `AlertService` | `SseAlertChannel` | enviar la alerta en tiempo real (SSE) | HU-11 |
-| `DroneService` | `AlertService` | evaluar alertas al recibir telemetría | HU-09, 10 |
+| `DroneService` | `AlertService` (evento `TelemetryReceived`) | evaluar alertas al recibir telemetría | HU-09, 10 |
 | `FlightHistoryService` | `AlertService` | convertir alertas altas/críticas en incidencias | HU-13 |
 | `MaintenanceRecordService` | `DroneService`, `FlightHistoryService` | aplicar el resultado y reiniciar contadores | HU-15 |
 | `MaintenanceRecommendationService` | `DroneService`, `SystemConfigurationService`, `SseAlertChannel` | enviar a mantenimiento y avisar al administrador | HU-14 |
 
-Eventos internos: `MissionCompleted` (Mission → FlightHistory), `HistoryUpdated` (FlightHistory → MaintenanceRecommendation), `DroneAvailable` (Drone → Mission).
+Eventos internos: `MissionCompleted` (Mission → FlightHistory), `HistoryUpdated` (FlightHistory → MaintenanceRecommendation), `DroneAvailable` (Drone → Mission), `TelemetryReceived` (Drone → Alert).
 
 ### 2.4 Transversales
 
@@ -205,7 +205,7 @@ Cada endpoint corresponde 1 a 1 a una interfaz ya aprobada del diagrama de compo
 | POST | `/api/drones/{code}/fault` | `DroneController.reportFault` | `IReportFault` | OPERATOR | HU-02 |
 | POST | `/api/drones/{code}/decommission` | `DroneController.decommission` | `IDecommissionDrone` | ADMIN, OPERATOR | HU-03 |
 | POST | `/api/drones/{code}/reactivate` | `DroneController.reactivate` | `IReactivateDrone` | ADMIN, OPERATOR | HU-03 |
-| POST | `/api/drones/{code}/telemetry` | `DroneController.receiveTelemetry` (batería y posición; dispara `AlertService.evaluate`) | *decisión del autor* | Fuente de telemetría | HU-07, 09, 10 |
+| POST | `/api/drones/{code}/telemetry` | `DroneController.receiveTelemetry` (batería y posición; publica `TelemetryReceived`) | *decisión del autor* | Fuente de telemetría | HU-07, 09, 10 |
 | GET | `/api/drones/{code}/flight-history` | `FlightHistoryController.getHistory` | `IGetFlightHistory` | OPERATOR | HU-13 |
 | POST | `/api/drones/{code}/maintenance-records` | `MaintenanceRecordController.recordResult` | `IRecordMaintenanceResult` | OPERATOR | HU-15 |
 | GET | `/api/maintenance-recommendations` | `MaintenanceRecommendationController.list` | ⚠ | ADMIN | HU-14 |
@@ -226,7 +226,7 @@ Cada endpoint corresponde 1 a 1 a una interfaz ya aprobada del diagrama de compo
 
 Las transiciones de estado se modelan como `POST /{recurso}/{code}/{acción}` porque son acciones con reglas (patrón State), no ediciones de campos; un `PATCH state` dejaría saltarse esas reglas.
 
-**Sin endpoint (las dispara el sistema, no un usuario):** `takeOff`, `reachCruise`, `startReturn`, `AlertService.evaluate` (lo llama `DroneService.receiveTelemetry`), `FlightHistoryService.onMissionCompleted` y `MaintenanceRecommendationService.onHistoryUpdated` (eventos internos).
+**Sin endpoint (las dispara el sistema, no un usuario):** `takeOff`, `reachCruise`, `startReturn`, `AlertService.evaluate` (lo dispara el evento `TelemetryReceived`), `FlightHistoryService.onMissionCompleted` y `MaintenanceRecommendationService.onHistoryUpdated` (eventos internos).
 
 ### 2.6 Pendientes ⚠
 

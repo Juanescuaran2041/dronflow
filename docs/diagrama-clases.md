@@ -14,7 +14,7 @@ Notation: `-` private, `+` public; `{abstract}` = abstract class or operation. T
 | Attributes | Operations |
 |---|---|
 | `-id: UUID` | `+authenticate(password: String): boolean` |
-| `-userName: String` | `+editData(userName: String, password: String, role: Role): void` |
+| `-userName: String` | `+editData(userName: String, password: String): void` |
 | `-passwordHash: String` | `+deactivate(): void` |
 | `-role: Role` | `+hasPermission(permission: Permission): boolean` |
 | `-active: boolean` | |
@@ -255,14 +255,14 @@ Only `Route ◆ Location` and `Mission ◆ Route` are compositions: `Location` i
 | Battery alert | Generated on every reading below the threshold |
 | Assignment | Priority is used to choose among several pending missions when a drone becomes available |
 | Route validation | Before takeoff. If the route cannot be calculated, the drone stays reserved; after 3 attempts it is released and the mission returns to pending without a drone |
-| End of mission | The drone goes to AVAILABLE or CHARGING depending on its battery versus the alert threshold |
+| End of mission | The drone goes to AVAILABLE or CHARGING depending on its battery versus the alert threshold; if it exceeds the maintenance threshold it goes to IN_MAINTENANCE instead (HU-02, HU-14) |
+| Mission completion | A mission becomes COMPLETED through `finish(code)`; this publishes `MissionCompleted` |
 | Maintenance | The recommendation sends the drone to IN_MAINTENANCE and is shown to the administrator as an on-screen alert. An APPROVED result resets flight hours and missions |
 | Visibility | Control panel and alerts are for the administrator only |
-| Users | All user data is editable |
-| Telemetry | Unchanged: its origin is out of scope |
+| Users | Editable fields are userName and password; the role cannot be edited (HU-22). An administrator cannot delete their own account or another administrator's (HU-21). The user list shows active users only |
+| Telemetry | The external telemetry source sends battery level and position with `POST /api/drones/{code}/telemetry`; which concrete system sends it is still to be defined |
+| Alerts | Alerts are queried by type and severity (MVP). The type → severity mapping in 1.4 is confirmed (HU-12) |
 | System configuration | Singleton pattern: one instance holds the assignment rule and both threshold groups |
-
-**Pending validation:** severity LOW for alerts of type `MAINTENANCE` (analyst proposal, noted in HU-12).
 
 ---
 
@@ -296,12 +296,12 @@ Only `Route ◆ Location` and `Mission ◆ Route` are compositions: `Location` i
 | fleet | Classes | `AvailableState`, `OnMissionState`, `ChargingState`, `InMaintenanceState`, `OutOfServiceState`, `DecommissionedState` | override only the valid transitions |
 | fleet | Interface | `DroneFactory` | `type()`, `create(DroneData)` |
 | fleet | Classes | `DeliveryDroneFactory`, `InspectionDroneFactory`, `MonitoringDroneFactory`, `DroneFactoryRegistry` | `supports(type)`, `create(DroneData)` |
-| fleet | Class | `DroneService` | `register`, `reportFault`, `decommission`, `reactivate` |
+| fleet | Class | `DroneService` | `register`, `reportFault`, `decommission`, `reactivate`, `receiveTelemetry` (publishes `TelemetryReceived`) |
 | fleet | Interface | `DroneRepository` | `save`, `findById` |
 | missions | Interface | `MissionStateHandler` | `assignDrone`, `takeOff`, `reachCruise`, `startReturn`, `finish`, `pause`, `resume`, `redirect`, `abort` |
 | missions | Abstract class | `BaseMissionState` | rejects every transition by default |
 | missions | Classes | `PendingState`, `TakeoffState`, `InProgressState`, `PausedState`, `ReturningState`, `CompletedState`, `AbortedState` | override only the valid transitions |
-| missions | Class | `MissionService` | `create`, `authorizeTakeoff`, `pause`, `resume`, `redirect`, `abort` |
+| missions | Class | `MissionService` | `create`, `authorizeTakeoff`, `pause`, `resume`, `redirect`, `abort`, `finish` |
 | missions | Interface | `MissionRepository` | `save`, `findById`, `find(MissionFilter)` |
 | assignment | Class | `AssignmentService` | `assignDrone(mission, drones, rule)`, `chooseMission(drone, missions, rule)` |
 | assignment | Interface | `AssignmentCriterion` | `score(drone, mission)` |
@@ -309,25 +309,25 @@ Only `Route ◆ Location` and `Mission ◆ Route` are compositions: `Location` i
 | routes | Class | `RouteValidator` | `validate(route)` |
 | routes | Value object | `ValidationResult` | `authorized`, `reason` |
 | routes | Interface | `RestrictedZoneProvider` | `getZones()` |
-| monitoring | Class | `MonitoringService` | `evaluate(drone, mission, thresholds)` |
+| monitoring | Class | `MonitoringService` | `onTelemetryReceived(TelemetryReceived)`, `evaluate(drone, mission, thresholds)`, `find(type, severity)` |
 | monitoring | Interface | `AlertRule` | `evaluate(drone, mission, thresholds): Optional<Alert>` |
 | monitoring | Classes | `LowBatteryRule`, `RouteDeviationRule`, `RestrictedZoneRule` | implement `AlertRule` |
 | monitoring | Class | `SeverityClassifier` | `classify(alert)` |
-| monitoring | Interface | `AlertRepository` | `save`, `findByMission` |
+| monitoring | Interface | `AlertRepository` | `save`, `findByMission`, `findByTypeAndSeverity` |
 | notification | Interface | `AlertPublisher` (Subject) | `subscribe`, `unsubscribe`, `publish(alert)` |
 | notification | Class | `AsyncAlertPublisher` | implements `AlertPublisher` |
 | notification | Interface | `AlertObserver` (Observer) | `onAlert(alert)` |
 | notification | Class | `UserNotificationChannel` | implements `AlertObserver` |
 | history | Class | `FlightHistoryService` | `onMissionCompleted(MissionCompleted)` |
-| history | Events | `MissionCompleted`, `HistoryUpdated` | published between modules |
+| history | Events | `MissionCompleted`, `HistoryUpdated`, `TelemetryReceived` | published between modules |
 | history | Interface | `FlightHistoryRepository` | `save`, `findByDrone` |
 | maintenance | Class | `MaintenanceService` | `onHistoryUpdated(HistoryUpdated)`, `recordResult(drone, result)` |
 | maintenance | Interfaces | `MaintenanceRecordRepository`, `MaintenanceRecommendationRepository` | `save`, `findByDrone` |
 | configuration | Interface | `ConfigurationRepository` | `get`, `save` |
-| users | Classes | `AuthenticationService`, `UserService`, `Session` | `login`; `registerOperator`, `edit`, `delete` |
+| users | Classes | `AuthenticationService`, `UserService`, `Session` | `login`; `registerOperator`, `edit`, `delete`, `listUsers` |
 | users | Interface | `PasswordHasher` | `hash`, `matches` |
 | users | Class | `BCryptHasher` | implements `PasswordHasher` |
-| users | Interface | `UserRepository` | `save`, `findById`, `findByUserName` |
+| users | Interface | `UserRepository` | `save`, `findById`, `findByUserName`, `findByActiveTrue` |
 | panel | Class | `DashboardService` | `fleetSummary`, `queryMissions(filter)` |
 | panel | Value objects | `FleetSummary`, `MissionFilter` | |
 | shared | Interface | `Repository<T, ID>` | `save`, `findById` |

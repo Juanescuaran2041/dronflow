@@ -4,7 +4,7 @@ Derivado solo de las historias de usuario (`docs/historias-usuario/`) y `docs/re
 
 ![Diagrama de contexto de Dronflow](vistas/diagrama-contexto.png)
 
-Archivos: [`vistas/diagrama-contexto.svg`](vistas/diagrama-contexto.svg) (vectorial, editable) y [`vistas/diagrama-contexto.png`](vistas/diagrama-contexto.png).
+Archivos: [`vistas/diagrama-contexto.svg`](vistas/diagrama-contexto.svg) (vectorial, editable) y [`vistas/diagrama-contexto.png`](vistas/diagrama-contexto.png). El SVG se regenera con `python docs/diagrama_contexto.py`.
 
 ## Notación
 
@@ -17,7 +17,7 @@ Archivos: [`vistas/diagrama-contexto.svg`](vistas/diagrama-contexto.svg) (vector
 
 ## Líneas por actor
 
-### Administrador (17 funcionalidades)
+### Administrador (19 funcionalidades)
 
 | Línea | HU |
 |---|---|
@@ -25,6 +25,7 @@ Archivos: [`vistas/diagrama-contexto.svg`](vistas/diagrama-contexto.svg) (vector
 | Registrar operador | HU-20 |
 | Editar cuenta de usuario | HU-22 |
 | Eliminar cuenta de usuario | HU-21 |
+| Listar usuarios activos | HU-21, HU-22 |
 | Registrar dron | HU-01 |
 | Dar de baja un dron | HU-03 |
 | Reactivar un dron | HU-03 |
@@ -37,6 +38,7 @@ Archivos: [`vistas/diagrama-contexto.svg`](vistas/diagrama-contexto.svg) (vector
 | Recibir alerta de desvío o zona restringida | HU-10 |
 | Recibir notificación en tiempo real | HU-11 |
 | Ver severidad de la alerta | HU-12 |
+| Consultar alertas por tipo y severidad | HU-12 |
 | Recibir recomendación de mantenimiento | HU-14 |
 
 ### Operador (15 funcionalidades)
@@ -64,12 +66,12 @@ Archivos: [`vistas/diagrama-contexto.svg`](vistas/diagrama-contexto.svg) (vector
 | Actor de sistema | Línea | HU |
 |---|---|---|
 | Proveedor de zonas restringidas | Suministrar zonas restringidas | HU-06, HU-10 |
-| Fuente de telemetría ⚠ | Enviar posición del dron | HU-07, HU-10 |
-| Fuente de telemetría ⚠ | Enviar nivel de batería | HU-09 |
+| Fuente de telemetría ⚠ | Enviar posición del dron (POST) | HU-07, HU-10 |
+| Fuente de telemetría ⚠ | Enviar nivel de batería (POST) | HU-09 |
 
 ## Notas
 
 - Registrar, dar de baja y reactivar drones aparecen en los dos actores porque HU-01 y HU-03 las permiten a administrador u operador, sin distinción.
 - Las alertas, el panel y el historial de misiones son solo del administrador (decisión del autor, `00-resumen.md`).
-- ⚠ La fuente de telemetría está fuera de alcance en HU-07: el diagrama muestra que el sistema recibe posición y batería, pero no define de dónde vienen.
+- ⚠ La fuente de telemetría envía batería y posición con `POST /api/drones/{code}/telemetry` (decisión del autor). Falta definir qué sistema concreto la envía.
 - La asignación automática (HU-05) y la validación de ruta (HU-06) las ejecuta el sistema; se dibujan en el operador porque es quien obtiene su resultado.
