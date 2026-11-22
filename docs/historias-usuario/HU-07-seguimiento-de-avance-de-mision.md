@@ -24,7 +24,7 @@ Característica: Seguimiento del avance de una misión
 
     Ejemplos:
       | estado_actual | evento                           | estado_nuevo |
-      | pendiente     | asignación de dron               | despegue     |
+      | pendiente     | ruta validada y despegue autorizado (HU-06) | despegue     |
       | despegue      | dron alcanza altitud de crucero  | en curso     |
       | en curso      | dron inicia regreso              | retorno      |
       | retorno       | dron aterriza en base            | finalizada   |
