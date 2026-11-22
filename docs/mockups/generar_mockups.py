@@ -327,9 +327,9 @@ def hu06():
     m.mapa(x, TOP + 60, 470, 300, [(40, 250), (200, 150), (420, 60)], zona=(240, 70, 120, 90, "Zona restringida"))
     px = x + 495
     m.texto(px, TOP + 60, 260, "Dron asignado: DRN-002 (reservado)", 12, "#111111")
-    m.texto(px, TOP + 85, 260, "Intento de cálculo de ruta: 1 de 3", 12, MUTED)
+    m.texto(px, TOP + 85, 260, "El sistema calculó la ruta 3 veces (máx. 3)", 12, MUTED)
     m.mensaje(px, TOP + 120, 265, "Despegue rechazado: la ruta cruza", "error", 36)
-    m.texto(px + 12, TOP + 158, 250, "la zona «Aeropuerto». Ajusta la ruta.", 12, "#c62828")
+    m.texto(px + 12, TOP + 158, 250, "la zona «Aeropuerto» en los 3 intentos.", 12, "#c62828")
     m.boton(px, TOP + 200, 265, "Validar ruta y despegar")
     m.texto(px, TOP + 245, 265, "Si la ruta no se calcula en 3 intentos,", 11)
     m.texto(px, TOP + 263, 265, "el dron vuelve a disponible y la misión", 11)
@@ -369,7 +369,9 @@ def hu08():
     m.modal(x + 150, TOP + 160, 420, 220)
     m.texto(x + 175, TOP + 180, 360, "Redirigir misión M-001", 15, "#111111", bold=True)
     m.campo(x + 175, TOP + 215, 370, "Nuevo destino", "Cliente Sur")
-    m.texto(x + 175, TOP + 275, 370, "La misión sigue en curso hacia el nuevo destino.", 12)
+    m.texto(x + 175, TOP + 265, 370, "La nueva ruta se valida como en HU-06. Si cruza", 12)
+    m.texto(x + 175, TOP + 283, 370, "una zona restringida, el cambio se rechaza y la", 12)
+    m.texto(x + 175, TOP + 301, 370, "misión sigue hacia su destino actual.", 12)
     m.boton(x + 315, TOP + 325, 110, "Cancelar", "secundario")
     m.boton(x + 435, TOP + 325, 110, "Redirigir")
     return m

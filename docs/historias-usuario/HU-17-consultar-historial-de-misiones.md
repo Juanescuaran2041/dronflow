@@ -29,4 +29,4 @@ Característica: Consulta del historial de misiones
 ```
 
 **Supuestos / preguntas abiertas**
-- Ninguno relevante.
+- Decisión del autor: se mantiene el filtro por estado de la misión, como lo piden RF-18 y los diagramas de clases (`MissionFilter`) y de componentes (`IQueryMissions`).

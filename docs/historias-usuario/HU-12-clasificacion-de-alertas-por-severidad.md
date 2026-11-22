@@ -31,6 +31,5 @@ Característica: Clasificación de alertas por severidad
 ```
 
 **Supuestos / preguntas abiertas**
-- La severidad "baja" para la recomendación de mantenimiento es una propuesta del analista, pendiente de validar.
-- El mapeo tipo de alerta → severidad es un ejemplo razonable propuesto por el analista (confirmado con el usuario); la tabla definitiva debe validarse con el equipo de producto.
+- Decisión del autor: el mapeo tipo de alerta → severidad queda confirmado tal como está en la tabla y en los diagramas de clases y de componentes (batería baja = media, desvío de ruta = alta, zona restringida = crítica, recomendación de mantenimiento = baja).
 - Decisión del autor: las alertas se consultan filtrando por tipo y por severidad (alcance MVP).
