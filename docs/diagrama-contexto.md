@@ -2,9 +2,9 @@
 
 Derivado solo de las historias de usuario (`docs/historias-usuario/`) y `docs/requeriments.md`. Muestra el sistema como una sola caja negra y a quienes interactúan con él.
 
-![Diagrama de contexto de Dronflow](diagrama-contexto.png)
+![Diagrama de contexto de Dronflow](vistas/diagrama-contexto.png)
 
-Archivos: [`diagrama-contexto.svg`](diagrama-contexto.svg) (vectorial, editable) y [`diagrama-contexto.png`](diagrama-contexto.png).
+Archivos: [`vistas/diagrama-contexto.svg`](vistas/diagrama-contexto.svg) (vectorial, editable) y [`vistas/diagrama-contexto.png`](vistas/diagrama-contexto.png).
 
 ## Notación
 

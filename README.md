@@ -65,13 +65,13 @@ Quedan fuera de la regla las clases que no tienen colección propia en MongoDB:
 
 ## Diagrama de clases (vista lógica)
 
-![Diagrama de clases de Dronflow](dronflow-backend.jpg)
+![Diagrama de clases de Dronflow](docs/vistas/dronflow-backend.jpg)
 
 La especificación de cada clase, atributo, operación y relación está en [`docs/diagrama-clases.md`](docs/diagrama-clases.md).
 
 ## Diagrama de componentes
 
-[![Diagrama de componentes de Dronflow](docs/diagrama-componentes.png)](docs/diagrama-componentes.svg)
+[![Diagrama de componentes de Dronflow](docs/vistas/diagrama-componentes.png)](docs/vistas/diagrama-componentes.svg)
 
 13 componentes, 52 interfaces y 30 conectores de ensamble, con sus puertos e interfaces provistas y requeridas. En el ancho del README los nombres de las interfaces no se alcanzan a leer: **haz clic en la imagen para abrir la versión vectorial a tamaño completo**.
 
