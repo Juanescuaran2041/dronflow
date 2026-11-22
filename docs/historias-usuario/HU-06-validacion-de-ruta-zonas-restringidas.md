@@ -44,3 +44,5 @@ Característica: Validación de ruta contra zonas restringidas
 **Supuestos / preguntas abiertas**
 - El máximo de intentos de cálculo de ruta es 3 (valor inicial, sujeto a cambio).
 - Las zonas restringidas son datos de configuración fija/externa (RF-07); esta historia solo cubre su consulta, no su gestión.
+- Decisión del autor: la ruta la calcula el propio sistema a partir del origen y el destino de la misión.
+- Decisión del autor: la validación la dispara el operador al autorizar el despegue; el motivo del rechazo se le muestra en pantalla como respuesta a esa acción.

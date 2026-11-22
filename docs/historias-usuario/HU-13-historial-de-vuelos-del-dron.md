@@ -29,4 +29,4 @@ Característica: Historial de vuelos del dron
 ```
 
 **Supuestos / preguntas abiertas**
-- Ninguno relevante.
+- Decisión del autor: el operador puede consultar en pantalla el historial de vuelos de cada dron.

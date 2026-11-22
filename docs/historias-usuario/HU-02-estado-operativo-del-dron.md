@@ -49,3 +49,4 @@ Característica: Estado operativo del dron
 **Supuestos / preguntas abiertas**
 - Se asume que el operador puede marcar manualmente un dron como "fuera de servicio" ante una avería reportada.
 - Al terminar una misión (finalizada o abortada) el dron no pasa automáticamente a "cargando": vuelve a "disponible" si su batería supera el umbral de batería (el mismo de HU-09/HU-18) y pasa a "cargando" si no. El mecanismo físico de carga está fuera del alcance.
+- Decisión del autor: si al terminar la misión el dron supera el umbral de mantenimiento (HU-14), pasa a "en mantenimiento" en lugar de "disponible" o "cargando".

@@ -35,3 +35,4 @@ Característica: Recomendación de mantenimiento preventivo
 **Supuestos / preguntas abiertas**
 - 100 horas es un valor de ejemplo; el umbral real lo define un administrador (HU-18, umbrales de mantenimiento).
 - La recomendación es la que lleva el dron a "en mantenimiento"; no hay otro disparador.
+- Decisión del autor: el umbral se evalúa al terminar la misión; si se supera, el dron pasa a "en mantenimiento" en lugar de "disponible" o "cargando" (HU-02).

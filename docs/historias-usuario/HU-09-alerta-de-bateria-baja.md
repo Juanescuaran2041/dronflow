@@ -33,3 +33,4 @@ Característica: Alerta de batería baja
 
 **Supuestos / preguntas abiertas**
 - El umbral de batería es global y lo modifica el administrador (HU-18). La alerta se genera en cada lectura bajo el umbral, no solo al cruzarlo.
+- Decisión del autor: cuentan como "en misión" los estados en curso (el dron está entregando), pausada (el dron se detuvo por alguna razón) y retorno (ya terminó la entrega y vuelve a la base).

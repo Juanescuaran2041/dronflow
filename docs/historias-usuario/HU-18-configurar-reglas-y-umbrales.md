@@ -42,3 +42,4 @@ Característica: Configuración de reglas de asignación y umbrales de alerta
 
 **Supuestos / preguntas abiertas**
 - Los umbrales de mantenimiento son independientes de los umbrales de alerta.
+- Decisión del autor: cada regla (ponderación de asignación, umbrales de alerta y umbrales de mantenimiento) se crea o modifica por separado, con su propio formulario.

@@ -25,3 +25,4 @@ Característica: Eliminación de cuentas de usuario
 
 **Supuestos / preguntas abiertas**
 - No se especifica si la eliminación es física o lógica; se asume lógica (soft-delete) para preservar trazabilidad de auditoría.
+- Decisión del autor: un administrador no puede eliminar su propia cuenta ni la de otro administrador.

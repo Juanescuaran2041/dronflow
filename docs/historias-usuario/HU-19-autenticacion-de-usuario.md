@@ -31,3 +31,4 @@ Característica: Autenticación de usuario
 
 **Supuestos / preguntas abiertas**
 - No se especifica límite de intentos fallidos ni bloqueo de cuenta; queda fuera del alcance de esta historia.
+- Decisión del autor: la sesión se maneja con un token JWT.
