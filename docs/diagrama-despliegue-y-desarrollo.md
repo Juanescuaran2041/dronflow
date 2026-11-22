@@ -175,6 +175,7 @@ Dentro de `Business_Service` unos servicios usan a otros. Para que el diagrama d
 | `RouteValidator` | `RestrictedZoneProvider` «interface» | zonas restringidas (proveedor externo) | HU-06, 10 |
 | `AlertService` | `MissionService`, `DroneService`, `RouteValidator`, `SystemConfigurationService` | evaluar batería, desvío y zona restringida | HU-09, 10 |
 | `AlertService` | `SseAlertChannel` | enviar la alerta en tiempo real (SSE) | HU-11 |
+| `DroneService` | `AlertService` | evaluar alertas al recibir telemetría | HU-09, 10 |
 | `FlightHistoryService` | `AlertService` | convertir alertas altas/críticas en incidencias | HU-13 |
 | `MaintenanceRecordService` | `DroneService`, `FlightHistoryService` | aplicar el resultado y reiniciar contadores | HU-15 |
 | `MaintenanceRecommendationService` | `DroneService`, `SystemConfigurationService`, `SseAlertChannel` | enviar a mantenimiento y avisar al administrador | HU-14 |
@@ -188,11 +189,12 @@ Eventos internos: `MissionCompleted` (Mission → FlightHistory), `HistoryUpdate
 
 ### 2.5 Endpoints REST
 
-Cada endpoint corresponde 1 a 1 a una interfaz ya aprobada del diagrama de componentes. El verbo y la ruta son la propuesta REST; no se agregan funcionalidades.
+Cada endpoint corresponde 1 a 1 a una interfaz ya aprobada del diagrama de componentes, salvo los marcados como *decisión del autor*, que salen de las decisiones registradas en las HU. El verbo y la ruta son la propuesta REST; no se agregan funcionalidades.
 
 | Método | Ruta | Controller.método | Interfaz | Rol | HU |
 |---|---|---|---|---|---|
 | POST | `/api/auth/login` | `UserController.login` | `ILogin` | público | HU-19 |
+| GET | `/api/users` (solo usuarios activos; 200 aunque la lista esté vacía) | `UserController.listUsers` | *decisión del autor* | ADMIN | HU-21, 22 |
 | POST | `/api/users` | `UserController.registerOperator` | `IRegisterOperator` | ADMIN | HU-20 |
 | PUT | `/api/users/{id}` | `UserController.edit` | `IEditUser` | ADMIN | HU-22 |
 | DELETE | `/api/users/{id}` | `UserController.delete` (lógico) | `IDeleteUser` | ADMIN | HU-21 |
@@ -203,6 +205,7 @@ Cada endpoint corresponde 1 a 1 a una interfaz ya aprobada del diagrama de compo
 | POST | `/api/drones/{code}/fault` | `DroneController.reportFault` | `IReportFault` | OPERATOR | HU-02 |
 | POST | `/api/drones/{code}/decommission` | `DroneController.decommission` | `IDecommissionDrone` | ADMIN, OPERATOR | HU-03 |
 | POST | `/api/drones/{code}/reactivate` | `DroneController.reactivate` | `IReactivateDrone` | ADMIN, OPERATOR | HU-03 |
+| POST | `/api/drones/{code}/telemetry` | `DroneController.receiveTelemetry` (batería y posición; dispara `AlertService.evaluate`) | *decisión del autor* | Fuente de telemetría | HU-07, 09, 10 |
 | GET | `/api/drones/{code}/flight-history` | `FlightHistoryController.getHistory` | `IGetFlightHistory` | OPERATOR | HU-13 |
 | POST | `/api/drones/{code}/maintenance-records` | `MaintenanceRecordController.recordResult` | `IRecordMaintenanceResult` | OPERATOR | HU-15 |
 | GET | `/api/maintenance-recommendations` | `MaintenanceRecommendationController.list` | ⚠ | ADMIN | HU-14 |
@@ -214,20 +217,22 @@ Cada endpoint corresponde 1 a 1 a una interfaz ya aprobada del diagrama de compo
 | POST | `/api/missions/{code}/resume` | `MissionController.resume` | `IResumeMission` | OPERATOR | HU-08 |
 | POST | `/api/missions/{code}/redirect` | `MissionController.redirect` | `IRedirectMission` | OPERATOR | HU-08 |
 | POST | `/api/missions/{code}/abort` | `MissionController.abort` | `IAbortMission` | OPERATOR | HU-08 |
+| POST | `/api/missions/{code}/finish` | `MissionController.finish` (misión → finalizada; publica `MissionCompleted`) | *decisión del autor* | ⚠ por confirmar | HU-07, 13, 14 |
 | GET | `/api/alerts/stream` (`text/event-stream`) | `AlertController.stream` | `ISubscribeToAlerts` | ADMIN | HU-11, 12 |
+| GET | `/api/alerts?type=&severity=` | `AlertController.find` | *decisión del autor* | ADMIN | HU-12 |
 | GET / PUT | `/api/configuration/assignment-rule` | `SystemConfigurationController` | `IGet/IUpdateAssignmentRule` | ADMIN | HU-18 |
 | GET / PUT | `/api/configuration/alert-thresholds` | `SystemConfigurationController` | `IGet/IUpdateAlertThresholds` | ADMIN | HU-18 |
 | GET / PUT | `/api/configuration/maintenance-thresholds` | `SystemConfigurationController` | `IGet/IUpdateMaintenanceThresholds` | ADMIN | HU-18 |
 
 Las transiciones de estado se modelan como `POST /{recurso}/{code}/{acción}` porque son acciones con reglas (patrón State), no ediciones de campos; un `PATCH state` dejaría saltarse esas reglas.
 
-**Sin endpoint (las dispara el sistema, no un usuario):** `takeOff`, `reachCruise`, `startReturn`, `finish` (telemetría/simulación ⚠), `AlertService.evaluate` (telemetría ⚠), `FlightHistoryService.onMissionCompleted` y `MaintenanceRecommendationService.onHistoryUpdated` (eventos internos).
+**Sin endpoint (las dispara el sistema, no un usuario):** `takeOff`, `reachCruise`, `startReturn`, `AlertService.evaluate` (lo llama `DroneService.receiveTelemetry`), `FlightHistoryService.onMissionCompleted` y `MaintenanceRecommendationService.onHistoryUpdated` (eventos internos).
 
 ### 2.6 Pendientes ⚠
 
 1. HTTPS y certificado si se expone fuera del host.
 2. Protocolo del Proveedor de Zonas Restringidas (RF-07).
-3. Origen de la telemetría (HU-07).
+3. Protocolo de la Fuente de Telemetría: el backend la recibe por `POST /api/drones/{code}/telemetry`; falta definir qué sistema la envía (HU-07).
 4. `GET /api/maintenance-recommendations`: el diagrama de componentes no tiene puerto de consulta para recomendaciones (solo llegan como alerta, HU-14). Confirmar si se quiere o se quita el Controller (excepción a la regla del README).
-5. Formato de sesión de `LoginResponse` (token JWT o sesión HTTP): HU-19 no lo fija.
+5. Quién llama a `POST /api/missions/{code}/finish` (la fuente de telemetría al aterrizar o el operador).
 6. Rol que consulta historial de vuelos (HU-13) y detalle de misión (HU-07): se puso OPERATOR según `diagrama-contexto.md`.

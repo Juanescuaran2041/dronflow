@@ -94,20 +94,23 @@ COLUMNAS = [
         "+login(credentials) : Session",
         "+registerOperator(data) : User",
         "+edit(id, data) : User",
-        "+delete(id) : void"],
+        "+delete(id) : void",
+        "+listUsers() : List<User>"],
      "UserService", [
         "+login(userName, password) : Session",
         "+registerOperator(data) : User",
         "+edit(id, data) : User",
-        "+delete(id) : void"],
+        "+delete(id) : void",
+        "+listUsers() : List<User>"],
      "UserRepository", [
         "+save(user) : User",
         "+findById(id) : Optional<User>",
-        "+findByUserName(userName) : Optional<User>"],
+        "+findByUserName(userName) : Optional<User>",
+        "+findByActiveTrue() : List<User>"],
      None, [
         "-UUID id", "-String userName", "-String passwordHash", "-Role role", "-boolean active"], [
         "+authenticate(password) : boolean",
-        "+editData(userName, password, role) : void",
+        "+editData(userName, password) : void",
         "+deactivate() : void",
         "+hasPermission(permission) : boolean"],
      "creates and returns"),
@@ -118,7 +121,8 @@ COLUMNAS = [
         "+fleetSummary() : FleetSummary",
         "+reportFault(code) : Drone",
         "+decommission(code) : Drone",
-        "+reactivate(code) : Drone"],
+        "+reactivate(code) : Drone",
+        "+receiveTelemetry(code, batteryLevel, position) : void"],
      "DroneService", [
         "+register(data) : Drone",
         "+listAll() : List<Drone>",
@@ -130,7 +134,8 @@ COLUMNAS = [
         "+reserve(code) : void",
         "+release(code) : void",
         "+completeMission(code) : void",
-        "+sendToMaintenance(code) : void"],
+        "+sendToMaintenance(code) : void",
+        "+receiveTelemetry(code, batteryLevel, position) : void"],
      "DroneRepository", [
         "+save(drone) : Drone",
         "+findByCode(code) : Optional<Drone>",
@@ -159,7 +164,8 @@ COLUMNAS = [
         "+pause(code) : Mission",
         "+resume(code) : Mission",
         "+redirect(code, destination) : Mission",
-        "+abort(code) : Mission"],
+        "+abort(code) : Mission",
+        "+finish(code) : Mission"],
      "MissionService", [
         "+create(data) : Mission",
         "+find(filter) : List<Mission>",
@@ -168,7 +174,8 @@ COLUMNAS = [
         "+pause(code) : Mission",
         "+resume(code) : Mission",
         "+redirect(code, destination) : Mission",
-        "+abort(code) : Mission"],
+        "+abort(code) : Mission",
+        "+finish(code) : Mission"],
      "MissionRepository", [
         "+save(mission) : Mission",
         "+findByCode(code) : Optional<Mission>",
@@ -193,14 +200,17 @@ COLUMNAS = [
         "+flightDuration() : Duration"],
      "creates and returns"),
     ("Alert", "AlertController", [
-        "+stream() : SseEmitter"],
+        "+stream() : SseEmitter",
+        "+find(type, severity) : List<Alert>"],
      "AlertService", [
         "+evaluate(droneCode, missionCode) : void",
         "+alertsOfMission(missionCode) : List<Alert>",
-        "+subscribe() : SseEmitter"],
+        "+subscribe() : SseEmitter",
+        "+find(type, severity) : List<Alert>"],
      "AlertRepository", [
         "+save(alert) : Alert",
-        "+findByMissionCode(missionCode) : List<Alert>"],
+        "+findByMissionCode(missionCode) : List<Alert>",
+        "+findByTypeAndSeverity(type, severity) : List<Alert>"],
      None, [
         "-UUID id", "-LocalDateTime generatedAt", "-Severity severity", "-Drone drone",
         "-AlertType type", "-String detail"], [

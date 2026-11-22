@@ -25,3 +25,4 @@ Característica: Edición de cuentas de usuario
 
 **Supuestos / preguntas abiertas**
 - No se especifica qué campos son editables; se asume datos de perfil y posibilidad de reset de contraseña, sin incluir necesariamente cambio de rol.
+- Decisión del autor: los campos editables son el nombre de usuario y la contraseña; el rol no se puede editar.

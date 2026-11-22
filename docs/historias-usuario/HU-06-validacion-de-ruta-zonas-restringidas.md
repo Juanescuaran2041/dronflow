@@ -46,3 +46,4 @@ Característica: Validación de ruta contra zonas restringidas
 - Las zonas restringidas son datos de configuración fija/externa (RF-07); esta historia solo cubre su consulta, no su gestión.
 - Decisión del autor: la ruta la calcula el propio sistema a partir del origen y el destino de la misión.
 - Decisión del autor: la validación la dispara el operador al autorizar el despegue; el motivo del rechazo se le muestra en pantalla como respuesta a esa acción.
+- Decisión del autor: al disparar el operador la validación, si la ruta calculada cruza una zona restringida el propio sistema reintenta el cálculo, hasta el máximo de intentos.

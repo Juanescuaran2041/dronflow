@@ -44,3 +44,4 @@ Característica: Intervención manual de una misión en curso
 **Supuestos / preguntas abiertas**
 - Al redirigir, el nuevo destino debe cumplir las mismas validaciones que un destino de creación (ej. no atravesar zonas restringidas — ver HU-06).
 - Decisión del autor: la base es la zona de carga del dron (alcance MVP).
+- Decisión del autor: al redirigir, la nueva ruta se valida igual que en HU-06; si cruza una zona restringida el cambio se rechaza, la misión sigue hacia su destino actual y el operador ve el motivo en pantalla.
