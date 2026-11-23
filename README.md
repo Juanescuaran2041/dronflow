@@ -142,6 +142,10 @@ El diseño asigna cada responsabilidad siguiendo los nueve principios GRASP. Cad
 
 Los tres subtipos se guardan en la misma colección `drones`. Spring Data agrega el campo `_class` para saber qué subclase crear al leerlos.
 
+### Singleton: configuración del sistema (HU-18)
+
+`SystemConfiguration` existe una sola vez en todo el sistema: es un único documento de Mongo con id fijo (`"system"`), y solo `SystemConfigurationService` (un bean de Spring, que también es único) lo crea y lo lee. Si el documento todavía no existe, el servicio lo crea con los valores por defecto de las HU: ponderación 0.33 / 0.33 / 0.34, batería 20 %, desvío 50 m y mantenimiento 120 h o 50 misiones. Así todos los módulos leen la misma ponderación y los mismos umbrales, y un cambio del administrador aplica de inmediato a todo el sistema.
+
 ## Autor
 
 -🧑‍💻 Juan Esteban Cuaran Santander — Estudiante de Ingeniería de Software 
