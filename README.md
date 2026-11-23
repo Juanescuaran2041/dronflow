@@ -146,6 +146,10 @@ Los tres subtipos se guardan en la misma colección `drones`. Spring Data agrega
 
 `SystemConfiguration` existe una sola vez en todo el sistema: es un único documento de Mongo con id fijo (`"system"`), y solo `SystemConfigurationService` (un bean de Spring, que también es único) lo crea y lo lee. Si el documento todavía no existe, el servicio lo crea con los valores por defecto de las HU: ponderación 0.33 / 0.33 / 0.34, batería 20 %, desvío 50 m y mantenimiento 120 h o 50 misiones. Así todos los módulos leen la misma ponderación y los mismos umbrales, y un cambio del administrador aplica de inmediato a todo el sistema.
 
+### Strategy: reglas de alerta (HU-09, HU-10)
+
+Cada condición que genera una alerta es una estrategia que implementa la interfaz `AlertRule`: `LowBatteryRule` (batería bajo el umbral), `RouteDeviationRule` (desvío mayor a la distancia configurada) y `RestrictedZoneRule` (ingreso a una zona restringida). `AlertService` recibe todas las reglas de Spring y aplica cada una a la lectura del dron. Para agregar una regla nueva basta con una clase `@Component` más, sin tocar el servicio. La severidad de cada alerta la define su tipo (`AlertType`), según la tabla de HU-12.
+
 ## Autor
 
 -🧑‍💻 Juan Esteban Cuaran Santander — Estudiante de Ingeniería de Software 
