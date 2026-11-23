@@ -37,6 +37,23 @@ public abstract class Drone {
         this.state = DroneState.AVAILABLE; // HU-02: un dron recién registrado queda disponible
     }
 
+    // HU-05: el dron sirve si soporta la carga y la autonomía que pide la misión
+    public boolean canExecute(double requiredPayload, int minEndurance) {
+        return state == DroneState.AVAILABLE && maxPayload >= requiredPayload && enduranceMin >= minEndurance;
+    }
+
+    // HU-05: al asignarlo queda reservado ("en misión")
+    public void assignToMission() {
+        requireState("assign to a mission", DroneState.AVAILABLE);
+        state = DroneState.ON_MISSION;
+    }
+
+    // HU-06: se libera si no se logra validar la ruta
+    public void releaseReservation() {
+        requireState("release", DroneState.ON_MISSION);
+        state = DroneState.AVAILABLE;
+    }
+
     // HU-02: un operador reporta una avería
     public void markOutOfService() {
         requireState("report a fault", DroneState.AVAILABLE);
