@@ -1,0 +1,51 @@
+package com.dronflow.fleet;
+
+import com.dronflow.fleet.dto.DroneResponse;
+import com.dronflow.fleet.dto.RegisterDroneRequest;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+// HU-01 y HU-03 las pueden hacer administrador u operador: basta con estar autenticado.
+@RestController
+@RequestMapping("/api/v1/drones")
+public class DroneController {
+    private final DroneService service;
+
+    public DroneController(DroneService service) {
+        this.service = service;
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public DroneResponse register(@Valid @RequestBody RegisterDroneRequest data) {
+        return DroneResponse.of(service.register(data));
+    }
+
+    @GetMapping
+    public List<DroneResponse> listAll() {
+        return service.listAll().stream().map(DroneResponse::of).toList();
+    }
+
+    @GetMapping("/{code}")
+    public DroneResponse findByCode(@PathVariable String code) {
+        return DroneResponse.of(service.findByCode(code));
+    }
+
+    @PostMapping("/{code}/report-fault")
+    public DroneResponse reportFault(@PathVariable String code) {
+        return DroneResponse.of(service.reportFault(code));
+    }
+
+    @PostMapping("/{code}/decommission")
+    public DroneResponse decommission(@PathVariable String code) {
+        return DroneResponse.of(service.decommission(code));
+    }
+
+    @PostMapping("/{code}/reactivate")
+    public DroneResponse reactivate(@PathVariable String code) {
+        return DroneResponse.of(service.reactivate(code));
+    }
+}

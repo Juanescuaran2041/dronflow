@@ -1,0 +1,51 @@
+package com.dronflow.fleet;
+
+import com.dronflow.fleet.dto.RegisterDroneRequest;
+import org.junit.jupiter.api.Test;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+class DroneTest {
+
+    private Drone newDrone() {
+        return new DeliveryDrone(new RegisterDroneRequest("DRN-001", "delivery", 5000, 25, 2, List.of("camera")));
+    }
+
+    @Test
+    void newDroneIsAvailable() {                       // HU-02
+        assertEquals(DroneState.AVAILABLE, newDrone().getState());
+    }
+
+    @Test
+    void faultMovesAvailableToOutOfService() {          // HU-02
+        Drone drone = newDrone();
+        drone.markOutOfService();
+        assertEquals(DroneState.OUT_OF_SERVICE, drone.getState());
+    }
+
+    @Test
+    void outOfServiceCanBeReactivatedOrDecommissioned() { // HU-03
+        Drone drone = newDrone();
+        drone.markOutOfService();
+        drone.reactivate();
+        assertEquals(DroneState.AVAILABLE, drone.getState());
+        drone.decommission();
+        assertEquals(DroneState.DECOMMISSIONED, drone.getState());
+    }
+
+    @Test
+    void decommissionedCannotBeReactivated() {           // HU-03 supuesto
+        Drone drone = newDrone();
+        drone.decommission();
+        assertThrows(ResponseStatusException.class, drone::reactivate);
+    }
+
+    @Test
+    void availableCannotBeReactivated() {
+        assertThrows(ResponseStatusException.class, newDrone()::reactivate);
+    }
+}
