@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface DroneRepository extends MongoRepository<Drone, String> {
     List<Drone> findByStateNot(DroneState state);
+    List<Drone> findByState(DroneState state);
 }

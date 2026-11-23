@@ -1,6 +1,7 @@
 package com.dronflow.fleet;
 
 import com.dronflow.fleet.dto.RegisterDroneRequest;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -14,10 +15,12 @@ import java.util.stream.Collectors;
 public class DroneService {
     private final DroneRepository droneRepository;
     private final Map<String, DroneFactory> factories;
+    private final ApplicationEventPublisher events;
 
     // Spring inyecta todas las fábricas registradas (@Component); se indexan por su tipo.
-    public DroneService(DroneRepository droneRepository, List<DroneFactory> factories) {
+    public DroneService(DroneRepository droneRepository, List<DroneFactory> factories, ApplicationEventPublisher events) {
         this.droneRepository = droneRepository;
+        this.events = events;
         this.factories = factories.stream().collect(Collectors.toMap(DroneFactory::type, Function.identity()));
     }
 
@@ -58,6 +61,25 @@ public class DroneService {
     public Drone reactivate(String code) {
         Drone drone = findByCode(code);
         drone.reactivate();
+        Drone saved = droneRepository.save(drone);
+        events.publishEvent(new DroneAvailable(code)); // HU-05: puede tomar una misión pendiente
+        return saved;
+    }
+
+    public List<Drone> findAvailable() {
+        return droneRepository.findByState(DroneState.AVAILABLE);
+    }
+
+    public Drone reserve(String code) {
+        Drone drone = findByCode(code);
+        drone.assignToMission();
+        return droneRepository.save(drone);
+    }
+
+    // No publica DroneAvailable: la misión que lo liberó no debe volver a tomarlo de inmediato (HU-06)
+    public Drone release(String code) {
+        Drone drone = findByCode(code);
+        drone.releaseReservation();
         return droneRepository.save(drone);
     }
 }

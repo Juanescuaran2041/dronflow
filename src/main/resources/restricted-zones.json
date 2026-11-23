@@ -1,0 +1,11 @@
+[
+  {
+    "name": "Aeropuerto El Dorado",
+    "perimeter": [
+      { "name": null, "latitude": 4.680, "longitude": -74.170, "altitude": 0 },
+      { "name": null, "latitude": 4.720, "longitude": -74.170, "altitude": 0 },
+      { "name": null, "latitude": 4.720, "longitude": -74.120, "altitude": 0 },
+      { "name": null, "latitude": 4.680, "longitude": -74.120, "altitude": 0 }
+    ]
+  }
+]
