@@ -45,6 +45,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/users").hasRole("ADMIN")
                         .requestMatchers("/api/v1/configuration/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/v1/missions").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/alerts/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth -> oauth.jwt(j -> j.jwtAuthenticationConverter(jwtConverter)))
                 .build();
