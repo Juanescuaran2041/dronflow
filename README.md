@@ -112,9 +112,35 @@ El diseño asigna cada responsabilidad siguiendo los nueve principios GRASP. Cad
 | **Low Coupling** | Controller → Service → Repository, y ningún componente usa el repositorio de otro: se comunican por interfaces. Los ciclos se rompen con eventos (`MissionCompleted`, `HistoryUpdated`, `DroneAvailable`, `TelemetryReceived`). Meta de CBO ≤ 8 (RNF-01). |
 | **High Cohesion** | Un Service por entidad con las reglas de su caso de uso; los Repository solo persisten y las entidades solo guardan su estado y sus reglas. |
 | **Polymorphism** | `Drone.executeTask(mission)` cambia según el subtipo (`DeliveryDrone`, `InspectionDrone`, `MonitoringDrone`). Los estados del dron y de la misión usan el patrón State, y los criterios de asignación (batería, cercanía, prioridad) y las reglas de alerta son implementaciones intercambiables de una interfaz. |
-| **Pure Fabrication** | Clases que no son del dominio y existen para mantener la cohesión: los Service y Repository, `RouteValidator`, `DroneFactoryRegistry`, `PasswordHasher` y el canal SSE de alertas. |
+| **Pure Fabrication** | Clases que no son del dominio y existen para mantener la cohesión: los Service y Repository, `RouteValidator`, las fábricas de drones (`DroneFactory`), `PasswordHasher` y el canal SSE de alertas. |
 | **Indirection** | Entre Monitoreo y Notificación hay un publicador de alertas (patrón Observer); entre módulos, eventos; y el proveedor de zonas restringidas se usa a través de la interfaz `RestrictedZoneProvider`. |
 | **Protected Variations** | Lo que puede cambiar queda detrás de una interfaz: el proveedor externo de zonas (protocolo aún sin definir), el algoritmo de contraseñas (`PasswordHasher`) y la creación de drones (`DroneFactory`): un tipo de dron nuevo requiere como máximo 2 clases nuevas, sin tocar el código existente (RNF-02). |
+
+## Patrones de diseño
+
+### Factory Method: creación de drones (RF-02, RNF-02)
+
+**Problema:** al registrar un dron (HU-01) llega un `type` (`delivery`, `inspection` o `monitoring`) y hay que crear la subclase correcta de `Drone`. Con un `if`/`switch` sobre el tipo, cada tipo nuevo obligaría a modificar `DroneService`, y RNF-02 pide agregar tipos sin tocar el código existente y con máximo 2 clases nuevas.
+
+**Solución:** cada tipo de dron tiene su propia fábrica, y todas cumplen la misma interfaz.
+
+| Rol del patrón | Clase en Dronflow |
+|---|---|
+| Producto | `Drone` (abstracta) |
+| Productos concretos | `DeliveryDrone`, `InspectionDrone`, `MonitoringDrone` |
+| Creador | `DroneFactory` (interfaz): `type()` y `create(data)` |
+| Creadores concretos | `DeliveryDroneFactory`, `InspectionDroneFactory`, `MonitoringDroneFactory` (cada uno es un `@Component`) |
+| Cliente | `DroneService` |
+
+**Cómo funciona:**
+1. Spring encuentra todas las clases `@Component` que implementan `DroneFactory` y se las entrega a `DroneService` como una lista.
+2. `DroneService` las guarda en un mapa indexado por `type()`. Este mapa es el registro de fábricas.
+3. En `register(data)`, el servicio busca la fábrica de `data.type()` y llama a `create(data)`. Si el tipo no existe, responde 400 con la lista de tipos soportados.
+4. El servicio solo conoce a `Drone` y a `DroneFactory`: no sabe qué subclases existen.
+
+**Agregar un tipo nuevo**, por ejemplo un dron de fumigación, requiere solo 2 clases nuevas: `SprayingDrone extends Drone` y `SprayingDroneFactory implements DroneFactory` con `@Component`. No se modifica ninguna clase existente (principio abierto/cerrado), y así se cumple RNF-02.
+
+Los tres subtipos se guardan en la misma colección `drones`. Spring Data agrega el campo `_class` para saber qué subclase crear al leerlos.
 
 ## Autor
 
