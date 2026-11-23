@@ -150,6 +150,18 @@ Los tres subtipos se guardan en la misma colección `drones`. Spring Data agrega
 
 Cada condición que genera una alerta es una estrategia que implementa la interfaz `AlertRule`: `LowBatteryRule` (batería bajo el umbral), `RouteDeviationRule` (desvío mayor a la distancia configurada) y `RestrictedZoneRule` (ingreso a una zona restringida). `AlertService` recibe todas las reglas de Spring y aplica cada una a la lectura del dron. Para agregar una regla nueva basta con una clase `@Component` más, sin tocar el servicio. La severidad de cada alerta la define su tipo (`AlertType`), según la tabla de HU-12.
 
+### Observer: eventos entre módulos
+
+Los módulos que dependerían uno del otro en ciclo se avisan con eventos de Spring (`ApplicationEventPublisher` y `@EventListener`), sin conocerse directamente:
+
+| Evento | Publica | Escucha | Para qué |
+|---|---|---|---|
+| `DroneAvailable` | `DroneService` | `MissionService` | Asignación diferida: el dron toma la misión pendiente de mayor prioridad (HU-05) |
+| `MissionCompleted` | `Mission.finish` (pendiente de disparador) | `FlightHistoryService` | Suma horas, misiones e incidencias al historial (HU-13) |
+| `HistoryUpdated` | `FlightHistoryService` | `MaintenanceRecommendationService` | Recomienda mantenimiento al superar el umbral (HU-14) |
+
+Las alertas llegan al administrador en tiempo real por Server-Sent Events (`GET /api/v1/alerts/stream`, HU-11).
+
 ## Autor
 
 -🧑‍💻 Juan Esteban Cuaran Santander — Estudiante de Ingeniería de Software 
