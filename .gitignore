@@ -41,3 +41,5 @@ drownflow.vpp.bak_*
 
 ### Python ###
 __pycache__/
+
+diagramas/
