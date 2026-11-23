@@ -45,6 +45,16 @@ class DroneTest {
     }
 
     @Test
+    void maintenanceResults() {                             // HU-14, HU-15
+        Drone drone = newDrone();
+        drone.sendToMaintenance();
+        assertEquals(DroneState.IN_MAINTENANCE, drone.getState());
+        drone.sendToRepair();
+        assertEquals(DroneState.OUT_OF_SERVICE, drone.getState());
+        assertThrows(ResponseStatusException.class, drone::sendToRepair);
+    }
+
+    @Test
     void availableCannotBeReactivated() {
         assertThrows(ResponseStatusException.class, newDrone()::reactivate);
     }

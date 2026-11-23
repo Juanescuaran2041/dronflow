@@ -66,6 +66,18 @@ public class DroneService {
         return saved;
     }
 
+    public Drone sendToMaintenance(String code) {
+        Drone drone = findByCode(code);
+        drone.sendToMaintenance();
+        return droneRepository.save(drone);
+    }
+
+    public Drone sendToRepair(String code) {
+        Drone drone = findByCode(code);
+        drone.sendToRepair();
+        return droneRepository.save(drone);
+    }
+
     public List<Drone> findAvailable() {
         return droneRepository.findByState(DroneState.AVAILABLE);
     }
