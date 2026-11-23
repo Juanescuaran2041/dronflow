@@ -60,6 +60,18 @@ public abstract class Drone {
         state = DroneState.OUT_OF_SERVICE;
     }
 
+    // HU-14: la recomendación de mantenimiento lo saca de servicio
+    public void sendToMaintenance() {
+        requireState("send to maintenance", DroneState.AVAILABLE, DroneState.ON_MISSION, DroneState.CHARGING);
+        state = DroneState.IN_MAINTENANCE;
+    }
+
+    // HU-15: el mantenimiento concluye que necesita reparación
+    public void sendToRepair() {
+        requireState("send to repair", DroneState.IN_MAINTENANCE);
+        state = DroneState.OUT_OF_SERVICE;
+    }
+
     // HU-03: baja permanente, solo sin misión activa
     public void decommission() {
         if (state == DroneState.ON_MISSION) {
