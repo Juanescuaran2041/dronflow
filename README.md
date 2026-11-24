@@ -87,18 +87,16 @@ Dronflow como caja negra, con sus actores y los sistemas externos que le suminis
 
 ## Diagrama de despliegue
 
-![Diagrama de despliegue de Dronflow](docs/vistas/deploymentView.jpg)
+![Diagrama de despliegue de Dronflow](<docs/Deployment Diagram.jpg>)
 
 Muestra **dónde se ejecuta** cada parte del sistema y cómo se comunican:
 
-- **Equipo del usuario** (`«device»`): el administrador u operador abre la aplicación web (`dronflow-frontend`, React + TS) en su navegador. El frontend vive en otro repositorio.
-- **Servidor** (`«device»`): Docker Engine ejecuta tres contenedores en la red interna `dronflow-net`:
-  - **Node 20** ejecuta la aplicación React + TS (imagen construida en el repositorio del frontend) en el puerto 5173.
-  - **JVM 21** ejecuta `dronflow-backend.jar` (Spring Boot) en el puerto 8080: la API REST y el flujo SSE de alertas en tiempo real. Permite CORS desde el origen del frontend.
-  - **MongoDB** guarda la base `dronflow` en el volumen `mongo-data`, para que los datos no se pierdan al reiniciar (RNF-10).
-- **Sistemas externos** (`«node»`): el proveedor de zonas restringidas (protocolo por definir). La telemetría (batería y posición) no es un sistema externo: es interna de Gestión de Flota.
+- **User machine** (`«device»`): el administrador u operador abre `dronflow-frontend` en su navegador web.
+- **Vercel (CDN)**: sirve el build estático de `dronflow-frontend` (React + TS, repositorio aparte). Las peticiones a `/api/*` se reenvían al backend con un *rewrite*, así que el navegador ve un solo origen y no hace falta CORS.
+- **Render Web Service**: un contenedor Docker con JVM 21 ejecuta `dronflow-backend.jar` (Spring Boot): la API REST y el flujo SSE de alertas en tiempo real. El puerto lo asigna Render (`PORT`).
+- **MongoDB Atlas (M0)**: guarda la base `dronflow` (RNF-10).
 
-Rutas de comunicación: navegador → frontend por HTTP (puerto 5173), navegador → backend por HTTP (puerto 8080) y backend → MongoDB con el protocolo de MongoDB (puerto 27017). No se usa nginx.
+Rutas de comunicación: navegador → Vercel por HTTPS 443, Vercel/navegador → Render por HTTPS 443 (REST/JSON + JWT, SSE) y Render → Atlas por `mongodb+srv` con TLS (puerto 27017).
 
 ## Principios GRASP aplicados
 
