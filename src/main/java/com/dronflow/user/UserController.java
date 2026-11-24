@@ -39,11 +39,11 @@ public class UserController {
         return UserResponse.of(service.edit(id, request.userName(), request.password()));
     }
 
-    // RF-22: solo administrador, y nadie puede darse de baja a sí mismo
+    // RF-22: solo administrador, y ninguna cuenta de administrador puede darse de baja (HU-21)
     @DeleteMapping("/users/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
-        service.delete(id, jwt.getSubject());
+    public void delete(@PathVariable UUID id) {
+        service.delete(id);
     }
 
     @PostMapping("/logout")
