@@ -2,6 +2,7 @@ package com.dronflow.fleet;
 
 import com.dronflow.fleet.dto.DroneResponse;
 import com.dronflow.fleet.dto.RegisterDroneRequest;
+import com.dronflow.fleet.dto.TelemetryRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +35,12 @@ public class DroneController {
         return DroneResponse.of(service.findByCode(code));
     }
 
+    // HU-09/HU-10: el dron (o su simulador) reporta su lectura; Monitoreo evalúa sus reglas de alerta
+    @PostMapping("/{code}/telemetry")
+    public DroneResponse updateTelemetry(@PathVariable String code, @Valid @RequestBody TelemetryRequest data) {
+        return DroneResponse.of(service.updateTelemetry(code, data.batteryLevelPercent(), data.location()));
+    }
+
     @PostMapping("/{code}/report-fault")
     public DroneResponse reportFault(@PathVariable String code) {
         return DroneResponse.of(service.reportFault(code));
@@ -42,6 +49,12 @@ public class DroneController {
     @PostMapping("/{code}/decommission")
     public DroneResponse decommission(@PathVariable String code) {
         return DroneResponse.of(service.decommission(code));
+    }
+
+    // HU-07: el dron termina de cargar y vuelve a quedar disponible
+    @PostMapping("/{code}/finish-charging")
+    public DroneResponse finishCharging(@PathVariable String code) {
+        return DroneResponse.of(service.finishCharging(code));
     }
 
     @PostMapping("/{code}/reactivate")

@@ -80,7 +80,7 @@ public class Mission {
         this.start = Instant.now();
     }
 
-    // Eventos del sistema (HU-07). Sin endpoint por decisión del autor: quedan listos para cuando se defina su disparador.
+    // Avance de la misión (HU-07). Hoy lo reporta el operador; mañana, la telemetría del dron.
     public void reachCruise() {
         requireState("reach cruise altitude in", MissionState.TAKEOFF);
         state = MissionState.IN_PROGRESS;

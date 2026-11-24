@@ -45,6 +45,22 @@ public class MissionController {
         return MissionResponse.of(service.authorizeTakeoff(code));
     }
 
+    // HU-07: avance de la misión
+    @PostMapping("/{code}/reach-cruise")
+    public MissionResponse reachCruise(@PathVariable String code) {
+        return MissionResponse.of(service.reachCruise(code));
+    }
+
+    @PostMapping("/{code}/start-return")
+    public MissionResponse startReturn(@PathVariable String code) {
+        return MissionResponse.of(service.startReturn(code));
+    }
+
+    @PostMapping("/{code}/finish")
+    public MissionResponse finish(@PathVariable String code) {
+        return MissionResponse.of(service.finish(code));
+    }
+
     @PostMapping("/{code}/pause")
     public MissionResponse pause(@PathVariable String code) {
         return MissionResponse.of(service.pause(code));

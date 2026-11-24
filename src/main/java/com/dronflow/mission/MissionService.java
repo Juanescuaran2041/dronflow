@@ -4,6 +4,7 @@ import com.dronflow.fleet.DroneAvailable;
 import com.dronflow.fleet.DroneService;
 import com.dronflow.fleet.Location;
 import com.dronflow.mission.dto.CreateMissionRequest;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -11,23 +12,31 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
 public class MissionService {
     private static final Set<String> MISSION_TYPES = Set.of("delivery", "inspection", "monitoring"); // HU-04
 
+    // Estados en los que el dron está en el aire y su telemetría puede generar alertas
+    private static final Set<MissionState> IN_FLIGHT = Set.of(MissionState.TAKEOFF, MissionState.IN_PROGRESS,
+            MissionState.PAUSED, MissionState.RETURNING);
+
     private final MissionRepository missionRepository;
     private final AssignmentService assignmentService;
     private final DroneService droneService;
     private final RouteValidator routeValidator;
+    private final ApplicationEventPublisher events;
 
     public MissionService(MissionRepository missionRepository, AssignmentService assignmentService,
-                          DroneService droneService, RouteValidator routeValidator) {
+                          DroneService droneService, RouteValidator routeValidator,
+                          ApplicationEventPublisher events) {
         this.missionRepository = missionRepository;
         this.assignmentService = assignmentService;
         this.droneService = droneService;
         this.routeValidator = routeValidator;
+        this.events = events;
     }
 
     // HU-04 + HU-05: se crea pendiente y el sistema intenta asignarle un dron de inmediato
@@ -63,6 +72,11 @@ public class MissionService {
                 });
     }
 
+    // HU-09/HU-10: la misión que el dron está volando, si tiene alguna
+    public Optional<Mission> activeMissionOf(String droneCode) {
+        return missionRepository.findByAssignedDroneCodeAndStateIn(droneCode, IN_FLIGHT).stream().findFirst();
+    }
+
     public List<Mission> find(MissionFilter filter) {
         return missionRepository.find(filter);
     }
@@ -82,6 +96,8 @@ public class MissionService {
         var crossed = routeValidator.firstCrossedZone(route);
         if (crossed.isEmpty()) {
             mission.takeOff(route);
+            // RF-02: el despegue dispara la tarea propia del tipo de dron, sin que el servicio sepa cuál es
+            droneService.findByCode(mission.getAssignedDroneCode()).executeTask(mission);
             return missionRepository.save(mission);
         }
         int attempt = mission.registerRouteAttempt();
@@ -95,6 +111,30 @@ public class MissionService {
         }
         missionRepository.save(mission);
         throw new ResponseStatusException(HttpStatus.CONFLICT, reason);
+    }
+
+    // HU-07: avance de la misión. El aterrizaje libera el dron y alimenta el historial (HU-13)
+    public Mission reachCruise(String code) {
+        Mission mission = findByCode(code);
+        mission.reachCruise();
+        return missionRepository.save(mission);
+    }
+
+    public Mission startReturn(String code) {
+        Mission mission = findByCode(code);
+        mission.startReturn();
+        return missionRepository.save(mission);
+    }
+
+    public Mission finish(String code) {
+        Mission mission = findByCode(code);
+        String droneCode = mission.getAssignedDroneCode();
+        mission.finish();
+        Mission saved = missionRepository.save(mission);
+        // el historial primero: el dron puede tomar otra misión apenas quede disponible
+        events.publishEvent(new MissionCompleted(code, droneCode, mission.flightDuration()));
+        droneService.completeMission(droneCode);
+        return saved;
     }
 
     public Mission pause(String code) {

@@ -1,5 +1,6 @@
 package com.dronflow.fleet;
 
+import com.dronflow.mission.Mission;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.http.HttpStatus;
@@ -37,6 +38,21 @@ public abstract class Drone {
         this.state = DroneState.AVAILABLE; // HU-02: un dron recién registrado queda disponible
     }
 
+    /**
+     * RF-02: la tarea de la misión la ejecuta cada subtipo a su manera (entrega, inspección, monitoreo).
+     * La llama MissionService al autorizar el despegue; agregar un tipo nuevo no toca a ningún llamador.
+     */
+    public abstract void executeTask(Mission mission);
+
+    // HU-09/HU-10: cada lectura del dron en vuelo actualiza su batería y su posición
+    public void updateTelemetry(double batteryLevelPercent, Location location) {
+        if (batteryLevelPercent < 0 || batteryLevelPercent > 100) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Battery level must be between 0 and 100");
+        }
+        this.batteryLevelPercent = batteryLevelPercent;
+        this.location = location;
+    }
+
     // HU-05: el dron sirve si soporta la carga y la autonomía que pide la misión
     public boolean canExecute(double requiredPayload, int minEndurance) {
         return state == DroneState.AVAILABLE && maxPayload >= requiredPayload && enduranceMin >= minEndurance;
@@ -46,6 +62,17 @@ public abstract class Drone {
     public void assignToMission() {
         requireState("assign to a mission", DroneState.AVAILABLE);
         state = DroneState.ON_MISSION;
+    }
+
+    // HU-07: al terminar la misión el dron queda libre, o a cargar si volvió con poca batería
+    public void completeMission(double batteryThreshold) {
+        requireState("complete a mission", DroneState.ON_MISSION);
+        state = batteryLevelPercent < batteryThreshold ? DroneState.CHARGING : DroneState.AVAILABLE;
+    }
+
+    public void finishCharging() {
+        requireState("finish charging", DroneState.CHARGING);
+        state = DroneState.AVAILABLE;
     }
 
     // HU-06: se libera si no se logra validar la ruta
