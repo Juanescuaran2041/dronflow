@@ -37,6 +37,15 @@ public abstract class Drone {
         this.state = DroneState.AVAILABLE; // HU-02: un dron recién registrado queda disponible
     }
 
+    // HU-09/HU-10: cada lectura del dron en vuelo actualiza su batería y su posición
+    public void updateTelemetry(double batteryLevelPercent, Location location) {
+        if (batteryLevelPercent < 0 || batteryLevelPercent > 100) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Battery level must be between 0 and 100");
+        }
+        this.batteryLevelPercent = batteryLevelPercent;
+        this.location = location;
+    }
+
     // HU-05: el dron sirve si soporta la carga y la autonomía que pide la misión
     public boolean canExecute(double requiredPayload, int minEndurance) {
         return state == DroneState.AVAILABLE && maxPayload >= requiredPayload && enduranceMin >= minEndurance;

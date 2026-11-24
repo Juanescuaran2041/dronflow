@@ -78,6 +78,15 @@ public class DroneService {
         return droneRepository.save(drone);
     }
 
+    // HU-09/HU-10: guarda la lectura y avisa a Monitoreo, que decide si genera alertas
+    public Drone updateTelemetry(String code, double batteryLevelPercent, Location location) {
+        Drone drone = findByCode(code);
+        drone.updateTelemetry(batteryLevelPercent, location);
+        Drone saved = droneRepository.save(drone);
+        events.publishEvent(new TelemetryReceived(saved));
+        return saved;
+    }
+
     public List<Drone> findAvailable() {
         return droneRepository.findByState(DroneState.AVAILABLE);
     }

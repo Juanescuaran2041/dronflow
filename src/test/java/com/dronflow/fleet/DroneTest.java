@@ -58,4 +58,21 @@ class DroneTest {
     void availableCannotBeReactivated() {
         assertThrows(ResponseStatusException.class, newDrone()::reactivate);
     }
+
+    @Test
+    void telemetryUpdatesBatteryAndPosition() {             // HU-09, HU-10
+        Drone drone = newDrone();
+        Location position = new Location("Km 4", 4.61, -74.07, 80);
+        drone.updateTelemetry(18.5, position);
+        assertEquals(18.5, drone.getBatteryLevelPercent());
+        assertEquals(position, drone.getLocation());
+    }
+
+    @Test
+    void telemetryRejectsABatteryOutsideThePercentageRange() {
+        Drone drone = newDrone();
+        assertThrows(ResponseStatusException.class, () -> drone.updateTelemetry(101, null));
+        assertThrows(ResponseStatusException.class, () -> drone.updateTelemetry(-1, null));
+        assertEquals(100, drone.getBatteryLevelPercent());  // la lectura inválida no se aplica
+    }
 }
