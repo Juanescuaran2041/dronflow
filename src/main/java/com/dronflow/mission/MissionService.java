@@ -61,7 +61,7 @@ public class MissionService {
     @EventListener
     public void onDroneAvailable(DroneAvailable event) {
         var drone = droneService.findByCode(event.droneCode());
-        missionRepository.findByStateAndAssignedDroneCodeIsNull(MissionState.PENDING).stream()
+        missionRepository.findUnassigned(MissionState.PENDING).stream()
                 .filter(m -> drone.canExecute(m.getRequiredPayload(), m.getMinEndurance()))
                 .max(Comparator.comparing(Mission::getPriority).thenComparing(Mission::getCreatedAt, Comparator.reverseOrder()))
                 .ifPresent(m -> {
@@ -72,7 +72,7 @@ public class MissionService {
     }
 
     public Optional<Mission> activeMissionOf(String droneCode) {
-        return missionRepository.findByAssignedDroneCodeAndStateIn(droneCode, IN_FLIGHT).stream().findFirst();
+        return missionRepository.findByDrone(droneCode, IN_FLIGHT).stream().findFirst();
     }
 
     public List<Mission> find(MissionFilter filter) {
