@@ -6,11 +6,14 @@ Sistema de Gestión Inteligente de Flotas de Drones para Misiones de Entrega, In
 
 ## Acceso de prueba para el profesor
 
-Abre la aplicación desplegada e inicia sesión con la cuenta de administrador de la demostración.
+Abre la aplicación desplegada e inicia sesión con cualquiera de estas dos cuentas. La de administrador ve todo; la de operador sirve para comprobar que los permisos por rol funcionan (no entra a alertas, mantenimiento, configuración ni registro de usuarios).
 
-| Usuario | Contraseña |
-|---|---|
-| `profesor` | `4pefbZYdSNg1wSZRgJLv` |
+| Usuario | Contraseña | Rol |
+|---|---|---|
+| `profesor` | `4pefbZYdSNg1wSZRgJLv` | Administrador |
+| `operador` | `operador-dronflow-2026` | Operador |
+
+La base de la demostración ya tiene drones, misiones en distintos estados, alertas e historial de vuelos. La colección de Postman de `postman/` apunta al backend desplegado y trae las variables listas.
 
 ## Descripción
 
