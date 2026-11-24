@@ -1,5 +1,6 @@
 package com.dronflow.fleet;
 
+import com.dronflow.mission.Mission;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.http.HttpStatus;
@@ -36,6 +37,12 @@ public abstract class Drone {
         this.location = null;           // pendiente de confirmar: se conoce con la primera telemetría
         this.state = DroneState.AVAILABLE; // HU-02: un dron recién registrado queda disponible
     }
+
+    /**
+     * RF-02: la tarea de la misión la ejecuta cada subtipo a su manera (entrega, inspección, monitoreo).
+     * La llama MissionService al autorizar el despegue; agregar un tipo nuevo no toca a ningún llamador.
+     */
+    public abstract void executeTask(Mission mission);
 
     // HU-05: el dron sirve si soporta la carga y la autonomía que pide la misión
     public boolean canExecute(double requiredPayload, int minEndurance) {
