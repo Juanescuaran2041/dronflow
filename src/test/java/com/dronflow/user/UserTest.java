@@ -17,7 +17,7 @@ class UserTest {
     }
 
     @Test
-    void editChangesUserNameAndPassword() {                 // RF-23
+    void editChangesUserNameAndPassword() {
         User user = newOperator();
         user.editData("operador2", "contrasena2", encoder);
         assertEquals("operador2", user.getUsername());
@@ -26,7 +26,7 @@ class UserTest {
     }
 
     @Test
-    void editKeepsWhatIsNotSent() {                         // RF-23
+    void editKeepsWhatIsNotSent() {
         User user = newOperator();
         user.editData(null, "contrasena2", encoder);
         assertEquals("operador1", user.getUsername());
@@ -37,7 +37,7 @@ class UserTest {
     }
 
     @Test
-    void aDeactivatedUserCannotAuthenticate() {             // RF-22
+    void aDeactivatedUserCannotAuthenticate() {
         User user = newOperator();
         user.deactivate();
         assertFalse(user.isActive());

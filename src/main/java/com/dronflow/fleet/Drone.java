@@ -33,18 +33,17 @@ public abstract class Drone {
         this.enduranceMin = enduranceMin;
         this.maxPayload = maxPayload;
         this.equipment = equipment;
-        this.batteryLevelPercent = 100; // pendiente de confirmar por el autor: HU-01 no da el nivel inicial
-        this.location = null;           // pendiente de confirmar: se conoce con la primera telemetría
-        this.state = DroneState.AVAILABLE; // HU-02: un dron recién registrado queda disponible
+        this.batteryLevelPercent = 100;
+        this.location = null;
+        this.state = DroneState.AVAILABLE;
     }
 
     /**
-     * RF-02: la tarea de la misión la ejecuta cada subtipo a su manera (entrega, inspección, monitoreo).
+     * Polimorfismo: la tarea de la misión la ejecuta cada subtipo a su manera.
      * La llama MissionService al autorizar el despegue; agregar un tipo nuevo no toca a ningún llamador.
      */
     public abstract void executeTask(Mission mission);
 
-    // HU-09/HU-10: cada lectura del dron en vuelo actualiza su batería y su posición
     public void updateTelemetry(double batteryLevelPercent, Location location) {
         if (batteryLevelPercent < 0 || batteryLevelPercent > 100) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Battery level must be between 0 and 100");
@@ -53,18 +52,15 @@ public abstract class Drone {
         this.location = location;
     }
 
-    // HU-05: el dron sirve si soporta la carga y la autonomía que pide la misión
     public boolean canExecute(double requiredPayload, int minEndurance) {
         return state == DroneState.AVAILABLE && maxPayload >= requiredPayload && enduranceMin >= minEndurance;
     }
 
-    // HU-05: al asignarlo queda reservado ("en misión")
     public void assignToMission() {
         requireState("assign to a mission", DroneState.AVAILABLE);
         state = DroneState.ON_MISSION;
     }
 
-    // HU-07: al terminar la misión el dron queda libre, o a cargar si volvió con poca batería
     public void completeMission(double batteryThreshold) {
         requireState("complete a mission", DroneState.ON_MISSION);
         state = batteryLevelPercent < batteryThreshold ? DroneState.CHARGING : DroneState.AVAILABLE;
@@ -75,31 +71,26 @@ public abstract class Drone {
         state = DroneState.AVAILABLE;
     }
 
-    // HU-06: se libera si no se logra validar la ruta
     public void releaseReservation() {
         requireState("release", DroneState.ON_MISSION);
         state = DroneState.AVAILABLE;
     }
 
-    // HU-02: un operador reporta una avería
     public void markOutOfService() {
         requireState("report a fault", DroneState.AVAILABLE);
         state = DroneState.OUT_OF_SERVICE;
     }
 
-    // HU-14: la recomendación de mantenimiento lo saca de servicio
     public void sendToMaintenance() {
         requireState("send to maintenance", DroneState.AVAILABLE, DroneState.ON_MISSION, DroneState.CHARGING);
         state = DroneState.IN_MAINTENANCE;
     }
 
-    // HU-15: el mantenimiento concluye que necesita reparación
     public void sendToRepair() {
         requireState("send to repair", DroneState.IN_MAINTENANCE);
         state = DroneState.OUT_OF_SERVICE;
     }
 
-    // HU-03: baja permanente, solo sin misión activa
     public void decommission() {
         if (state == DroneState.ON_MISSION) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
@@ -111,7 +102,6 @@ public abstract class Drone {
         state = DroneState.DECOMMISSIONED;
     }
 
-    // HU-03: vuelve al servicio desde fuera de servicio o en mantenimiento
     public void reactivate() {
         requireState("reactivate", DroneState.OUT_OF_SERVICE, DroneState.IN_MAINTENANCE);
         state = DroneState.AVAILABLE;

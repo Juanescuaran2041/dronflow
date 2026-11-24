@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-// HU-10: alerta si el dron se aleja de su ruta más de la distancia configurada
 @Component
 public class RouteDeviationRule implements AlertRule {
 

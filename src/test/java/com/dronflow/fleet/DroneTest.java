@@ -16,19 +16,19 @@ class DroneTest {
     }
 
     @Test
-    void newDroneIsAvailable() {                       // HU-02
+    void newDroneIsAvailable() {
         assertEquals(DroneState.AVAILABLE, newDrone().getState());
     }
 
     @Test
-    void faultMovesAvailableToOutOfService() {          // HU-02
+    void faultMovesAvailableToOutOfService() {
         Drone drone = newDrone();
         drone.markOutOfService();
         assertEquals(DroneState.OUT_OF_SERVICE, drone.getState());
     }
 
     @Test
-    void outOfServiceCanBeReactivatedOrDecommissioned() { // HU-03
+    void outOfServiceCanBeReactivatedOrDecommissioned() {
         Drone drone = newDrone();
         drone.markOutOfService();
         drone.reactivate();
@@ -38,14 +38,14 @@ class DroneTest {
     }
 
     @Test
-    void decommissionedCannotBeReactivated() {           // HU-03 supuesto
+    void decommissionedCannotBeReactivated() {
         Drone drone = newDrone();
         drone.decommission();
         assertThrows(ResponseStatusException.class, drone::reactivate);
     }
 
     @Test
-    void maintenanceResults() {                             // HU-14, HU-15
+    void maintenanceResults() {
         Drone drone = newDrone();
         drone.sendToMaintenance();
         assertEquals(DroneState.IN_MAINTENANCE, drone.getState());
@@ -60,7 +60,7 @@ class DroneTest {
     }
 
     @Test
-    void completingAMissionWithEnoughBatteryLeavesTheDroneAvailable() {   // HU-07
+    void completingAMissionWithEnoughBatteryLeavesTheDroneAvailable() {
         Drone drone = newDrone();
         drone.assignToMission();
         drone.completeMission(20);                       // vuelve con 100 %
@@ -68,7 +68,7 @@ class DroneTest {
     }
 
     @Test
-    void completingAMissionWithLowBatterySendsTheDroneToCharge() {        // HU-07
+    void completingAMissionWithLowBatterySendsTheDroneToCharge() {
         Drone drone = newDrone();
         drone.assignToMission();
         drone.completeMission(101);                      // umbral por encima de la carga actual
@@ -84,7 +84,7 @@ class DroneTest {
     }
 
     @Test
-    void telemetryUpdatesBatteryAndPosition() {             // HU-09, HU-10
+    void telemetryUpdatesBatteryAndPosition() {
         Drone drone = newDrone();
         Location position = new Location("Km 4", 4.61, -74.07, 80);
         drone.updateTelemetry(18.5, position);

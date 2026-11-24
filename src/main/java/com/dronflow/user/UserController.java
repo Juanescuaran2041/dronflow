@@ -33,13 +33,11 @@ public class UserController {
         return UserResponse.of(service.registerOperator(request.userName(), request.password()));
     }
 
-    // RF-23: solo administrador (regla en SecurityConfig)
     @PutMapping("/users/{id}")
     public UserResponse edit(@PathVariable UUID id, @Valid @RequestBody EditUserRequest request) {
         return UserResponse.of(service.edit(id, request.userName(), request.password()));
     }
 
-    // RF-22: solo administrador, y nadie puede darse de baja a sí mismo
     @DeleteMapping("/users/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {

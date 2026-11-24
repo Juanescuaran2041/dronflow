@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-// HU-01 y HU-03 las pueden hacer administrador u operador: basta con estar autenticado.
 @RestController
 @RequestMapping("/api/v1/drones")
 public class DroneController {
@@ -35,7 +34,6 @@ public class DroneController {
         return DroneResponse.of(service.findByCode(code));
     }
 
-    // HU-09/HU-10: el dron (o su simulador) reporta su lectura; Monitoreo evalúa sus reglas de alerta
     @PostMapping("/{code}/telemetry")
     public DroneResponse updateTelemetry(@PathVariable String code, @Valid @RequestBody TelemetryRequest data) {
         return DroneResponse.of(service.updateTelemetry(code, data.batteryLevelPercent(), data.location()));
@@ -51,7 +49,6 @@ public class DroneController {
         return DroneResponse.of(service.decommission(code));
     }
 
-    // HU-07: el dron termina de cargar y vuelve a quedar disponible
     @PostMapping("/{code}/finish-charging")
     public DroneResponse finishCharging(@PathVariable String code) {
         return DroneResponse.of(service.finishCharging(code));

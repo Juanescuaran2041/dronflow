@@ -10,8 +10,8 @@ import java.util.Comparator;
 import java.util.Optional;
 
 /**
- * HU-05: elige el dron disponible y compatible con mejor puntaje según la ponderación de HU-18.
- * La prioridad no distingue entre drones (supuesto de HU-05): sirve para elegir entre misiones pendientes.
+ * Elige el dron disponible y compatible con mejor puntaje según la ponderación configurada.
+ * La prioridad no distingue entre drones: sirve para elegir entre misiones pendientes.
  */
 @Service
 public class AssignmentService {

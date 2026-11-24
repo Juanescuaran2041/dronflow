@@ -26,7 +26,6 @@ public class MissionController {
         return MissionResponse.of(service.create(data));
     }
 
-    // HU-17: solo administrador (regla en SecurityConfig)
     @GetMapping
     public List<MissionResponse> find(@RequestParam(required = false) String droneCode,
                                       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant from,
@@ -45,7 +44,6 @@ public class MissionController {
         return MissionResponse.of(service.authorizeTakeoff(code));
     }
 
-    // HU-07: avance de la misión
     @PostMapping("/{code}/reach-cruise")
     public MissionResponse reachCruise(@PathVariable String code) {
         return MissionResponse.of(service.reachCruise(code));

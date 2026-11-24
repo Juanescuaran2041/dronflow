@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class MaintenanceThresholdsTest {
 
     @Test
-    void recommendsOnlyWhenAThresholdIsReached() {   // HU-14 (umbral de 100 h del ejemplo)
+    void recommendsOnlyWhenAThresholdIsReached() {
         MaintenanceThresholds thresholds = new MaintenanceThresholds(100, 50);
         assertTrue(thresholds.exceededBy(101, 10));   // 95 h + 6 h
         assertFalse(thresholds.exceededBy(42, 10));   // 40 h + 2 h

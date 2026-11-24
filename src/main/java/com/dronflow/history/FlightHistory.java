@@ -22,20 +22,19 @@ public class FlightHistory {
         this.droneCode = droneCode;
     }
 
-    // HU-13: suma las horas de la misión y la cuenta como completada
     public void registerCompletedMission(Duration duration) {
         flightHours += duration.toMillis() / 3_600_000.0;
         completedMissions++;
     }
 
-    // HU-13 (Creator): el historial crea sus incidencias a partir de las alertas altas o críticas
+    // Creator: el historial crea sus propias incidencias a partir de las alertas altas o críticas
     public void registerIncident(Alert alert) {
         if (alert.isIncident()) {
             incidents.add(new Incident(alert.getId(), alert.getMissionCode(), alert.getSeverity(), alert.getGeneratedAt()));
         }
     }
 
-    // HU-15: un mantenimiento aprobado reinicia los contadores; las incidencias no se borran
+    // Un mantenimiento aprobado reinicia los contadores; las incidencias no se borran
     public void resetCounters() {
         flightHours = 0;
         completedMissions = 0;

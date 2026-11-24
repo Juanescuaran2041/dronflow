@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-// HU-14: solo administrador (regla en SecurityConfig). Las recomendaciones las genera el sistema.
 @RestController
 public class MaintenanceRecommendationController {
     private final MaintenanceRecommendationService service;

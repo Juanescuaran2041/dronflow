@@ -19,12 +19,11 @@ public class SystemConfiguration {
 
     protected SystemConfiguration() {}
 
-    // Valores por defecto = ejemplos de las HU (decisión del autor)
     static SystemConfiguration withDefaults() {
         SystemConfiguration c = new SystemConfiguration();
         c.assignmentRule = new AssignmentRule(0.33, 0.33, 0.34);
-        c.alertThresholds = new AlertThresholds(20, 50);           // HU-09, HU-10
-        c.maintenanceThresholds = new MaintenanceThresholds(120, 50); // HU-18
+        c.alertThresholds = new AlertThresholds(20, 50);
+        c.maintenanceThresholds = new MaintenanceThresholds(120, 50);
         return c;
     }
 

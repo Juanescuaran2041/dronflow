@@ -35,14 +35,12 @@ public class AlertService {
         this.missionService = missionService;
     }
 
-    // HU-09 y HU-10: cada lectura del dron en vuelo se evalúa contra todas las reglas
     @EventListener
     public void onTelemetryReceived(TelemetryReceived event) {
         missionService.activeMissionOf(event.drone().getCode())
                 .ifPresent(mission -> evaluate(event.drone(), mission));
     }
 
-    /** HU-09 y HU-10: aplica todas las reglas a una lectura del dron en misión. */
     public List<Alert> evaluate(Drone drone, Mission mission) {
         var thresholds = configuration.getAlertThresholds();
         return rules.stream()
@@ -52,7 +50,6 @@ public class AlertService {
                 .toList();
     }
 
-    // Guarda la alerta y la envía en tiempo real a los administradores conectados (HU-11)
     public Alert raise(Alert alert) {
         Alert saved = alertRepository.save(alert);
         for (SseEmitter emitter : subscribers) {
@@ -79,7 +76,6 @@ public class AlertService {
         return emitter;
     }
 
-    // HU-12: consulta por tipo y severidad (ambos opcionales)
     public List<Alert> find(AlertType type, Severity severity) {
         if (type != null && severity != null) return alertRepository.findByTypeAndSeverity(type, severity, NEWEST_FIRST);
         if (type != null) return alertRepository.findByType(type, NEWEST_FIRST);

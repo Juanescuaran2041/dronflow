@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-// HU-06: el sistema calcula la ruta (decisión del autor) y la valida contra las zonas restringidas
+// El sistema calcula la ruta y la valida contra las zonas restringidas
 @Component
 public class RouteValidator {
     private final RestrictedZoneProvider zones;

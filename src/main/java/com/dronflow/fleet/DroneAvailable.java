@@ -1,4 +1,4 @@
 package com.dronflow.fleet;
 
-/** Evento: un dron quedó disponible (HU-05, asignación diferida). */
+/** Observer: lo escucha MissionService para darle una misión pendiente. */
 public record DroneAvailable(String droneCode) {}

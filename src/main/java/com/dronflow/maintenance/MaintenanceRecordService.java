@@ -23,7 +23,6 @@ public class MaintenanceRecordService {
         this.historyService = historyService;
     }
 
-    // HU-15: solo se registra para un dron en mantenimiento, y el resultado decide su nuevo estado
     public MaintenanceRecord recordResult(String droneCode, MaintenanceResult result) {
         Drone drone = droneService.findByCode(droneCode);
         if (drone.getState() != DroneState.IN_MAINTENANCE) {
@@ -33,7 +32,7 @@ public class MaintenanceRecordService {
         switch (result) {
             case APPROVED -> {
                 historyService.resetCounters(droneCode); // reinicia horas y misiones, conserva incidencias
-                droneService.reactivate(droneCode);      // vuelve a disponible
+                droneService.reactivate(droneCode);
             }
             case REQUIRES_REPAIR -> droneService.sendToRepair(droneCode);
             case DECOMMISSION -> droneService.decommission(droneCode);

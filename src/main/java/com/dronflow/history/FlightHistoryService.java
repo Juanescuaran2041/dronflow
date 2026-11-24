@@ -22,13 +22,11 @@ public class FlightHistoryService {
         this.events = events;
     }
 
-    // HU-13: si el dron aún no voló, su historial está en ceros
     public FlightHistory getHistory(String droneCode) {
         droneService.findByCode(droneCode); // 404 si el dron no existe
         return historyRepository.findById(droneCode).orElseGet(() -> new FlightHistory(droneCode));
     }
 
-    // HU-13: al terminar la misión suma sus horas y registra como incidencias sus alertas altas o críticas
     @EventListener
     public void onMissionCompleted(MissionCompleted event) {
         FlightHistory history = historyRepository.findById(event.droneCode())
@@ -39,7 +37,6 @@ public class FlightHistoryService {
         events.publishEvent(new HistoryUpdated(history.getDroneCode(), history.getFlightHours(), history.getCompletedMissions()));
     }
 
-    // HU-15
     public void resetCounters(String droneCode) {
         FlightHistory history = getHistory(droneCode);
         history.resetCounters();

@@ -23,7 +23,7 @@ public class Alert {
         this.id = UUID.randomUUID();
         this.generatedAt = Instant.now();
         this.type = type;
-        this.severity = type.severity(); // HU-12: clasificación automática
+        this.severity = type.severity();
         this.droneCode = droneCode;
         this.missionCode = missionCode;
         this.detail = detail;
@@ -33,7 +33,6 @@ public class Alert {
         return type + " (" + severity + ") on drone " + droneCode + ": " + detail;
     }
 
-    // HU-13: las alertas altas o críticas quedan como incidencias en el historial
     public boolean isIncident() {
         return severity == Severity.HIGH || severity == Severity.CRITICAL;
     }

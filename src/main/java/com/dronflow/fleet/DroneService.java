@@ -40,7 +40,6 @@ public class DroneService {
         return droneRepository.save(factory.create(data));
     }
 
-    // HU-03: un dron dado de baja deja de aparecer entre los drones de la flota
     public List<Drone> listAll() {
         return droneRepository.findByStateNot(DroneState.DECOMMISSIONED);
     }
@@ -66,7 +65,7 @@ public class DroneService {
         Drone drone = findByCode(code);
         drone.reactivate();
         Drone saved = droneRepository.save(drone);
-        events.publishEvent(new DroneAvailable(code)); // HU-05: puede tomar una misión pendiente
+        events.publishEvent(new DroneAvailable(code));
         return saved;
     }
 
@@ -82,13 +81,13 @@ public class DroneService {
         return droneRepository.save(drone);
     }
 
-    // HU-07: el umbral de carga es el mismo de la alerta de batería baja (HU-09)
+    // El umbral para mandarlo a cargar es el mismo de la alerta de batería baja
     public Drone completeMission(String code) {
         Drone drone = findByCode(code);
         drone.completeMission(configuration.getAlertThresholds().batteryMinPercent());
         Drone saved = droneRepository.save(drone);
         if (saved.getState() == DroneState.AVAILABLE) {
-            events.publishEvent(new DroneAvailable(code)); // HU-05: puede tomar una misión pendiente
+            events.publishEvent(new DroneAvailable(code));
         }
         return saved;
     }
@@ -101,7 +100,6 @@ public class DroneService {
         return saved;
     }
 
-    // HU-09/HU-10: guarda la lectura y avisa a Monitoreo, que decide si genera alertas
     public Drone updateTelemetry(String code, double batteryLevelPercent, Location location) {
         Drone drone = findByCode(code);
         drone.updateTelemetry(batteryLevelPercent, location);
@@ -120,7 +118,7 @@ public class DroneService {
         return droneRepository.save(drone);
     }
 
-    // No publica DroneAvailable: la misión que lo liberó no debe volver a tomarlo de inmediato (HU-06)
+    // No publica DroneAvailable: la misión que lo liberó no debe volver a tomarlo de inmediato
     public Drone release(String code) {
         Drone drone = findByCode(code);
         drone.releaseReservation();

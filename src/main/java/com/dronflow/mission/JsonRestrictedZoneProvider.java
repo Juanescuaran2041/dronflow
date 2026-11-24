@@ -10,7 +10,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.List;
 
-// Decisión del autor (HU-06): las zonas vienen en restricted-zones.json, empaquetado en el backend
+// Las zonas vienen de restricted-zones.json, empaquetado en el backend
 @Component
 public class JsonRestrictedZoneProvider implements RestrictedZoneProvider {
     private final List<RestrictedZone> zones;
