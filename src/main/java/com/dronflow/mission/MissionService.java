@@ -82,6 +82,8 @@ public class MissionService {
         var crossed = routeValidator.firstCrossedZone(route);
         if (crossed.isEmpty()) {
             mission.takeOff(route);
+            // RF-02: el despegue dispara la tarea propia del tipo de dron, sin que el servicio sepa cuál es
+            droneService.findByCode(mission.getAssignedDroneCode()).executeTask(mission);
             return missionRepository.save(mission);
         }
         int attempt = mission.registerRouteAttempt();
