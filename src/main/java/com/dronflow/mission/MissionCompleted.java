@@ -2,8 +2,5 @@ package com.dronflow.mission;
 
 import java.time.Duration;
 
-/**
- * Evento: una misión terminó (HU-13). Lo publicará Mission.finish cuando se defina quién reporta el aterrizaje;
- * por ahora no tiene publicador (decisión del autor).
- */
+/** Evento: una misión aterrizó y terminó (HU-13). Lo publica MissionService.finish. */
 public record MissionCompleted(String missionCode, String droneCode, Duration flightDuration) {}

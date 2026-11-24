@@ -48,6 +48,17 @@ public abstract class Drone {
         state = DroneState.ON_MISSION;
     }
 
+    // HU-07: al terminar la misión el dron queda libre, o a cargar si volvió con poca batería
+    public void completeMission(double batteryThreshold) {
+        requireState("complete a mission", DroneState.ON_MISSION);
+        state = batteryLevelPercent < batteryThreshold ? DroneState.CHARGING : DroneState.AVAILABLE;
+    }
+
+    public void finishCharging() {
+        requireState("finish charging", DroneState.CHARGING);
+        state = DroneState.AVAILABLE;
+    }
+
     // HU-06: se libera si no se logra validar la ruta
     public void releaseReservation() {
         requireState("release", DroneState.ON_MISSION);

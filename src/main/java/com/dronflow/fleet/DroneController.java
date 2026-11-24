@@ -44,6 +44,12 @@ public class DroneController {
         return DroneResponse.of(service.decommission(code));
     }
 
+    // HU-07: el dron termina de cargar y vuelve a quedar disponible
+    @PostMapping("/{code}/finish-charging")
+    public DroneResponse finishCharging(@PathVariable String code) {
+        return DroneResponse.of(service.finishCharging(code));
+    }
+
     @PostMapping("/{code}/reactivate")
     public DroneResponse reactivate(@PathVariable String code) {
         return DroneResponse.of(service.reactivate(code));

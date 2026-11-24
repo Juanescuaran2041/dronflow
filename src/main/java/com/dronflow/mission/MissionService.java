@@ -4,6 +4,7 @@ import com.dronflow.fleet.DroneAvailable;
 import com.dronflow.fleet.DroneService;
 import com.dronflow.fleet.Location;
 import com.dronflow.mission.dto.CreateMissionRequest;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -21,13 +22,16 @@ public class MissionService {
     private final AssignmentService assignmentService;
     private final DroneService droneService;
     private final RouteValidator routeValidator;
+    private final ApplicationEventPublisher events;
 
     public MissionService(MissionRepository missionRepository, AssignmentService assignmentService,
-                          DroneService droneService, RouteValidator routeValidator) {
+                          DroneService droneService, RouteValidator routeValidator,
+                          ApplicationEventPublisher events) {
         this.missionRepository = missionRepository;
         this.assignmentService = assignmentService;
         this.droneService = droneService;
         this.routeValidator = routeValidator;
+        this.events = events;
     }
 
     // HU-04 + HU-05: se crea pendiente y el sistema intenta asignarle un dron de inmediato
@@ -95,6 +99,30 @@ public class MissionService {
         }
         missionRepository.save(mission);
         throw new ResponseStatusException(HttpStatus.CONFLICT, reason);
+    }
+
+    // HU-07: avance de la misión. El aterrizaje libera el dron y alimenta el historial (HU-13)
+    public Mission reachCruise(String code) {
+        Mission mission = findByCode(code);
+        mission.reachCruise();
+        return missionRepository.save(mission);
+    }
+
+    public Mission startReturn(String code) {
+        Mission mission = findByCode(code);
+        mission.startReturn();
+        return missionRepository.save(mission);
+    }
+
+    public Mission finish(String code) {
+        Mission mission = findByCode(code);
+        String droneCode = mission.getAssignedDroneCode();
+        mission.finish();
+        Mission saved = missionRepository.save(mission);
+        // el historial primero: el dron puede tomar otra misión apenas quede disponible
+        events.publishEvent(new MissionCompleted(code, droneCode, mission.flightDuration()));
+        droneService.completeMission(droneCode);
+        return saved;
     }
 
     public Mission pause(String code) {

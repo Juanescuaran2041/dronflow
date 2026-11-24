@@ -1,5 +1,6 @@
 package com.dronflow.fleet;
 
+import com.dronflow.configuration.SystemConfigurationService;
 import com.dronflow.fleet.dto.RegisterDroneRequest;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
@@ -16,11 +17,14 @@ public class DroneService {
     private final DroneRepository droneRepository;
     private final Map<String, DroneFactory> factories;
     private final ApplicationEventPublisher events;
+    private final SystemConfigurationService configuration;
 
     // Spring inyecta todas las fábricas registradas (@Component); se indexan por su tipo.
-    public DroneService(DroneRepository droneRepository, List<DroneFactory> factories, ApplicationEventPublisher events) {
+    public DroneService(DroneRepository droneRepository, List<DroneFactory> factories,
+                        ApplicationEventPublisher events, SystemConfigurationService configuration) {
         this.droneRepository = droneRepository;
         this.events = events;
+        this.configuration = configuration;
         this.factories = factories.stream().collect(Collectors.toMap(DroneFactory::type, Function.identity()));
     }
 
@@ -76,6 +80,25 @@ public class DroneService {
         Drone drone = findByCode(code);
         drone.sendToRepair();
         return droneRepository.save(drone);
+    }
+
+    // HU-07: el umbral de carga es el mismo de la alerta de batería baja (HU-09)
+    public Drone completeMission(String code) {
+        Drone drone = findByCode(code);
+        drone.completeMission(configuration.getAlertThresholds().batteryMinPercent());
+        Drone saved = droneRepository.save(drone);
+        if (saved.getState() == DroneState.AVAILABLE) {
+            events.publishEvent(new DroneAvailable(code)); // HU-05: puede tomar una misión pendiente
+        }
+        return saved;
+    }
+
+    public Drone finishCharging(String code) {
+        Drone drone = findByCode(code);
+        drone.finishCharging();
+        Drone saved = droneRepository.save(drone);
+        events.publishEvent(new DroneAvailable(code));
+        return saved;
     }
 
     public List<Drone> findAvailable() {
