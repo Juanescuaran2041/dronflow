@@ -44,6 +44,7 @@ Controller  →  Service  →  Repository  →  MongoDB
 - **Controller** — expone los endpoints REST, valida la entrada y traduce a DTO. No contiene lógica de negocio.
 - **Service** — concentra las reglas de negocio, las transiciones de estado y la coordinación entre entidades. Es la única capa que puede llamar a varios repositorios.
 - **Repository** — acceso a MongoDB. Solo operaciones de persistencia y consulta.
+- **Domain** — las entidades, sus enumeraciones y sus objetos de valor. No depende de ninguna otra capa; las tres anteriores dependen de ella.
 
 **Regla del proyecto: por cada clase del modelo hay un repositorio, un servicio y un controlador.**
 
@@ -67,9 +68,9 @@ Quedan fuera de la regla las clases que no tienen colección propia en MongoDB:
 
 ## Diagrama de clases (vista lógica)
 
-![Diagrama de clases de Dronflow](<docs/Diagrama de clases.jpg>)
+![Diagrama de clases de Dronflow](<docs/Class Diagram (Logic View).jpg>)
 
-## Vista de desarrollo (tres capas)
+## Vista de desarrollo (cuatro capas)
 
 ![Vista de desarrollo de Dronflow](<docs/Development View.jpg>)
 
@@ -102,11 +103,11 @@ Rutas de comunicación: navegador → Vercel por HTTPS 443, Vercel/navegador →
 
 ## Principios GRASP aplicados
 
-El diseño asigna cada responsabilidad siguiendo los nueve principios GRASP. Cada fila dice dónde se ve en los diagramas de clases, de tres capas y de componentes.
+El diseño asigna cada responsabilidad siguiendo los nueve principios GRASP. Cada fila dice dónde se ve en los diagramas de clases, de cuatro capas y de componentes.
 
 | Principio | Cómo se aplica en Dronflow |
 |---|---|
-| **Information Expert** | Cada responsabilidad la tiene la clase que posee los datos: `Drone.canExecute(mission)` decide si el dron sirve para una misión, `Route.crosses(zone)` y `Route.deviationFrom(position)` validan la ruta, `Location.distanceTo(other)` calcula la cercanía, `MaintenanceThresholds.exceededBy(history)` decide el mantenimiento y `Alert.isIncident()` decide qué alerta es incidencia. |
+| **Information Expert** | Cada responsabilidad la tiene la clase que posee los datos: `Drone.canExecute(mission)` decide si el dron sirve para una misión, `Route.crosses(zone)` y `Route.deviationFrom(position)` validan la ruta, `Location.distanceTo(other)` calcula la cercanía, `MaintenanceThresholds.exceededBy(flightHours, completedMissions)` decide el mantenimiento y `Alert.isIncident()` decide qué alerta es incidencia. |
 | **Creator** | Crea quien contiene: `FlightHistory` crea sus `Incident` (`registerIncident(alert)`), `Mission` contiene su `Route` y `SystemConfiguration` contiene sus tres reglas. Las entidades nuevas las crean los Service del caso de uso (*creates and returns*). |
 | **Controller** | Un `@RestController` por entidad recibe la petición HTTP y delega en su Service, sin lógica de negocio. Solo expone lo que un usuario pide: por ejemplo, `FlightHistoryController` solo consulta el historial. |
 | **Low Coupling** | Controller → Service → Repository, y ningún componente usa el repositorio de otro: se comunican por interfaces. Los ciclos se rompen con eventos (`MissionCompleted`, `HistoryUpdated`, `DroneAvailable`, `TelemetryReceived`). Meta de CBO ≤ 8 (RNF-01). |
