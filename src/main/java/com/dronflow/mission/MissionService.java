@@ -167,6 +167,9 @@ public class MissionService {
     public Mission abort(String code) {
         Mission mission = findByCode(code);
         mission.abort();
-        return missionRepository.save(mission);
+        Mission saved = missionRepository.save(mission);
+        // HU-02: una misión abortada libera el dron igual que una finalizada; sin historial, porque no se completó
+        droneService.completeMission(mission.getAssignedDroneCode());
+        return saved;
     }
 }
