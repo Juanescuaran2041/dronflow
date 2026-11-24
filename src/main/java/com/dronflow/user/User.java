@@ -44,6 +44,11 @@ public class User {
         }
     }
 
+    // Solo se promueve: el diseno no contempla quitarle el rol a un administrador
+    public void promoteToAdmin() {
+        this.role = Role.ADMIN;
+    }
+
     // Se da de baja; authenticate() ya rechaza a un usuario inactivo
     public void deactivate() {
         this.active = false;

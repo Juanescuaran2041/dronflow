@@ -38,6 +38,12 @@ public class UserController {
         return UserResponse.of(service.edit(id, request.userName(), request.password()));
     }
 
+    // Solo promueve a administrador; no existe la operacion inversa
+    @PutMapping("/users/{id}/role")
+    public UserResponse promoteToAdmin(@PathVariable UUID id) {
+        return UserResponse.of(service.promoteToAdmin(id));
+    }
+
     @DeleteMapping("/users/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) {

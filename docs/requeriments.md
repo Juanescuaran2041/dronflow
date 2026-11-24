@@ -56,6 +56,7 @@ Sistema de Gestión Inteligente de Flotas de Drones
 | RF-21 | El sistema debe permitir que un administrador registre nuevos usuarios con rol de operador. |
 | RF-22 | El sistema debe permitir que un administrador elimine cuentas de usuario existentes. |
 | RF-23 | El sistema debe permitir que un administrador edite cuentas de usuario existentes. |
+| RF-24 | El sistema debe permitir que un administrador promueva una cuenta de operador al rol de administrador. La operación es solo de ascenso: el sistema no permite retirar el rol de administrador a ninguna cuenta, ni promover una cuenta dada de baja. |
 
 ## Requerimientos no funcionales
 
