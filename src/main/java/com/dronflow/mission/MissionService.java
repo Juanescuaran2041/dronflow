@@ -12,11 +12,16 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
 public class MissionService {
     private static final Set<String> MISSION_TYPES = Set.of("delivery", "inspection", "monitoring"); // HU-04
+
+    // Estados en los que el dron está en el aire y su telemetría puede generar alertas
+    private static final Set<MissionState> IN_FLIGHT = Set.of(MissionState.TAKEOFF, MissionState.IN_PROGRESS,
+            MissionState.PAUSED, MissionState.RETURNING);
 
     private final MissionRepository missionRepository;
     private final AssignmentService assignmentService;
@@ -67,6 +72,11 @@ public class MissionService {
                 });
     }
 
+    // HU-09/HU-10: la misión que el dron está volando, si tiene alguna
+    public Optional<Mission> activeMissionOf(String droneCode) {
+        return missionRepository.findByAssignedDroneCodeAndStateIn(droneCode, IN_FLIGHT).stream().findFirst();
+    }
+
     public List<Mission> find(MissionFilter filter) {
         return missionRepository.find(filter);
     }
@@ -86,6 +96,8 @@ public class MissionService {
         var crossed = routeValidator.firstCrossedZone(route);
         if (crossed.isEmpty()) {
             mission.takeOff(route);
+            // RF-02: el despegue dispara la tarea propia del tipo de dron, sin que el servicio sepa cuál es
+            droneService.findByCode(mission.getAssignedDroneCode()).executeTask(mission);
             return missionRepository.save(mission);
         }
         int attempt = mission.registerRouteAttempt();

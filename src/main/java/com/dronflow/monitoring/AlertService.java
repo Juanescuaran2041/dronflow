@@ -2,8 +2,11 @@ package com.dronflow.monitoring;
 
 import com.dronflow.configuration.SystemConfigurationService;
 import com.dronflow.fleet.Drone;
+import com.dronflow.fleet.TelemetryReceived;
 import com.dronflow.mission.Mission;
+import com.dronflow.mission.MissionService;
 import com.dronflow.monitoring.dto.AlertResponse;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -21,18 +24,25 @@ public class AlertService {
     private final AlertRepository alertRepository;
     private final List<AlertRule> rules;
     private final SystemConfigurationService configuration;
+    private final MissionService missionService;
     private final List<SseEmitter> subscribers = new CopyOnWriteArrayList<>();
 
-    public AlertService(AlertRepository alertRepository, List<AlertRule> rules, SystemConfigurationService configuration) {
+    public AlertService(AlertRepository alertRepository, List<AlertRule> rules,
+                        SystemConfigurationService configuration, MissionService missionService) {
         this.alertRepository = alertRepository;
         this.rules = rules;
         this.configuration = configuration;
+        this.missionService = missionService;
     }
 
-    /**
-     * HU-09 y HU-10: aplica todas las reglas a una lectura del dron en misión.
-     * Sin llamador por ahora: la telemetría que lo dispara quedó fuera por decisión del autor.
-     */
+    // HU-09 y HU-10: cada lectura del dron en vuelo se evalúa contra todas las reglas
+    @EventListener
+    public void onTelemetryReceived(TelemetryReceived event) {
+        missionService.activeMissionOf(event.drone().getCode())
+                .ifPresent(mission -> evaluate(event.drone(), mission));
+    }
+
+    /** HU-09 y HU-10: aplica todas las reglas a una lectura del dron en misión. */
     public List<Alert> evaluate(Drone drone, Mission mission) {
         var thresholds = configuration.getAlertThresholds();
         return rules.stream()

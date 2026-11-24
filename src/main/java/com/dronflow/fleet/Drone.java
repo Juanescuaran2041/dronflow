@@ -1,5 +1,6 @@
 package com.dronflow.fleet;
 
+import com.dronflow.mission.Mission;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,21 @@ public abstract class Drone {
         this.batteryLevelPercent = 100; // pendiente de confirmar por el autor: HU-01 no da el nivel inicial
         this.location = null;           // pendiente de confirmar: se conoce con la primera telemetría
         this.state = DroneState.AVAILABLE; // HU-02: un dron recién registrado queda disponible
+    }
+
+    /**
+     * RF-02: la tarea de la misión la ejecuta cada subtipo a su manera (entrega, inspección, monitoreo).
+     * La llama MissionService al autorizar el despegue; agregar un tipo nuevo no toca a ningún llamador.
+     */
+    public abstract void executeTask(Mission mission);
+
+    // HU-09/HU-10: cada lectura del dron en vuelo actualiza su batería y su posición
+    public void updateTelemetry(double batteryLevelPercent, Location location) {
+        if (batteryLevelPercent < 0 || batteryLevelPercent > 100) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Battery level must be between 0 and 100");
+        }
+        this.batteryLevelPercent = batteryLevelPercent;
+        this.location = location;
     }
 
     // HU-05: el dron sirve si soporta la carga y la autonomía que pide la misión
