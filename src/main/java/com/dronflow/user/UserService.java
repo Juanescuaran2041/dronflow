@@ -63,6 +63,19 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public User promoteToAdmin(UUID id) {
+        User user = findById(id);
+        if (user.getRole() == Role.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "User is already an administrator");
+        }
+        // Una cuenta dada de baja no se promueve: quedaria como admin que no puede entrar
+        if (!user.isActive()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "A deactivated account cannot be promoted");
+        }
+        user.promoteToAdmin();
+        return userRepository.save(user);
+    }
+
     // Se da de baja, no se borra, para no perder el rastro de quién operó cada misión
     public void delete(UUID id) {
         User user = findById(id);

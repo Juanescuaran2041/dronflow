@@ -27,6 +27,7 @@ Backlog derivado de `docs/requeriments.md`. RF-02 se fusionó dentro de HU-01 (v
 | [HU-21](HU-21-eliminar-cuenta-de-usuario.md) | Eliminar cuenta de usuario | Revocar accesos obsoletos | RF-22 |
 | [HU-22](HU-22-editar-cuenta-de-usuario.md) | Editar cuenta de usuario | Mantener datos de acceso actualizados | RF-23 |
 | [HU-23](HU-23-cerrar-sesion.md) | Cerrar sesión | Evitar que un acceso siga activo al terminar | RF-20, RNF-04 (decisión del autor) |
+| [HU-24](HU-24-promover-operador-a-administrador.md) | Promover un operador a administrador | Delegar la administración sin crear una cuenta nueva | RF-24 |
 
 ## Decisiones confirmadas con el usuario antes de generar el backlog
 - Registrar/dar de baja/reactivar drones: **administrador u operador**, sin distinción de permisos (HU-01, HU-03).
