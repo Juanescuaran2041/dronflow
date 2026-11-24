@@ -1,0 +1,258 @@
+<mxGraphModel dx="1381" dy="803" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+        <mxCell id="browser-1" parent="1" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.browserWindow;rSize=0;strokeColor=#666666;strokeColor2=#008cff;strokeColor3=#c4c4c4;mainText=dronflow-frontend.vercel.app/missions;recursiveResize=0;" vertex="1">
+          <mxGeometry height="700" width="1040" x="40" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="bloque-1" parent="browser-1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#e7ecee;" value="" vertex="1">
+          <mxGeometry height="580" width="860" x="180" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="bloque-2" parent="browser-1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#0c191c;" value="" vertex="1">
+          <mxGeometry height="580" width="180" x="0" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-3" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=13;fontColor=#ffffff;fontStyle=1;spacing=0;" value="✛  Dronflow" vertex="1">
+          <mxGeometry height="20" width="140" x="18" y="134" as="geometry" />
+        </mxCell>
+        <mxCell id="bloque-4" parent="browser-1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#24383d;" value="" vertex="1">
+          <mxGeometry height="1" width="144" x="18" y="162" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-5" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;fontColor=#b9c7cb;fontStyle=0;spacing=0;" value="Drones" vertex="1">
+          <mxGeometry height="18" width="150" x="18" y="176" as="geometry" />
+        </mxCell>
+        <mxCell id="bloque-6" parent="browser-1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#16282c;" value="" vertex="1">
+          <mxGeometry height="26" width="180" x="0" y="198" as="geometry" />
+        </mxCell>
+        <mxCell id="bloque-7" parent="browser-1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#9c1f5c;" value="" vertex="1">
+          <mxGeometry height="26" width="3" x="0" y="198" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-8" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;fontColor=#ffffff;fontStyle=1;spacing=0;" value="Misiones" vertex="1">
+          <mxGeometry height="18" width="150" x="18" y="202" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-9" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;fontColor=#b9c7cb;fontStyle=0;spacing=0;" value="Alertas" vertex="1">
+          <mxGeometry height="18" width="150" x="18" y="228" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-10" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;fontColor=#b9c7cb;fontStyle=0;spacing=0;" value="Mantenimiento" vertex="1">
+          <mxGeometry height="18" width="150" x="18" y="254" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-11" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;fontColor=#b9c7cb;fontStyle=0;spacing=0;" value="Configuración" vertex="1">
+          <mxGeometry height="18" width="150" x="18" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-12" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;fontColor=#b9c7cb;fontStyle=0;spacing=0;" value="Registrar operador" vertex="1">
+          <mxGeometry height="18" width="150" x="18" y="306" as="geometry" />
+        </mxCell>
+        <mxCell id="bloque-13" parent="browser-1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#24383d;" value="" vertex="1">
+          <mxGeometry height="1" width="144" x="18" y="622" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-14" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#b9c7cb;fontStyle=0;spacing=0;" value="profesor (Administrador)" vertex="1">
+          <mxGeometry height="16" width="150" x="18" y="632" as="geometry" />
+        </mxCell>
+        <mxCell id="salir-15" parent="browser-1" style="strokeWidth=1;shadow=0;dashed=0;html=1;shape=mxgraph.mockup.forms.rrect;rSize=4;strokeColor=#3a5157;fillColor=none;fontColor=#ffffff;fontSize=11;" value="Cerrar sesión" vertex="1">
+          <mxGeometry height="28" width="144" x="18" y="652" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-16" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=22;fontColor=#0f1d20;fontStyle=1;spacing=0;" value="Misiones" vertex="1">
+          <mxGeometry height="30" width="804" x="208" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="bloque-17" parent="browser-1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#ced8db;" value="" vertex="1">
+          <mxGeometry height="1" width="804" x="208" y="174" as="geometry" />
+        </mxCell>
+        <mxCell id="btn-18" parent="browser-1" style="strokeWidth=1;shadow=0;dashed=0;html=1;shape=mxgraph.mockup.forms.rrect;rSize=4;strokeColor=none;fillColor=#9c1f5c;fontColor=#ffffff;fontSize=11;fontStyle=1;" value="Crear misión" vertex="1">
+          <mxGeometry height="32" width="130" x="882" y="142" as="geometry" />
+        </mxCell>
+        <mxCell id="panel-19" parent="browser-1" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;strokeColor=#ced8db;fillColor=#fbfcfc;" value="" vertex="1">
+          <mxGeometry height="70" width="804" x="208" y="192" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-20" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;fontColor=#516267;fontStyle=0;spacing=0;" value="Código de misión" vertex="1">
+          <mxGeometry height="14" width="230" x="228" y="202" as="geometry" />
+        </mxCell>
+        <mxCell id="campo-21" parent="browser-1" style="strokeWidth=1;shadow=0;dashed=0;html=1;shape=mxgraph.mockup.forms.rrect;rSize=4;strokeColor=#ced8db;fillColor=#fbfcfc;fontColor=#0f1d20;fontSize=11;align=left;spacingLeft=8;" value="M-EFD5BA51" vertex="1">
+          <mxGeometry height="30" width="230" x="228" y="218" as="geometry" />
+        </mxCell>
+        <mxCell id="btn-22" parent="browser-1" style="strokeWidth=1;shadow=0;dashed=0;html=1;shape=mxgraph.mockup.forms.rrect;rSize=4;strokeColor=#ced8db;fillColor=#fbfcfc;fontColor=#0f1d20;fontSize=11;" value="Abrir" vertex="1">
+          <mxGeometry height="30" width="80" x="474" y="218" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-23" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=14;fontColor=#0f1d20;fontStyle=1;spacing=0;" value="Historial de misiones" vertex="1">
+          <mxGeometry height="20" width="300" x="208" y="276" as="geometry" />
+        </mxCell>
+        <mxCell id="panel-24" parent="browser-1" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;strokeColor=#ced8db;fillColor=#fbfcfc;" value="" vertex="1">
+          <mxGeometry height="70" width="804" x="208" y="302" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-25" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;fontColor=#516267;fontStyle=0;spacing=0;" value="Dron" vertex="1">
+          <mxGeometry height="14" width="150" x="228" y="312" as="geometry" />
+        </mxCell>
+        <mxCell id="campo-26" parent="browser-1" style="strokeWidth=1;shadow=0;dashed=0;html=1;shape=mxgraph.mockup.forms.rrect;rSize=4;strokeColor=#ced8db;fillColor=#fbfcfc;fontColor=#0f1d20;fontSize=11;align=left;spacingLeft=8;" value="DRN-001" vertex="1">
+          <mxGeometry height="30" width="150" x="228" y="328" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-27" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;fontColor=#516267;fontStyle=0;spacing=0;" value="Desde" vertex="1">
+          <mxGeometry height="14" width="150" x="394" y="312" as="geometry" />
+        </mxCell>
+        <mxCell id="campo-28" parent="browser-1" style="strokeWidth=1;shadow=0;dashed=0;html=1;shape=mxgraph.mockup.forms.rrect;rSize=4;strokeColor=#ced8db;fillColor=#fbfcfc;fontColor=#0f1d20;fontSize=11;align=left;spacingLeft=8;" value="dd/mm/aaaa" vertex="1">
+          <mxGeometry height="30" width="150" x="394" y="328" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-29" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;fontColor=#516267;fontStyle=0;spacing=0;" value="Hasta" vertex="1">
+          <mxGeometry height="14" width="150" x="560" y="312" as="geometry" />
+        </mxCell>
+        <mxCell id="campo-30" parent="browser-1" style="strokeWidth=1;shadow=0;dashed=0;html=1;shape=mxgraph.mockup.forms.rrect;rSize=4;strokeColor=#ced8db;fillColor=#fbfcfc;fontColor=#0f1d20;fontSize=11;align=left;spacingLeft=8;" value="dd/mm/aaaa" vertex="1">
+          <mxGeometry height="30" width="150" x="560" y="328" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-31" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;fontColor=#516267;fontStyle=0;spacing=0;" value="Estado" vertex="1">
+          <mxGeometry height="14" width="130" x="726" y="312" as="geometry" />
+        </mxCell>
+        <mxCell id="campo-32" parent="browser-1" style="strokeWidth=1;shadow=0;dashed=0;html=1;shape=mxgraph.mockup.forms.rrect;rSize=4;strokeColor=#ced8db;fillColor=#fbfcfc;fontColor=#0f1d20;fontSize=11;align=left;spacingLeft=8;" value="Todos" vertex="1">
+          <mxGeometry height="30" width="130" x="726" y="328" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-33" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;fontColor=#516267;fontStyle=0;spacing=0;" value="▾" vertex="1">
+          <mxGeometry height="30" width="14" x="834" y="328" as="geometry" />
+        </mxCell>
+        <mxCell id="btn-34" parent="browser-1" style="strokeWidth=1;shadow=0;dashed=0;html=1;shape=mxgraph.mockup.forms.rrect;rSize=4;strokeColor=none;fillColor=#9c1f5c;fontColor=#ffffff;fontSize=11;fontStyle=1;" value="Consultar" vertex="1">
+          <mxGeometry height="32" width="100" x="872" y="328" as="geometry" />
+        </mxCell>
+        <mxCell id="panel-35" parent="browser-1" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;strokeColor=#ced8db;fillColor=#fbfcfc;" value="" vertex="1">
+          <mxGeometry height="198" width="816" x="208" y="388" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-36" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#516267;fontStyle=1;spacing=0;" value="Código" vertex="1">
+          <mxGeometry height="30" width="108" x="216" y="396" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-37" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#516267;fontStyle=1;spacing=0;" value="Estado" vertex="1">
+          <mxGeometry height="30" width="92" x="336" y="396" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-38" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#516267;fontStyle=1;spacing=0;" value="Prioridad" vertex="1">
+          <mxGeometry height="30" width="74" x="440" y="396" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-39" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#516267;fontStyle=1;spacing=0;" value="Dron" vertex="1">
+          <mxGeometry height="30" width="74" x="526" y="396" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-40" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#516267;fontStyle=1;spacing=0;" value="Origen" vertex="1">
+          <mxGeometry height="30" width="118" x="612" y="396" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-41" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#516267;fontStyle=1;spacing=0;" value="Destino" vertex="1">
+          <mxGeometry height="30" width="118" x="742" y="396" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-42" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#516267;fontStyle=1;spacing=0;" value="Creada" vertex="1">
+          <mxGeometry height="30" width="148" x="872" y="396" as="geometry" />
+        </mxCell>
+        <mxCell id="bloque-43" parent="browser-1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#ced8db;" value="" vertex="1">
+          <mxGeometry height="1" width="816" x="208" y="434" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-44" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#0f1d20;fontStyle=0;spacing=0;" value="M-D5A3CC00" vertex="1">
+          <mxGeometry height="16" width="108" x="218" y="441" as="geometry" />
+        </mxCell>
+        <mxCell id="chip-45" parent="browser-1" style="rounded=1;arcSize=30;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#faeedb;fontColor=#7f5200;fontSize=10;" value="● Pendiente" vertex="1">
+          <mxGeometry height="18" width="79" x="336" y="442" as="geometry" />
+        </mxCell>
+        <mxCell id="chip-46" parent="browser-1" style="rounded=1;arcSize=30;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#e7ecee;fontColor=#516267;fontSize=10;" value="● Baja" vertex="1">
+          <mxGeometry height="18" width="56" x="440" y="442" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-47" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#0f1d20;fontStyle=0;spacing=0;" value="—" vertex="1">
+          <mxGeometry height="16" width="74" x="528" y="441" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-48" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#0f1d20;fontStyle=0;spacing=0;" value="Bodega Norte" vertex="1">
+          <mxGeometry height="16" width="118" x="614" y="441" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-49" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#0f1d20;fontStyle=0;spacing=0;" value="Chapinero" vertex="1">
+          <mxGeometry height="16" width="118" x="744" y="441" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-50" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#0f1d20;fontStyle=0;spacing=0;" value="24/11/2026, 16:03" vertex="1">
+          <mxGeometry height="16" width="148" x="874" y="441" as="geometry" />
+        </mxCell>
+        <mxCell id="bloque-51" parent="browser-1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#edf1f2;" value="" vertex="1">
+          <mxGeometry height="1" width="816" x="208" y="466" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-52" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#0f1d20;fontStyle=0;spacing=0;" value="M-EFD5BA51" vertex="1">
+          <mxGeometry height="16" width="108" x="218" y="471" as="geometry" />
+        </mxCell>
+        <mxCell id="chip-53" parent="browser-1" style="rounded=1;arcSize=30;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#e2eef5;fontColor=#17597f;fontSize=10;" value="● En curso" vertex="1">
+          <mxGeometry height="18" width="72" x="336" y="472" as="geometry" />
+        </mxCell>
+        <mxCell id="chip-54" parent="browser-1" style="rounded=1;arcSize=30;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#fae6e4;fontColor=#a0251c;fontSize=10;" value="● Alta" vertex="1">
+          <mxGeometry height="18" width="56" x="440" y="472" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-55" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#0f1d20;fontStyle=0;spacing=0;" value="DRN-003" vertex="1">
+          <mxGeometry height="16" width="74" x="528" y="471" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-56" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#0f1d20;fontStyle=0;spacing=0;" value="Suba" vertex="1">
+          <mxGeometry height="16" width="118" x="614" y="471" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-57" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#0f1d20;fontStyle=0;spacing=0;" value="Usaquén" vertex="1">
+          <mxGeometry height="16" width="118" x="744" y="471" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-58" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#0f1d20;fontStyle=0;spacing=0;" value="24/11/2026, 16:03" vertex="1">
+          <mxGeometry height="16" width="148" x="874" y="471" as="geometry" />
+        </mxCell>
+        <mxCell id="bloque-59" parent="browser-1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#edf1f2;" value="" vertex="1">
+          <mxGeometry height="1" width="816" x="208" y="496" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-60" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#0f1d20;fontStyle=0;spacing=0;" value="M-309DD209" vertex="1">
+          <mxGeometry height="16" width="108" x="218" y="501" as="geometry" />
+        </mxCell>
+        <mxCell id="chip-61" parent="browser-1" style="rounded=1;arcSize=30;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#faeedb;fontColor=#7f5200;fontSize=10;" value="● Pausada" vertex="1">
+          <mxGeometry height="18" width="65" x="336" y="502" as="geometry" />
+        </mxCell>
+        <mxCell id="chip-62" parent="browser-1" style="rounded=1;arcSize=30;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#fae6e4;fontColor=#a0251c;fontSize=10;" value="● Alta" vertex="1">
+          <mxGeometry height="18" width="56" x="440" y="502" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-63" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#0f1d20;fontStyle=0;spacing=0;" value="DRN-004" vertex="1">
+          <mxGeometry height="16" width="74" x="528" y="501" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-64" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#0f1d20;fontStyle=0;spacing=0;" value="Centro" vertex="1">
+          <mxGeometry height="16" width="118" x="614" y="501" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-65" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#0f1d20;fontStyle=0;spacing=0;" value="Chía" vertex="1">
+          <mxGeometry height="16" width="118" x="744" y="501" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-66" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#0f1d20;fontStyle=0;spacing=0;" value="24/11/2026, 16:03" vertex="1">
+          <mxGeometry height="16" width="148" x="874" y="501" as="geometry" />
+        </mxCell>
+        <mxCell id="bloque-67" parent="browser-1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#edf1f2;" value="" vertex="1">
+          <mxGeometry height="1" width="816" x="208" y="526" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-68" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#0f1d20;fontStyle=0;spacing=0;" value="M-A6A3621D" vertex="1">
+          <mxGeometry height="16" width="108" x="218" y="531" as="geometry" />
+        </mxCell>
+        <mxCell id="chip-69" parent="browser-1" style="rounded=1;arcSize=30;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#e0efe7;fontColor=#0f5c3a;fontSize=10;" value="● Finalizada" vertex="1">
+          <mxGeometry height="18" width="86" x="336" y="532" as="geometry" />
+        </mxCell>
+        <mxCell id="chip-70" parent="browser-1" style="rounded=1;arcSize=30;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#fae6e4;fontColor=#a0251c;fontSize=10;" value="● Alta" vertex="1">
+          <mxGeometry height="18" width="56" x="440" y="532" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-71" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#0f1d20;fontStyle=0;spacing=0;" value="DRN-001" vertex="1">
+          <mxGeometry height="16" width="74" x="528" y="531" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-72" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#0f1d20;fontStyle=0;spacing=0;" value="Base Norte" vertex="1">
+          <mxGeometry height="16" width="118" x="614" y="531" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-73" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#0f1d20;fontStyle=0;spacing=0;" value="Chapinero" vertex="1">
+          <mxGeometry height="16" width="118" x="744" y="531" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-74" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#0f1d20;fontStyle=0;spacing=0;" value="24/11/2026, 16:03" vertex="1">
+          <mxGeometry height="16" width="148" x="874" y="531" as="geometry" />
+        </mxCell>
+        <mxCell id="bloque-75" parent="browser-1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#edf1f2;" value="" vertex="1">
+          <mxGeometry height="1" width="816" x="208" y="556" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-76" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#0f1d20;fontStyle=0;spacing=0;" value="M-07318A64" vertex="1">
+          <mxGeometry height="16" width="108" x="218" y="561" as="geometry" />
+        </mxCell>
+        <mxCell id="chip-77" parent="browser-1" style="rounded=1;arcSize=30;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#fae6e4;fontColor=#a0251c;fontSize=10;" value="● Abortada" vertex="1">
+          <mxGeometry height="18" width="72" x="336" y="562" as="geometry" />
+        </mxCell>
+        <mxCell id="chip-78" parent="browser-1" style="rounded=1;arcSize=30;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#fae6e4;fontColor=#a0251c;fontSize=10;" value="● Crítica" vertex="1">
+          <mxGeometry height="18" width="65" x="440" y="562" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-79" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#0f1d20;fontStyle=0;spacing=0;" value="DRN-002" vertex="1">
+          <mxGeometry height="16" width="74" x="528" y="561" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-80" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#0f1d20;fontStyle=0;spacing=0;" value="Usaquén" vertex="1">
+          <mxGeometry height="16" width="118" x="614" y="561" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-81" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#0f1d20;fontStyle=0;spacing=0;" value="Chía" vertex="1">
+          <mxGeometry height="16" width="118" x="744" y="561" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-82" parent="browser-1" style="text;html=1;whiteSpace=wrap;overflow=hidden;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#0f1d20;fontStyle=0;spacing=0;" value="24/11/2026, 16:03" vertex="1">
+          <mxGeometry height="16" width="148" x="874" y="561" as="geometry" />
+        </mxCell>
+        <mxCell id="nota" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;fontColor=#516267;" value="HU-17 — Consultar historial de misiones   ·   /missions" vertex="1">
+          <mxGeometry height="40" width="1040" x="40" y="754" as="geometry" />
+        </mxCell>
+  </root>
+</mxGraphModel>
