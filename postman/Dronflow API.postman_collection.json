@@ -1,0 +1,1809 @@
+{
+  "info": {
+    "name": "Dronflow API",
+    "description": "API REST de Dronflow, sistema de gestion de flotas de drones.\n\nLa coleccion esta ordenada como un flujo: de la carpeta 1 a la 10, de arriba abajo, corre entera sin errores y se puede repetir las veces que quieras (el dron y los operadores se crean con nombre nuevo en cada corrida). Cada peticion valida el codigo de respuesta que espera.\n\nSi prefieres probar peticiones sueltas, ten en cuenta que la API respeta los estados del dominio: una mision no se pausa si no esta en vuelo y un dron no se da de baja si esta en mision. En ese caso la respuesta 409 es la correcta, no un fallo.\n\nVariables de la coleccion:\n- baseUrl: el backend desplegado en Render. Para local, http://localhost:8080\n- adminUser / adminPassword: la cuenta de administrador de la demostracion\n- token: la coleccion inicia sesion sola antes de cada peticion si no hay token vigente,\n  asi que puedes abrir cualquier peticion y darle Send sin pasos previos.\n- droneCode y missionCode: arrancan apuntando a datos que ya existen en la demo.\n  Al correr el flujo los reemplazan los que crea la propia corrida.\n- userId: lo rellena 'Registrar operador' (arranca vacia: apuntar a una cuenta exige crearla).\n\nLa ultima peticion (SSE) deja la conexion abierta a proposito: ahi se ven llegar las alertas en vivo.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Inicia sesion solo si no hay token vigente, para que cualquier peticion responda sin pasos previos.",
+          "const token = pm.collectionVariables.get('token');",
+          "let vigente = false;",
+          "if (token && token.split('.').length === 3) {",
+          "    try {",
+          "        const carga = JSON.parse(atob(token.split('.')[1]));",
+          "        vigente = carga.exp * 1000 > Date.now() + 60000;",
+          "    } catch (e) { vigente = false; }",
+          "}",
+          "if (!vigente && !pm.request.url.toString().includes('/auth/login')) {",
+          "    pm.sendRequest({",
+          "        url: pm.collectionVariables.get('baseUrl') + '/api/v1/auth/login',",
+          "        method: 'POST',",
+          "        header: { 'Content-Type': 'application/json' },",
+          "        body: { mode: 'raw', raw: JSON.stringify({",
+          "            userName: pm.collectionVariables.get('adminUser'),",
+          "            password: pm.collectionVariables.get('adminPassword')",
+          "        }) }",
+          "    }, function (err, res) {",
+          "        if (!err && res.code === 200) { pm.collectionVariables.set('token', res.json().token); }",
+          "    });",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://dronflow-backend.onrender.com",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminUser",
+      "value": "profesor",
+      "type": "string"
+    },
+    {
+      "key": "adminPassword",
+      "value": "4pefbZYdSNg1wSZRgJLv",
+      "type": "string"
+    },
+    {
+      "key": "droneCode",
+      "value": "DRN-001",
+      "type": "string"
+    },
+    {
+      "key": "missionCode",
+      "value": "M-EFD5BA51",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "operadorUser",
+      "value": "operador-demo",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Acceso y usuarios",
+      "description": "HU-19 a HU-24. Arranca por aqui: guarda el token que usan las demas peticiones.",
+      "item": [
+        {
+          "name": "Iniciar sesion",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"{{adminUser}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "RF-20. Unica peticion que no necesita token."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const cuerpo = pm.response.json();",
+                  "pm.collectionVariables.set(\"token\", cuerpo.token);",
+                  "pm.test(\"Devuelve token y rol\", function () {",
+                  "    pm.expect(cuerpo).to.have.property(\"token\");",
+                  "    pm.expect(cuerpo.role).to.eql(\"ADMIN\");",
+                  "});",
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Registrar operador",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"{{operadorUser}}\",\n  \"password\": \"operador-2026\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "RF-21, solo ADMIN. El nombre se genera unico en cada corrida para poder repetirla."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"operadorUser\", \"operador-\" + Date.now());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"userId\", pm.response.json().id);",
+                  "pm.test(\"Responde 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Editar cuenta",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "{{userId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"{{operadorUser}}\",\n  \"password\": \"nueva-clave-2026\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "RF-23, solo ADMIN. Usa el {{userId}} que guardo la peticion anterior."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Dar de baja una cuenta",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "{{userId}}"
+              ]
+            },
+            "description": "RF-22, solo ADMIN. Baja logica: la cuenta no se borra, se desactiva."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 204\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Registrar operador para promover",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"{{operadorUser}}\",\n  \"password\": \"operador-2026\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Una cuenta activa nueva: la anterior quedo dada de baja y una cuenta inactiva no se puede promover."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"operadorUser\", \"operador-\" + (Date.now() + 1));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"userId\", pm.response.json().id);",
+                  "pm.test(\"Responde 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Promover a administrador",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/{{userId}}/role",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "{{userId}}",
+                "role"
+              ]
+            },
+            "description": "RF-24, solo ADMIN. Solo de ascenso: 409 si ya es administradora o esta dada de baja."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Queda como ADMIN\", function () { pm.expect(pm.response.json().role).to.eql(\"ADMIN\"); });",
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Configuracion",
+      "description": "HU-18, solo ADMIN. Se ajusta antes del vuelo porque el umbral de mantenimiento decide lo que pasa al terminar la mision.",
+      "item": [
+        {
+          "name": "Ver ponderacion de asignacion",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/configuration/assignment-rule",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "configuration",
+                "assignment-rule"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cambiar ponderacion de asignacion",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/configuration/assignment-rule",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "configuration",
+                "assignment-rule"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"batteryWeight\": 0.33,\n  \"proximityWeight\": 0.33,\n  \"priorityWeight\": 0.34\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Los tres pesos con los que el sistema elige dron."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Ver umbrales de alerta",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/configuration/alert-thresholds",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "configuration",
+                "alert-thresholds"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cambiar umbrales de alerta",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/configuration/alert-thresholds",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "configuration",
+                "alert-thresholds"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"batteryMinPercent\": 20,\n  \"maxDeviationMeters\": 50\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Bateria minima y desvio maximo con los que se disparan las alertas."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Ver umbrales de mantenimiento",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/configuration/maintenance-thresholds",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "configuration",
+                "maintenance-thresholds"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cambiar umbrales de mantenimiento",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/configuration/maintenance-thresholds",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "configuration",
+                "maintenance-thresholds"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"maxHours\": 120,\n  \"maxMissions\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Se baja a 1 mision para que el dron de prueba pase a mantenimiento al terminar su vuelo y se pueda probar esa parte. La ultima carpeta lo devuelve a 50."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Flota: alta y telemetria",
+      "description": "HU-01 a HU-03. El dron de prueba nace aqui con un codigo distinto en cada corrida.",
+      "item": [
+        {
+          "name": "Registrar dron",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/drones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "drones"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"{{droneCode}}\",\n  \"type\": \"delivery\",\n  \"batteryCapacity\": 9000,\n  \"enduranceMin\": 90,\n  \"maxPayload\": 15,\n  \"equipment\": [\n    \"camara\",\n    \"gancho\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "RF-01. Carga y autonomia altas a proposito: asi la mision de prueba solo la puede tomar este dron."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"droneCode\", \"DRN-\" + (Date.now() % 100000));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Nace disponible\", function () { pm.expect(pm.response.json().state).to.eql(\"AVAILABLE\"); });",
+                  "pm.test(\"Responde 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar drones",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/drones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "drones"
+              ]
+            },
+            "description": "RF-03. No incluye los drones dados de baja."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar un dron",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/drones/{{droneCode}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "drones",
+                "{{droneCode}}"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reportar telemetria",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/drones/{{droneCode}}/telemetry",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "drones",
+                "{{droneCode}}",
+                "telemetry"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"batteryLevelPercent\": 100,\n  \"location\": {\n    \"name\": \"Base Norte\",\n    \"latitude\": 4.711,\n    \"longitude\": -74.0721,\n    \"altitude\": 2600\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "RF-07. Deja el dron cargado y en el origen de la mision."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. Misiones: ciclo completo",
+      "description": "HU-04 a HU-08 y HU-15. De la creacion al cierre, pasando por pausa, reanudacion y redireccion.",
+      "item": [
+        {
+          "name": "Crear mision",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/missions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "missions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"delivery\",\n  \"priority\": \"HIGH\",\n  \"origin\": {\n    \"name\": \"Base Norte\",\n    \"latitude\": 4.711,\n    \"longitude\": -74.0721,\n    \"altitude\": 2600\n  },\n  \"destination\": {\n    \"name\": \"Hospital Usaquen\",\n    \"latitude\": 4.6951,\n    \"longitude\": -74.0308,\n    \"altitude\": 2580\n  },\n  \"requiredPayload\": 10,\n  \"minEndurance\": 90\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "RF-04 y RF-05: al crearla el sistema le asigna el dron compatible con mejor puntaje."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"missionCode\", pm.response.json().code);",
+                  "pm.test(\"Queda asignada al dron de prueba\", function () {",
+                  "    pm.expect(pm.response.json().assignedDroneCode).to.eql(pm.collectionVariables.get(\"droneCode\"));",
+                  "});",
+                  "pm.test(\"Responde 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Autorizar despegue",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/missions/{{missionCode}}/authorize-takeoff",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "missions",
+                "{{missionCode}}",
+                "authorize-takeoff"
+              ]
+            },
+            "description": "RF-06. Calcula la ruta y la valida contra las zonas restringidas."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Alcanzar crucero",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/missions/{{missionCode}}/reach-cruise",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "missions",
+                "{{missionCode}}",
+                "reach-cruise"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Pausar mision",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/missions/{{missionCode}}/pause",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "missions",
+                "{{missionCode}}",
+                "pause"
+              ]
+            },
+            "description": "RF-15."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reanudar mision",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/missions/{{missionCode}}/resume",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "missions",
+                "{{missionCode}}",
+                "resume"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Redirigir mision",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/missions/{{missionCode}}/redirect",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "missions",
+                "{{missionCode}}",
+                "redirect"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"destination\": {\n    \"name\": \"Centro de acopio Chapinero\",\n    \"latitude\": 4.6486,\n    \"longitude\": -74.0629,\n    \"altitude\": 2620\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "RF-15. La ruta nueva se valida igual contra las zonas restringidas."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Iniciar retorno",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/missions/{{missionCode}}/start-return",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "missions",
+                "{{missionCode}}",
+                "start-return"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Finalizar mision",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/missions/{{missionCode}}/finish",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "missions",
+                "{{missionCode}}",
+                "finish"
+              ]
+            },
+            "description": "Cierra la mision, suma el vuelo al historial y, con el umbral en 1 mision, manda el dron a mantenimiento."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar una mision",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/missions/{{missionCode}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "missions",
+                "{{missionCode}}"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Historial de misiones (filtros)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/missions?droneCode={{droneCode}}&from=&to=&state=COMPLETED",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "missions"
+              ],
+              "query": [
+                {
+                  "key": "droneCode",
+                  "value": "{{droneCode}}"
+                },
+                {
+                  "key": "from",
+                  "value": ""
+                },
+                {
+                  "key": "to",
+                  "value": ""
+                },
+                {
+                  "key": "state",
+                  "value": "COMPLETED"
+                }
+              ]
+            },
+            "description": "RF-16, solo ADMIN. Filtros opcionales por dron, fechas y estado."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5. Historial de vuelos",
+      "description": "HU-12. Horas de vuelo, misiones completadas e incidencias del dron.",
+      "item": [
+        {
+          "name": "Historial de vuelos de un dron",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/drones/{{droneCode}}/flight-history",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "drones",
+                "{{droneCode}}",
+                "flight-history"
+              ]
+            },
+            "description": "RF-12."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Tiene la mision recien completada\", function () {",
+                  "    pm.expect(pm.response.json().completedMissions).to.be.above(0);",
+                  "});",
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "6. Mantenimiento",
+      "description": "HU-13 y HU-14. El dron quedo en mantenimiento al cerrar la mision.",
+      "item": [
+        {
+          "name": "Recomendaciones de mantenimiento",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/maintenance-recommendations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "maintenance-recommendations"
+              ]
+            },
+            "description": "RF-13, solo ADMIN."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Registrar resultado de mantenimiento",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/maintenance-records",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "maintenance-records"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"droneCode\": \"{{droneCode}}\",\n  \"result\": \"APPROVED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "RF-14. APPROVED reinicia los contadores y devuelve el dron a disponible. Los otros resultados son REQUIRES_REPAIR y DECOMMISSION."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mantenimientos de un dron",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/drones/{{droneCode}}/maintenance-records",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "drones",
+                "{{droneCode}}",
+                "maintenance-records"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "7. Misiones: bateria baja y aborto",
+      "description": "HU-09, HU-10 y HU-17. Segundo vuelo: genera las alertas y termina abortado.",
+      "item": [
+        {
+          "name": "Crear mision (segunda)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/missions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "missions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"delivery\",\n  \"priority\": \"CRITICAL\",\n  \"origin\": {\n    \"name\": \"Base Norte\",\n    \"latitude\": 4.711,\n    \"longitude\": -74.0721,\n    \"altitude\": 2600\n  },\n  \"destination\": {\n    \"name\": \"Hospital Usaquen\",\n    \"latitude\": 4.6951,\n    \"longitude\": -74.0308,\n    \"altitude\": 2580\n  },\n  \"requiredPayload\": 10,\n  \"minEndurance\": 90\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Mismo dron: es el unico que carga 10 kg con 90 minutos de autonomia."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"missionCode\", pm.response.json().code);",
+                  "pm.test(\"Responde 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Autorizar despegue (segunda)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/missions/{{missionCode}}/authorize-takeoff",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "missions",
+                "{{missionCode}}",
+                "authorize-takeoff"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Alcanzar crucero (segunda)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/missions/{{missionCode}}/reach-cruise",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "missions",
+                "{{missionCode}}",
+                "reach-cruise"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reportar telemetria en vuelo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/drones/{{droneCode}}/telemetry",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "drones",
+                "{{droneCode}}",
+                "telemetry"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"batteryLevelPercent\": 12,\n  \"location\": {\n    \"name\": \"Desvio sobre Suba\",\n    \"latitude\": 4.742,\n    \"longitude\": -74.0833,\n    \"altitude\": 2650\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "RF-09 y RF-10: bateria bajo el umbral y fuera de ruta, asi que esta sola lectura dispara dos alertas."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Abortar mision",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/missions/{{missionCode}}/abort",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "missions",
+                "{{missionCode}}",
+                "abort"
+              ]
+            },
+            "description": "RF-17. Libera el dron; como vuelve con 12% de bateria, queda cargando."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "8. Alertas",
+      "description": "HU-09 a HU-11, solo ADMIN.",
+      "item": [
+        {
+          "name": "Consultar alertas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/alerts?type=&severity=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "alerts"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": ""
+                },
+                {
+                  "key": "severity",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "RF-11. Filtros opcionales: type (LOW_BATTERY, ROUTE_DEVIATION, RESTRICTED_ZONE, MAINTENANCE) y severity."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Hay alertas del vuelo\", function () { pm.expect(pm.response.json().length).to.be.above(0); });",
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "9. Flota: carga y fin de vida",
+      "description": "HU-02 y HU-03. Los estados que le quedan al dron.",
+      "item": [
+        {
+          "name": "Terminar de cargar",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/drones/{{droneCode}}/finish-charging",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "drones",
+                "{{droneCode}}",
+                "finish-charging"
+              ]
+            },
+            "description": "El dron volvio del vuelo con 12% y entro a cargar; aqui vuelve a disponible."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reportar averia",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/drones/{{droneCode}}/report-fault",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "drones",
+                "{{droneCode}}",
+                "report-fault"
+              ]
+            },
+            "description": "RF-02. Lo saca de servicio."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reactivar un dron",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/drones/{{droneCode}}/reactivate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "drones",
+                "{{droneCode}}",
+                "reactivate"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Dar de baja un dron",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/drones/{{droneCode}}/decommission",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "drones",
+                "{{droneCode}}",
+                "decommission"
+              ]
+            },
+            "description": "RF-02. Baja definitiva: deja de aparecer en el listado."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "10. Cierre",
+      "description": "Deja el sistema como estaba y cierra la sesion.",
+      "item": [
+        {
+          "name": "Restaurar umbrales de mantenimiento",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/configuration/maintenance-thresholds",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "configuration",
+                "maintenance-thresholds"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"maxHours\": 120,\n  \"maxMissions\": 50\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Devuelve el umbral que bajo la carpeta 2."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cerrar sesion",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "logout"
+              ]
+            },
+            "description": "RF-20. Guarda el token en la lista de revocados."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 204\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Alertas en tiempo real (SSE)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/alerts/stream",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "alerts",
+                "stream"
+              ]
+            },
+            "description": "RF-11 por Server-Sent Events: la conexion queda abierta esperando alertas nuevas, no responde y se cierra. Por eso va al final: en el Runner hay que detenerla a mano."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
