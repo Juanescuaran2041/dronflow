@@ -1,5 +1,6 @@
 package com.dronflow.user;
 
+import com.dronflow.user.dto.EditUserRequest;
 import com.dronflow.user.dto.LoginRequest;
 import com.dronflow.user.dto.RegisterOperatorRequest;
 import com.dronflow.user.dto.Session;
@@ -9,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -28,6 +31,19 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public UserResponse registerOperator(@Valid @RequestBody RegisterOperatorRequest request) {
         return UserResponse.of(service.registerOperator(request.userName(), request.password()));
+    }
+
+    // RF-23: solo administrador (regla en SecurityConfig)
+    @PutMapping("/users/{id}")
+    public UserResponse edit(@PathVariable UUID id, @Valid @RequestBody EditUserRequest request) {
+        return UserResponse.of(service.edit(id, request.userName(), request.password()));
+    }
+
+    // RF-22: solo administrador, y nadie puede darse de baja a sí mismo
+    @DeleteMapping("/users/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
+        service.delete(id, jwt.getSubject());
     }
 
     @PostMapping("/logout")
