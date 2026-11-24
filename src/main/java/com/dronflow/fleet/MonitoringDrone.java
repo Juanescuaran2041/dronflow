@@ -15,7 +15,6 @@ public class MonitoringDrone extends Drone {
         super(data.code(), "monitoring", data.batteryCapacity(), data.enduranceMin(), data.maxPayload(), data.equipment());
     }
 
-    // RF-02: monitoreo = transmitir video durante el trayecto y fotografiar el destino
     @Override
     public void executeTask(Mission mission) {
         streamVideo(mission);

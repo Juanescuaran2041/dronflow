@@ -16,7 +16,6 @@ public record Route(List<Location> points) {
         return zone.intersects(this);
     }
 
-    // HU-10: distancia en metros desde una posición al tramo más cercano de la ruta
     public double deviationFrom(Location position) {
         double min = Double.MAX_VALUE;
         for (int i = 0; i + 1 < points.size(); i++) {

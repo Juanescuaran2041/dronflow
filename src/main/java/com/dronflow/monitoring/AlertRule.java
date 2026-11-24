@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public interface AlertRule {
 
-    // HU-09: cuentan como "en misión" en curso, pausada y retorno (decisión del autor)
+    // Cuentan como "en misión" en curso, pausada y retorno
     Set<MissionState> FLYING = Set.of(MissionState.IN_PROGRESS, MissionState.PAUSED, MissionState.RETURNING);
 
     Optional<Alert> evaluate(Drone drone, Mission mission, AlertThresholds thresholds);

@@ -29,8 +29,8 @@ public class MaintenanceRecommendationService {
     }
 
     /**
-     * HU-14: al actualizarse el historial, si el dron supera el umbral se genera la recomendación,
-     * el dron pasa a "en mantenimiento" y el administrador ve una alerta en pantalla (HU-11).
+     * Al actualizarse el historial, si el dron supera el umbral se genera la recomendación,
+     * el dron pasa a "en mantenimiento" y el administrador ve una alerta en pantalla.
      */
     @EventListener
     public void onHistoryUpdated(HistoryUpdated event) {

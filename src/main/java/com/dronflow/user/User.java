@@ -35,7 +35,6 @@ public class User {
         return active && passwordEncoder.matches(password, passwordHash);
     }
 
-    // RF-23: solo cambia lo que llega; lo que viene vacío se deja como estaba
     public void editData(String username, String password, PasswordEncoder passwordEncoder) {
         if (username != null && !username.isBlank()) {
             this.username = username;
@@ -45,7 +44,7 @@ public class User {
         }
     }
 
-    // RF-22: la cuenta se da de baja; authenticate() ya rechaza a un usuario inactivo
+    // Se da de baja; authenticate() ya rechaza a un usuario inactivo
     public void deactivate() {
         this.active = false;
     }

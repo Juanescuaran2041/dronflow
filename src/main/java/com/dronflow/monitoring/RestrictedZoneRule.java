@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-// HU-10: alerta si el dron entra en una zona restringida
 @Component
 public class RestrictedZoneRule implements AlertRule {
     private final RestrictedZoneProvider zones;

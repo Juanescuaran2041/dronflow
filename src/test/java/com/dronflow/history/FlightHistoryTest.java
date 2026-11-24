@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class FlightHistoryTest {
 
     @Test
-    void completedMissionAddsHoursAndCount() {                    // HU-13
+    void completedMissionAddsHoursAndCount() {
         FlightHistory h = new FlightHistory("DRN-001");
         h.registerCompletedMission(Duration.ofMinutes(90));
         assertEquals(1.5, h.getFlightHours(), 1e-9);
@@ -19,7 +19,7 @@ class FlightHistoryTest {
     }
 
     @Test
-    void onlyHighOrCriticalAlertsBecomeIncidents() {               // HU-13
+    void onlyHighOrCriticalAlertsBecomeIncidents() {
         FlightHistory h = new FlightHistory("DRN-001");
         h.registerIncident(new Alert(AlertType.LOW_BATTERY, "DRN-001", "M-1", "medium"));
         h.registerIncident(new Alert(AlertType.ROUTE_DEVIATION, "DRN-001", "M-1", "high"));
@@ -27,7 +27,7 @@ class FlightHistoryTest {
     }
 
     @Test
-    void resetKeepsTheIncidents() {                                 // HU-15
+    void resetKeepsTheIncidents() {
         FlightHistory h = new FlightHistory("DRN-001");
         h.registerCompletedMission(Duration.ofHours(105));
         h.registerIncident(new Alert(AlertType.RESTRICTED_ZONE, "DRN-001", "M-1", "critical"));

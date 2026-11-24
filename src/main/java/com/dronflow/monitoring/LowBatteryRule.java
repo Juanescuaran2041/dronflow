@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-// HU-09: alerta en cada lectura bajo el umbral, no solo al cruzarlo
+// Alerta en cada lectura bajo el umbral, no solo al cruzarlo
 @Component
 public class LowBatteryRule implements AlertRule {
 

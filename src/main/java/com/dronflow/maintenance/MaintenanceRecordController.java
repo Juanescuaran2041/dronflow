@@ -17,7 +17,6 @@ public class MaintenanceRecordController {
         this.service = service;
     }
 
-    // HU-15
     @PostMapping("/maintenance-records")
     @ResponseStatus(HttpStatus.CREATED)
     public MaintenanceRecordResponse recordResult(@Valid @RequestBody RecordMaintenanceRequest request) {

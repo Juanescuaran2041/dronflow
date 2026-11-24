@@ -17,12 +17,12 @@ class MissionTest {
     }
 
     @Test
-    void newMissionIsPending() {                          // HU-04
+    void newMissionIsPending() {
         assertEquals(MissionState.PENDING, newMission().getState());
     }
 
     @Test
-    void sameOriginAndDestinationIsRejected() {           // HU-04
+    void sameOriginAndDestinationIsRejected() {
         assertThrows(ResponseStatusException.class, () -> new Mission("delivery", Priority.LOW, A, A, 1, 10));
     }
 
@@ -44,7 +44,7 @@ class MissionTest {
     }
 
     @Test
-    void releasingTheDroneResetsTheAttempts() {           // HU-06
+    void releasingTheDroneResetsTheAttempts() {
         Mission m = newMission();
         m.assignDrone("DRN-001");
         m.registerRouteAttempt();
@@ -55,7 +55,7 @@ class MissionTest {
     }
 
     @Test
-    void routeCrossingAZoneIsDetected() {                  // HU-06
+    void routeCrossingAZoneIsDetected() {
         RestrictedZone zone = new RestrictedZone("Z", List.of(
                 new Location(null, 4.62, -74.07, 0), new Location(null, 4.63, -74.07, 0),
                 new Location(null, 4.63, -74.06, 0), new Location(null, 4.62, -74.06, 0)));

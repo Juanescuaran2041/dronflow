@@ -15,7 +15,6 @@ public class InspectionDrone extends Drone {
         super(data.code(), "inspection", data.batteryCapacity(), data.enduranceMin(), data.maxPayload(), data.equipment());
     }
 
-    // RF-02: inspección = capturar un punto de revisión por cada vértice de la ruta
     @Override
     public void executeTask(Mission mission) {
         mission.getRoute().points().forEach(this::captureInspectionPoint);

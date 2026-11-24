@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.List;
 
-// Consulta con filtros opcionales (HU-17); Spring Data la une a MissionRepository por el sufijo "Impl"
+// Consulta con filtros opcionales; Spring Data la une a MissionRepository por el sufijo "Impl"
 class MissionQueryRepositoryImpl implements MissionQueryRepository {
     private final MongoTemplate mongo;
 

@@ -7,7 +7,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 
-// HU-11 y HU-12: solo administrador (regla en SecurityConfig)
 @RestController
 @RequestMapping("/api/v1/alerts")
 public class AlertController {

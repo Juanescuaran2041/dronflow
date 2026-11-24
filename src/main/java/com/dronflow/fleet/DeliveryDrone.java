@@ -15,7 +15,6 @@ public class DeliveryDrone extends Drone {
         super(data.code(), "delivery", data.batteryCapacity(), data.enduranceMin(), data.maxPayload(), data.equipment());
     }
 
-    // RF-02: entrega = recoger la carga en el origen y depositarla en el destino
     @Override
     public void executeTask(Mission mission) {
         pickUpCargo(mission);

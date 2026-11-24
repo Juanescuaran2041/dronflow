@@ -17,7 +17,7 @@ import java.util.Set;
 
 @Service
 public class MissionService {
-    private static final Set<String> MISSION_TYPES = Set.of("delivery", "inspection", "monitoring"); // HU-04
+    private static final Set<String> MISSION_TYPES = Set.of("delivery", "inspection", "monitoring");
 
     // Estados en los que el dron está en el aire y su telemetría puede generar alertas
     private static final Set<MissionState> IN_FLIGHT = Set.of(MissionState.TAKEOFF, MissionState.IN_PROGRESS,
@@ -39,7 +39,6 @@ public class MissionService {
         this.events = events;
     }
 
-    // HU-04 + HU-05: se crea pendiente y el sistema intenta asignarle un dron de inmediato
     public Mission create(CreateMissionRequest data) {
         if (!MISSION_TYPES.contains(data.type())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -58,7 +57,7 @@ public class MissionService {
         });
     }
 
-    // HU-05, asignación diferida: el dron liberado toma la misión pendiente compatible de mayor prioridad
+    // Asignación diferida: el dron liberado toma la misión pendiente compatible de mayor prioridad
     @EventListener
     public void onDroneAvailable(DroneAvailable event) {
         var drone = droneService.findByCode(event.droneCode());
@@ -72,7 +71,6 @@ public class MissionService {
                 });
     }
 
-    // HU-09/HU-10: la misión que el dron está volando, si tiene alguna
     public Optional<Mission> activeMissionOf(String droneCode) {
         return missionRepository.findByAssignedDroneCodeAndStateIn(droneCode, IN_FLIGHT).stream().findFirst();
     }
@@ -86,7 +84,7 @@ public class MissionService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Mission not found"));
     }
 
-    // HU-06: valida la ruta; si cruza una zona cuenta el intento y al tercero libera el dron
+    // Valida la ruta; si cruza una zona cuenta el intento y al tercero libera el dron
     public Mission authorizeTakeoff(String code) {
         Mission mission = findByCode(code);
         if (mission.getAssignedDroneCode() == null) {
@@ -96,7 +94,7 @@ public class MissionService {
         var crossed = routeValidator.firstCrossedZone(route);
         if (crossed.isEmpty()) {
             mission.takeOff(route);
-            // RF-02: el despegue dispara la tarea propia del tipo de dron, sin que el servicio sepa cuál es
+            // El despegue dispara la tarea propia del tipo de dron, sin que el servicio sepa cuál es
             droneService.findByCode(mission.getAssignedDroneCode()).executeTask(mission);
             return missionRepository.save(mission);
         }
@@ -113,7 +111,6 @@ public class MissionService {
         throw new ResponseStatusException(HttpStatus.CONFLICT, reason);
     }
 
-    // HU-07: avance de la misión. El aterrizaje libera el dron y alimenta el historial (HU-13)
     public Mission reachCruise(String code) {
         Mission mission = findByCode(code);
         mission.reachCruise();
@@ -149,7 +146,7 @@ public class MissionService {
         return missionRepository.save(mission);
     }
 
-    // HU-08: la nueva ruta se valida igual que en HU-06; si cruza una zona, la misión sigue a su destino actual
+    // La nueva ruta se valida igual; si cruza una zona, la misión sigue a su destino actual
     public Mission redirect(String code, Location destination) {
         Mission mission = findByCode(code);
         var drone = droneService.findByCode(mission.getAssignedDroneCode());
@@ -163,12 +160,11 @@ public class MissionService {
         return missionRepository.save(mission);
     }
 
-    // HU-08: el dron inicia el retorno a su base; su llegada la reporta el sistema (fuera de alcance por ahora)
     public Mission abort(String code) {
         Mission mission = findByCode(code);
         mission.abort();
         Mission saved = missionRepository.save(mission);
-        // HU-02: una misión abortada libera el dron igual que una finalizada; sin historial, porque no se completó
+        // Una misión abortada libera el dron igual que una finalizada; sin historial, porque no se completó
         droneService.completeMission(mission.getAssignedDroneCode());
         return saved;
     }

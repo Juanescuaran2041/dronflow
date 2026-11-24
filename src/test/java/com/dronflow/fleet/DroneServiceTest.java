@@ -32,7 +32,7 @@ class DroneServiceTest {
     }
 
     @Test
-    void completingAMissionLeavesTheDroneAvailableAndAnnouncesIt() {     // HU-07, HU-05
+    void completingAMissionLeavesTheDroneAvailableAndAnnouncesIt() {
         Drone drone = droneOnMission();
         when(configuration.getAlertThresholds()).thenReturn(new AlertThresholds(20, 50));
 
@@ -42,7 +42,7 @@ class DroneServiceTest {
         verify(events).publishEvent(new DroneAvailable("DRN-001"));
     }
 
-    /** HU-02/HU-14: el historial de la propia misión pudo mandarlo a mantenimiento antes de llegar aquí. */
+    /** El historial de la propia misión pudo mandarlo a mantenimiento antes de llegar aquí. */
     @Test
     void completingAMissionRespectsADroneAlreadySentToMaintenance() {
         Drone drone = droneOnMission();

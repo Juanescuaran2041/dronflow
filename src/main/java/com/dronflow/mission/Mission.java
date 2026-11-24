@@ -13,7 +13,7 @@ import java.util.UUID;
 @Document("missions")
 public class Mission {
 
-    public static final int MAX_ROUTE_ATTEMPTS = 3; // HU-06: valor inicial, sujeto a cambio
+    public static final int MAX_ROUTE_ATTEMPTS = 3;
 
     @Id
     private String code;
@@ -36,7 +36,7 @@ public class Mission {
     public Mission(String type, Priority priority, Location origin, Location destination,
                    double requiredPayload, int minEndurance) {
         if (origin.samePointAs(destination)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Origin and destination must be different"); // HU-04
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Origin and destination must be different");
         }
         this.code = "M-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         this.type = type;
@@ -45,11 +45,10 @@ public class Mission {
         this.destination = destination;
         this.requiredPayload = requiredPayload;
         this.minEndurance = minEndurance;
-        this.state = MissionState.PENDING; // HU-04
+        this.state = MissionState.PENDING;
         this.createdAt = Instant.now();
     }
 
-    // HU-05: queda reservada para el dron, pero sigue pendiente hasta validar la ruta
     public void assignDrone(String droneCode) {
         requireState("assign a drone to", MissionState.PENDING);
         if (assignedDroneCode != null) {
@@ -58,7 +57,6 @@ public class Mission {
         this.assignedDroneCode = droneCode;
     }
 
-    // HU-06: tras agotar los intentos vuelve a pendiente sin dron
     public void releaseDrone() {
         this.assignedDroneCode = null;
         this.routeAttempts = 0;
@@ -69,7 +67,6 @@ public class Mission {
         return ++routeAttempts;
     }
 
-    // HU-06/HU-07: ruta validada y despegue autorizado
     public void takeOff(Route validRoute) {
         requireState("take off", MissionState.PENDING);
         if (assignedDroneCode == null) {
@@ -80,7 +77,7 @@ public class Mission {
         this.start = Instant.now();
     }
 
-    // Avance de la misión (HU-07). Hoy lo reporta el operador; mañana, la telemetría del dron.
+    // Avance de la misión. Hoy lo reporta el operador; mañana, la telemetría del dron.
     public void reachCruise() {
         requireState("reach cruise altitude in", MissionState.TAKEOFF);
         state = MissionState.IN_PROGRESS;
@@ -97,7 +94,6 @@ public class Mission {
         end = Instant.now();
     }
 
-    // HU-08
     public void pause() {
         requireState("pause", MissionState.IN_PROGRESS);
         state = MissionState.PAUSED;

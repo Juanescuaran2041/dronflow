@@ -3,7 +3,6 @@ package com.dronflow.configuration;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
-// HU-18: solo el administrador (regla en SecurityConfig). Cada regla se edita por separado.
 @RestController
 @RequestMapping("/api/v1/configuration")
 public class SystemConfigurationController {

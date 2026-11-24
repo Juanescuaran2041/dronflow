@@ -53,7 +53,6 @@ public class UserService {
         return userRepository.save(new User(username, passwordEncoder.encode(password), Role.OPERATOR));
     }
 
-    // RF-23: el administrador cambia el nombre de usuario, la contraseña o ambos
     public User edit(UUID id, String username, String password) {
         User user = findById(id);
         if (username != null && !username.equals(user.getUsername())
@@ -64,10 +63,10 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    // RF-22: la cuenta se da de baja, no se borra, para no perder el rastro de quién operó cada misión
+    // Se da de baja, no se borra, para no perder el rastro de quién operó cada misión
     public void delete(UUID id) {
         User user = findById(id);
-        // HU-21: ninguna cuenta de administrador se da de baja, ni la propia ni la de otro
+        // Ninguna cuenta de administrador se da de baja, ni la propia ni la de otro
         if (user.getRole() == Role.ADMIN) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Administrator accounts cannot be deleted");
         }

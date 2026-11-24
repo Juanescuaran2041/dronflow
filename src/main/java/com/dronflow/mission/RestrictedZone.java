@@ -4,7 +4,7 @@ import com.dronflow.fleet.Location;
 
 import java.util.List;
 
-/** Zona restringida: dato de configuración fija (RF-07), no se guarda en Mongo. */
+/** Zona restringida: dato de configuración fija, no se guarda en Mongo. */
 public record RestrictedZone(String name, List<Location> perimeter) {
 
     // Punto dentro del polígono (ray casting)

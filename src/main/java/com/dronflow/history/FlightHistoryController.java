@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-// HU-13: solo consulta; el historial lo actualiza el sistema al terminar cada misión
 @RestController
 public class FlightHistoryController {
     private final FlightHistoryService service;

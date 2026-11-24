@@ -18,7 +18,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** RF-02: cada subtipo ejecuta su propia tarea al recibir el mismo mensaje. */
+/** Polimorfismo: cada subtipo ejecuta su propia tarea al recibir el mismo mensaje. */
 class DroneTaskTest {
 
     private static final Location ORIGIN = new Location("Base", 4.60, -74.08, 0);

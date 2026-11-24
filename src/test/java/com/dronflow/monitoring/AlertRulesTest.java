@@ -38,7 +38,7 @@ class AlertRulesTest {
     }
 
     @Test
-    void lowBatteryOnlyBelowTheThresholdAndWhileFlying() {          // HU-09
+    void lowBatteryOnlyBelowTheThresholdAndWhileFlying() {
         LowBatteryRule rule = new LowBatteryRule();
         assertTrue(rule.evaluate(drone(19, A), flyingMission(), THRESHOLDS).isPresent());
         assertTrue(rule.evaluate(drone(21, A), flyingMission(), THRESHOLDS).isEmpty());
@@ -47,7 +47,7 @@ class AlertRulesTest {
     }
 
     @Test
-    void deviationAboveTheThreshold() {                              // HU-10
+    void deviationAboveTheThreshold() {
         RouteDeviationRule rule = new RouteDeviationRule();
         assertTrue(rule.evaluate(drone(80, new Location(null, 4.62, -74.08, 0)), flyingMission(), THRESHOLDS).isEmpty());
         // ~0.001° de longitud ≈ 110 m fuera de la ruta
@@ -55,7 +55,7 @@ class AlertRulesTest {
     }
 
     @Test
-    void enteringARestrictedZone() {                                  // HU-10
+    void enteringARestrictedZone() {
         RestrictedZone zone = new RestrictedZone("Z", List.of(
                 new Location(null, 4.61, -74.09, 0), new Location(null, 4.63, -74.09, 0),
                 new Location(null, 4.63, -74.07, 0), new Location(null, 4.61, -74.07, 0)));
@@ -66,7 +66,7 @@ class AlertRulesTest {
     }
 
     @Test
-    void severityComesFromTheType() {                                 // HU-12
+    void severityComesFromTheType() {
         assertEquals(Severity.MEDIUM, new Alert(AlertType.LOW_BATTERY, "D", "M", "").getSeverity());
         assertEquals(Severity.HIGH, new Alert(AlertType.ROUTE_DEVIATION, "D", "M", "").getSeverity());
         assertEquals(Severity.CRITICAL, new Alert(AlertType.RESTRICTED_ZONE, "D", "M", "").getSeverity());
