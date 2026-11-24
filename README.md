@@ -83,7 +83,7 @@ Cada entidad tiene su Controller (Presentation Layer), Service (Service Layer) y
 
 ## Diagrama de contexto
 
-<img width="1089" height="641" alt="image" src="https://github.com/user-attachments/assets/626b5ed6-dfc9-4b5b-9ef2-abc9e4ea1f20" />
+![Diagrama de contexto de Dronflow](<docs/Context Diagram.png>)
 
 Dronflow como caja negra, con sus actores y los sistemas externos que le suministran datos. Cada línea es una funcionalidad concreta, trazada a su historia de usuario.
 
