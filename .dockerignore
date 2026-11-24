@@ -1,0 +1,5 @@
+target/
+.git/
+diagramas/
+*.vpp
+docs/
