@@ -4,6 +4,13 @@ Sistema de Gestión Inteligente de Flotas de Drones para Misiones de Entrega, In
 
 **Aplicación desplegada:** https://dronflow-frontend.vercel.app/
 
+## Acceso de prueba para el profesor
+
+Abre la aplicación desplegada e inicia sesión con la cuenta de administrador de la demostración.
+
+| Usuario | Contraseña |
+|---|---|
+| `profesor` | `4pefbZYdSNg1wSZRgJLv` |
 
 ## Descripción
 
