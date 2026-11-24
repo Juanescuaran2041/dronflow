@@ -15,6 +15,76 @@ Abre la aplicación desplegada e inicia sesión con cualquiera de estas dos cuen
 
 La base de la demostración ya tiene drones, misiones en distintos estados, alertas e historial de vuelos. La colección de Postman de `postman/` apunta al backend desplegado y trae las variables listas.
 
+## Pruebas guiadas
+
+### 1. Crear una misión y ver a qué dron la asigna el sistema
+
+El dron **no se elige**: lo decide el sistema con la carga útil y la autonomía que pide la misión.
+
+**Misiones → Crear misión**, tipo *Entrega*, prioridad la que sea, y estos valores:
+
+| Campo | Origen | Destino |
+|---|---|---|
+| Nombre | `Chapinero` | `Usaquen` |
+| Latitud | `4.6486` | `4.6951` |
+| Longitud | `-74.0629` | `-74.0308` |
+| Altitud | `60` | `80` |
+
+Carga útil requerida **2.5 kg** y autonomía mínima **20 min**.
+
+Al crearla salta al detalle de la misión y el campo **Dron asignado** ya trae el dron elegido. Si se piden valores que ningún dron de la flota cumple (por ejemplo 35 kg), la misión nace en estado *Pendiente* y sin dron: ese es el comportamiento esperado, no un fallo.
+
+### 2. Validación de ruta contra zona restringida (HU-06)
+
+La zona `Aeropuerto El Dorado` va de latitud **4.680 a 4.720** y de longitud **−74.170 a −74.120** (`src/main/resources/restricted-zones.json`). Basta con que la línea recta entre origen y destino la atraviese.
+
+Se crea otra misión igual que la anterior pero con estas coordenadas:
+
+| Campo | Origen | Destino |
+|---|---|---|
+| Nombre | `Fontibon` | `Chapinero` |
+| Latitud | `4.700` | `4.700` |
+| Longitud | `-74.200` | `-74.060` |
+
+En el detalle de la misión, **Autorizar despegue** responde en rojo:
+
+```
+Takeoff rejected: the route crosses the restricted zone 'Aeropuerto El Dorado' (attempt 1 of 3)
+```
+
+El campo *Intentos de ruta* sube con cada intento. Al tercero el sistema libera el dron y la misión queda *Sin asignar*, para que un dron no se quede bloqueado por una ruta imposible.
+
+### 3. Alerta de zona restringida (HU-10)
+
+Esta no se puede provocar desde la aplicación: nace de la telemetría del dron, y el frontend no envía telemetría. Se lanza con la colección de Postman, con un dron que esté en una misión en curso:
+
+```
+POST /api/v1/drones/{code}/telemetry
+{
+  "batteryLevelPercent": 70,
+  "location": { "name": "Sobre El Dorado", "latitude": 4.700, "longitude": -74.145, "altitude": 90 }
+}
+```
+
+Después, en la aplicación: **Alertas → Actualizar**, y aparece la fila *Zona restringida · Crítica*. Con la pantalla de alertas abierta llega sola, sin recargar, porque el navegador mantiene abierta la conexión SSE.
+
+### 4. Severidad de las alertas
+
+No se calcula: cada tipo de alerta tiene la suya fija (`AlertType`).
+
+| Tipo | Severidad | Cuándo nace |
+|---|---|---|
+| Zona restringida | Crítica | El dron entra en la zona, en vuelo |
+| Desvío de ruta | Alta | Se aleja más de `maxDeviationMeters` (50 m por defecto) |
+| Batería baja | Media | Batería bajo `batteryMinPercent` (20 % por defecto), en vuelo |
+| Mantenimiento | Baja | El dron supera las horas o las misiones del umbral |
+
+Solo las de severidad Alta y Crítica se empujan al operador en tiempo real. Los umbrales se cambian en **Configuración**; la severidad está fija en el código.
+
+### 5. Flujo completo de la API
+
+La colección `postman/Dronflow API.postman_collection.json` recorre los 36 endpoints en orden, de la carpeta 1 a la 10, y se puede repetir. Inicia sesión sola, así que cualquier petición responde nada más abrirla y darle Send.
+
 ## Descripción
 
 Dronflow es un sistema de software para la gestión centralizada de una flota de drones autónomos que ejecutan distintos tipos de misiones: entregas, inspección de infraestructura y monitoreo o fotografía aérea. El sistema controla el ciclo de vida completo de cada dron segun su disponibilidad y asigna misiones según criterios como batería disponible, cercanía y prioridad.
