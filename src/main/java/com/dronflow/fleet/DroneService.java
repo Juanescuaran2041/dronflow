@@ -84,6 +84,10 @@ public class DroneService {
     // El umbral para mandarlo a cargar es el mismo de la alerta de batería baja
     public Drone completeMission(String code) {
         Drone drone = findByCode(code);
+        // Si el historial de esta misma misión ya lo mandó a mantenimiento, el mantenimiento manda
+        if (drone.getState() == DroneState.IN_MAINTENANCE) {
+            return drone;
+        }
         drone.completeMission(configuration.getAlertThresholds().batteryMinPercent());
         Drone saved = droneRepository.save(drone);
         if (saved.getState() == DroneState.AVAILABLE) {

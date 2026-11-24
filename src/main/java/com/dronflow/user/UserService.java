@@ -64,10 +64,11 @@ public class UserService {
     }
 
     // Se da de baja, no se borra, para no perder el rastro de quién operó cada misión
-    public void delete(UUID id, String requesterUsername) {
+    public void delete(UUID id) {
         User user = findById(id);
-        if (user.getUsername().equals(requesterUsername)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "You cannot delete your own account");
+        // Ninguna cuenta de administrador se da de baja, ni la propia ni la de otro
+        if (user.getRole() == Role.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Administrator accounts cannot be deleted");
         }
         user.deactivate();
         userRepository.save(user);

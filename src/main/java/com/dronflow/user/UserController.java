@@ -40,8 +40,8 @@ public class UserController {
 
     @DeleteMapping("/users/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
-        service.delete(id, jwt.getSubject());
+    public void delete(@PathVariable UUID id) {
+        service.delete(id);
     }
 
     @PostMapping("/logout")
